@@ -17,7 +17,7 @@ def _to_world(p, scale):
 
 
 def render(roots, tex_rgba, glow_rgba=None, size=320, yaw=35.0, pitch=22.0, dist=2.6, scale=1.0,
-           pose=None, hidden=(), bg=(58, 64, 82), target_y=None):
+           pose=None, hidden=(), bg=(58, 64, 82), target_y=None, shadow=True, transparent=False):
     qs = quads(roots, pose, hidden)
     tw, th = tex_rgba.shape[1], tex_rgba.shape[0]
     # camera
@@ -44,16 +44,19 @@ def render(roots, tex_rgba, glow_rgba=None, size=320, yaw=35.0, pitch=22.0, dist
         return np.array([size / 2 + f * x / z, size / 2 - f * y / z, z])
 
     # ground shadow ellipse
-    sh = []
-    for a in range(24):
-        ang = a / 24 * 2 * math.pi
-        sh.append(proj(np.array([math.cos(ang) * 0.38 * scale, 0.0, math.sin(ang) * 0.38 * scale])))
-    sh = np.array(sh)
-    from PIL import ImageDraw
-    shadow = Image.new('L', (size, size), 0)
-    ImageDraw.Draw(shadow).polygon([(p[0], p[1]) for p in sh], fill=90)
-    sa = np.asarray(shadow, np.float32)[..., None] / 255.0
-    img = img * (1 - sa * 0.6)
+    if not shadow:
+        sh = None
+    sh = [] if shadow else None
+    if sh is not None:
+        for a in range(24):
+            ang = a / 24 * 2 * math.pi
+            sh.append(proj(np.array([math.cos(ang) * 0.38 * scale, 0.0, math.sin(ang) * 0.38 * scale])))
+        sh = np.array(sh)
+        from PIL import ImageDraw
+        smask = Image.new('L', (size, size), 0)
+        ImageDraw.Draw(smask).polygon([(p[0], p[1]) for p in sh], fill=90)
+        sa = np.asarray(smask, np.float32)[..., None] / 255.0
+        img = img * (1 - sa * 0.6)
 
     for verts, uvs, n in qs:
         wv = [_to_world(v, scale) for v in verts]
@@ -71,7 +74,11 @@ def render(roots, tex_rgba, glow_rgba=None, size=320, yaw=35.0, pitch=22.0, dist
             shade = min(1.0, 0.4 + 0.6 * (max(0.0, -nw @ L0) + max(0.0, -nw @ L1)))
         for tri in ((0, 1, 2), (0, 2, 3)):
             _raster(img, zbuf, [P[i] for i in tri], [uvs[i] for i in tri], tex_rgba, glow_rgba, tw, th, shade)
-    return Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), 'RGB')
+    out = Image.fromarray(np.clip(img, 0, 255).astype(np.uint8), 'RGB')
+    if transparent:
+        alpha = np.where(np.isinf(zbuf), 0, 255).astype(np.uint8)
+        out = Image.fromarray(np.dstack([np.asarray(out), alpha]), 'RGBA')
+    return out
 
 
 def _raster(img, zbuf, P, UV, tex, glow, tw, th, shade):

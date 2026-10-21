@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "tamagotchi:scratching_post"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "tamagotchi:blocks/scratching_post"
+}

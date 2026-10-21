@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "H": "minecraft:hay_block",
+    "F": "minecraft:feather",
+    "E": "minecraft:egg"
+  },
+  "pattern": [
+    "H H",
+    "FEF",
+    "HHH"
+  ],
+  "result": {
+    "id": "tamagotchi:dragon_nest"
+  }
+}

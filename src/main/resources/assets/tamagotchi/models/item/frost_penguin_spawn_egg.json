@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tamagotchi:item/frost_penguin_spawn_egg"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": "minecraft:red_mushroom_block",
+    "S": "minecraft:slime_ball",
+    "M": "minecraft:mushroom_stem"
+  },
+  "pattern": [
+    "RRR",
+    "SMS",
+    " M "
+  ],
+  "result": {
+    "id": "tamagotchi:bouncy_mushroom"
+  }
+}

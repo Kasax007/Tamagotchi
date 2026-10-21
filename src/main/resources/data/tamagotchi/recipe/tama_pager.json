@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "N": "minecraft:iron_nugget",
+    "G": "minecraft:glass_pane",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    " N ",
+    "NGN",
+    "NRN"
+  ],
+  "result": {
+    "id": "tamagotchi:tama_pager"
+  }
+}

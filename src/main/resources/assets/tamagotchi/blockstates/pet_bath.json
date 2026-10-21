@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "tamagotchi:block/pet_bath"
+    },
+    "filled=true": {
+      "model": "tamagotchi:block/pet_bath_filled"
+    }
+  }
+}

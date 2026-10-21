@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": "minecraft:stick",
+    "P": "#minecraft:planks",
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "SPS",
+    "PCP",
+    "SPS"
+  ],
+  "result": {
+    "id": "tamagotchi:running_wheel"
+  }
+}

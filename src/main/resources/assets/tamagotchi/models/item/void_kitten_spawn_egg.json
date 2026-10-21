@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tamagotchi:item/void_kitten_spawn_egg"
+  }
+}

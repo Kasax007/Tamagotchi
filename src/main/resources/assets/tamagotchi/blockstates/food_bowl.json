@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "fill=0": {
+      "model": "tamagotchi:block/food_bowl"
+    },
+    "fill=1": {
+      "model": "tamagotchi:block/food_bowl_fill1"
+    },
+    "fill=2": {
+      "model": "tamagotchi:block/food_bowl_fill2"
+    },
+    "fill=3": {
+      "model": "tamagotchi:block/food_bowl_fill3"
+    }
+  }
+}

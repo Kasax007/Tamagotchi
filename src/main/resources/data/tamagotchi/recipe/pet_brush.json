@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": "#minecraft:wool",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "WWW",
+    " S "
+  ],
+  "result": {
+    "id": "tamagotchi:pet_brush"
+  }
+}

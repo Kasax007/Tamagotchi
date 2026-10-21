@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "tamagotchi:block/pet_house"
+  }
+}

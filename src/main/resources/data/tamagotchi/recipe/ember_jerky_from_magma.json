@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:cooked_porkchop",
+    "minecraft:magma_cream"
+  ],
+  "result": {
+    "id": "tamagotchi:ember_jerky",
+    "count": 3
+  }
+}

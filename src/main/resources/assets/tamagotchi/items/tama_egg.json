@@ -1,0 +1,83 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "cases": [
+      {
+        "when": "desert_dragon",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/desert_dragon_spawn_egg"
+        }
+      },
+      {
+        "when": "jungle_dragon",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/jungle_dragon_spawn_egg"
+        }
+      },
+      {
+        "when": "tide_dragon",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/tide_dragon_spawn_egg"
+        }
+      },
+      {
+        "when": "frost_penguin",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/frost_penguin_spawn_egg"
+        }
+      },
+      {
+        "when": "ember_pup",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/ember_pup_spawn_egg"
+        }
+      },
+      {
+        "when": "sculk_wisp",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/sculk_wisp_spawn_egg"
+        }
+      },
+      {
+        "when": "void_kitten",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/void_kitten_spawn_egg"
+        }
+      },
+      {
+        "when": "pebble_golem",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/pebble_golem_spawn_egg"
+        }
+      },
+      {
+        "when": "hex_toad",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/hex_toad_spawn_egg"
+        }
+      },
+      {
+        "when": "mimic",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:item/mimic_spawn_egg"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "tamagotchi:item/desert_dragon_spawn_egg"
+    }
+  }
+}

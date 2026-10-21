@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:wheat",
+    "minecraft:gold_nugget",
+    "minecraft:gold_nugget",
+    "minecraft:honey_bottle"
+  ],
+  "result": {
+    "id": "tamagotchi:golden_biscuit",
+    "count": 2
+  }
+}

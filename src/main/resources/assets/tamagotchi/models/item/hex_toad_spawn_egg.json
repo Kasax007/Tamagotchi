@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tamagotchi:item/hex_toad_spawn_egg"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "tamagotchi:item/desert_dragon_spawn_egg"
+  }
+}

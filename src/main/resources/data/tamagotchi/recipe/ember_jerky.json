@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:cooked_beef",
+    "minecraft:blaze_powder"
+  ],
+  "result": {
+    "id": "tamagotchi:ember_jerky",
+    "count": 3
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:glow_berries",
+    "minecraft:slime_ball",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "tamagotchi:glow_gummy",
+    "count": 3
+  }
+}

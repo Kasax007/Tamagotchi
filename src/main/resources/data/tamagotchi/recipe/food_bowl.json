@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "minecraft:clay_ball"
+  },
+  "pattern": [
+    "C C",
+    " C "
+  ],
+  "result": {
+    "id": "tamagotchi:food_bowl"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tamagotchi:block/pet_basket"
+    },
+    "facing=east": {
+      "model": "tamagotchi:block/pet_basket",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tamagotchi:block/pet_basket",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tamagotchi:block/pet_basket",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:cactus",
+    "minecraft:sweet_berries",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "tamagotchi:dragon_fruit",
+    "count": 2
+  }
+}

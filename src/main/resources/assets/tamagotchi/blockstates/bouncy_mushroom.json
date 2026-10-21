@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "squished=false": {
+      "model": "tamagotchi:block/bouncy_mushroom"
+    },
+    "squished=true": {
+      "model": "tamagotchi:block/bouncy_mushroom_squished"
+    }
+  }
+}

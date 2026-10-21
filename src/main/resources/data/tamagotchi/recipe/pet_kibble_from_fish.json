@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:wheat",
+    "#minecraft:fishes"
+  ],
+  "result": {
+    "id": "tamagotchi:pet_kibble",
+    "count": 4
+  }
+}

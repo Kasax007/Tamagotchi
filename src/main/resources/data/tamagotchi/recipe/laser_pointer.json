@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": "minecraft:redstone_torch",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "  R",
+    " I ",
+    "I  "
+  ],
+  "result": {
+    "id": "tamagotchi:laser_pointer"
+  }
+}

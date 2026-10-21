@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:sugar",
+    "minecraft:amethyst_shard",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "tamagotchi:rock_candy",
+    "count": 2
+  }
+}

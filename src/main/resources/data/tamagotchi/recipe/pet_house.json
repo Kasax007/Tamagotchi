@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "minecraft:bricks",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    " B ",
+    "BPB",
+    "P P"
+  ],
+  "result": {
+    "id": "tamagotchi:pet_house"
+  }
+}

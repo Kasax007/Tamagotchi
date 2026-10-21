@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "I": "minecraft:iron_ingot",
+    "W": "minecraft:water_bucket"
+  },
+  "pattern": [
+    "P P",
+    "IWI",
+    "PPP"
+  ],
+  "result": {
+    "id": "tamagotchi:pet_bath"
+  }
+}

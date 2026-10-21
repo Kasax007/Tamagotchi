@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": "#minecraft:wool",
+    "S": "minecraft:slime_ball"
+  },
+  "pattern": [
+    " W ",
+    "WSW",
+    " W "
+  ],
+  "result": {
+    "id": "tamagotchi:squeaky_ball",
+    "count": 2
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tamagotchi:block/running_wheel"
+    },
+    "facing=east": {
+      "model": "tamagotchi:block/running_wheel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tamagotchi:block/running_wheel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tamagotchi:block/running_wheel",
+      "y": 270
+    }
+  }
+}
