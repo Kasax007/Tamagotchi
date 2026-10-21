@@ -102,10 +102,10 @@ lang.update({
 })
 # ------------------------------------------------------------------ Tamacon (in-game guide)
 FOUND = {
-    'desert_dragon': 'desert pyramids (40 %)', 'jungle_dragon': 'jungle temples (40 %)', 'tide_dragon': 'ocean monuments (50 %)',
-    'frost_penguin': 'igloos (45 %)', 'ember_pup': 'nether fortresses (30 %)', 'sculk_wisp': 'ancient cities (50 %)',
-    'void_kitten': 'end cities (30 %)', 'pebble_golem': 'trail ruins (35 %) and mineshafts (8 %)', 'hex_toad': 'swamp huts (45 %)',
-    'mimic': 'trial chambers (30 %) and woodland mansions (60 %)',
+    'desert_dragon': 'desert pyramids (40%)', 'jungle_dragon': 'jungle temples (40%)', 'tide_dragon': 'ocean monuments (50%)',
+    'frost_penguin': 'igloos (45%)', 'ember_pup': 'nether fortresses (30%)', 'sculk_wisp': 'ancient cities (50%)',
+    'void_kitten': 'end cities (30%)', 'pebble_golem': 'trail ruins (35%) and mineshafts (8%)', 'hex_toad': 'swamp huts (45%)',
+    'mimic': 'trial chambers (30%) and woodland mansions (60%)',
 }
 TREAT = {
     'desert_dragon': 'Dragon Fruit', 'jungle_dragon': 'Dragon Fruit', 'tide_dragon': 'Fish Crackers', 'frost_penguin': 'Fish Crackers',

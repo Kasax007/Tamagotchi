@@ -72,9 +72,13 @@ public class LaserPointerItem extends TooltipItem {
             DOTS.remove(user.getUUID());
             return;
         }
-        Vec3 p = hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i()).scale(0.04));
+        pointAt(server, user, hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i()).scale(0.04)));
+    }
+
+    /** The red dot of {@code user}'s pointer is at {@code p} this tick (the user's pets chase it). */
+    public static void pointAt(ServerLevel level, LivingEntity user, Vec3 p) {
         DOTS.put(user.getUUID(), new Dot(p, level.getGameTime(), level.dimension()));
-        server.sendParticles(ModParticles.LASER_DOT, p.x, p.y, p.z, 1, 0, 0, 0, 0);
+        level.sendParticles(ModParticles.LASER_DOT, p.x, p.y, p.z, 1, 0, 0, 0, 0);
     }
 
     @Override

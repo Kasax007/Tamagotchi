@@ -410,6 +410,14 @@ public class PetGallery implements FabricClientGameTest {
         }
         ctx.waitTicks(3);
         shot("56_tamacon_page");
+        // every pet page (they show the pet itself)
+        for (int i = 0; i < 24; i++) {
+            ctx.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT);
+            ctx.waitTicks(1);
+            if (i % 3 == 2) {
+                shot("59_tamacon_pet_" + i);
+            }
+        }
         ctx.runOnClient(mc -> mc.gui.setScreen(null));
         // the 3D pager and laser pointer, in first and third person
         cam("0.5 -60 0.5 0 15");

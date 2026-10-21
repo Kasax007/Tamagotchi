@@ -293,6 +293,12 @@ public class TamaconScreen extends Screen {
         if (this.minecraft == null || this.minecraft.level == null) {
             return null;
         }
-        return this.dummies.computeIfAbsent(s, k -> ModEntities.type(k).create(this.minecraft.level, EntitySpawnReason.LOAD));
+        return this.dummies.computeIfAbsent(s, k -> {
+            TamaPet pet = ModEntities.type(k).create(this.minecraft.level, EntitySpawnReason.LOAD);
+            if (pet != null) {
+                pet.setId(-1000 - k.ordinal());   // never added to the level, but rendering asks for an id
+            }
+            return pet;
+        });
     }
 }

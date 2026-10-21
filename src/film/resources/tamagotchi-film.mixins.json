@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "net.kasax.tamagotchi.film.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ScreenshotLeakMixin",
+    "FreeCamPlayerMixin",
+    "FreeCamInputMixin",
+    "ClientLockstepMixin",
+    "NoCrosshairMixin",
+    "NoToastMixin",
+    "FilmUserMixin",
+    "ScreenEffectFilmMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "ServerLockstepMixin"
+  ]
+}

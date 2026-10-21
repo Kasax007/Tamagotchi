@@ -54,6 +54,37 @@ dependencies {
 	}
 }
 
+// Footage for the videos, frame by frame (src/film): ./gradlew runFilm -Pfilm=SCENE[,SCENE] -PfilmOut=DIR
+sourceSets {
+	film {
+		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+	}
+}
+loom {
+	mods {
+		"tamagotchi-film" {
+			sourceSet sourceSets.film
+		}
+	}
+	runs {
+		film {
+			client()
+			name "Film"
+			source sourceSets.film
+			runDir "build/run/film"
+			property "fabric.client.gametest"
+			property "fabric.client.gametest.testModResourcesPath", file("src/film/resources").absolutePath
+			vmArg "-Xmx3G"
+			if (project.hasProperty('film')) vmArg "-Dfilm.scene=${project.property('film')}"
+			if (project.hasProperty('filmOut')) vmArg "-Dfilm.out=${project.property('filmOut')}"
+		}
+	}
+}
+tasks.matching { it.name == 'runFilm' }.configureEach {
+	onlyIf { project.hasProperty('film') }
+}
+
 processResources {
 	inputs.property "version", project.version
 
