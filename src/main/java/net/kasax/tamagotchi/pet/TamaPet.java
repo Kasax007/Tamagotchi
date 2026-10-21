@@ -601,7 +601,6 @@ public class TamaPet extends TamableAnimal {
         syncNeeds();
         playAction(PetAction.TAMED);
         playSound(ModSounds.PET_TAME, 1.0F, 1.0F);
-        level().broadcastEntityEvent(this, (byte) 7);
         player.sendSystemMessage(Component.translatable("message.tamagotchi.tamed", getName()).withStyle(ChatFormatting.LIGHT_PURPLE));
         player.sendSystemMessage(Component.translatable("message.tamagotchi.tamed_help").withStyle(ChatFormatting.GRAY));
         if (!player.getInventory().contains(new ItemStack(ModItems.TAMA_PAGER))) {

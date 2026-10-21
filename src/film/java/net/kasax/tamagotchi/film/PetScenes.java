@@ -99,6 +99,8 @@ final class PetScenes {
 
     private void ready() {
         if (d.sp == null) {
+            // in the film's world every structure gets its pet (the structure shots go looking for them)
+            PetSpawns.RULES.replaceAll((k, r) -> new PetSpawns.Rule(r.species(), 1F));
             d.openWorld(SEED, true, false);
             for (String rule : new String[]{"advance_time false", "spawn_mobs false", "spawn_monsters false", "do_fire_tick false",
                     "fire_spread_radius_around_player 0", "mob_griefing false", "do_patrol_spawning false", "spawn_patrols false",
@@ -133,6 +135,11 @@ final class PetScenes {
                 box(x + dx, y, z + dz, x + dx + 13, y + 24, z + dz + 11, "air");
                 box(x + dx, y - 1, z + dz, x + dx + 13, y - 1, z + dz + 11, "grass_block");
                 box(x + dx, y - 6, z + dz, x + dx + 13, y - 2, z + dz + 11, "dirt");
+            }
+        }
+        for (int bx = x - 48; bx < x + 48; bx += 16) {
+            for (int bz = z - 48; bz < z + 48; bz += 16) {
+                d.cmd(String.format("fillbiome %d %d %d %d %d %d minecraft:flower_forest", bx, y - 8, bz, bx + 15, y + 40, bz + 15));
             }
         }
         d.run(5);
@@ -306,18 +313,21 @@ final class PetScenes {
     }
 
     private void lineup() {
+        // a little crowd that fits a phone screen: four at the back, three, three in front
         PetSpecies[] all = PetSpecies.values();
+        double[][] spots = {{-1.7, 1.3}, {-0.57, 1.45}, {0.57, 1.45}, {1.7, 1.3}, {-1.15, 0.2}, {0, 0.3}, {1.15, 0.2}, {-1.2, -0.95}, {0, -0.9}, {1.2, -0.95}};
+        int[] order = {2, 5, 9, 0, 6, 1, 7, 4, 3, 8};
         for (int i = 0; i < all.length; i++) {
-            pet("p" + i, all[i], at(-6.75 + i * 1.5, 0, 2 + (i % 2) * 0.6), 180, true, false);
+            double[] sp = spots[order[i]];
+            pet("p" + i, all[i], at(sp[0], 0, sp[1]), 180 + (float) sp[0] * 9, true, false);
         }
         d.run(5);
+        Vec3 look = at(0, 0.45, 0.2);
         d.shoot("lineup_dolly", 6, t -> {
             double f = FilmDirector.ease(t, 0, 120);
-            Vec3 eye = lerp(at(-7.5, 1.5, -1.2), at(7.5, 1.5, -1.2), f);
-            track(t, eye, eye.add(0, -0.85, 3.4));
-            if (t % 23 == 5) {
-                int i = (int) Math.round(f * 9);
-                with("p" + i, p -> p.pet(null));
+            track(t, lerp(at(-0.8, 1.9, -6.0), at(0.5, 1.4, -4.0), f), look);
+            if (t % 12 == 6) {
+                with("p" + (t / 12 % 10), p -> p.pet(null));
             }
         });
     }
@@ -331,7 +341,7 @@ final class PetScenes {
         d.shoot("petting_closeups", 5, t -> {
             double f = FilmDirector.ease(t, 0, 100);
             Vec3 eye = lerp(at(-2.6, 0.95, -1.5), at(2.6, 0.95, -1.5), f);
-            track(t, eye, new Vec3(eye.x, at(0, 0.45, 0).y, at(0, 0, 0).z));
+            track(t, eye, new Vec3(eye.x * 0.7 + at(0, 0, 0).x * 0.3, at(0, 0.45, 0).y, at(0, 0, 0).z));
             if (t == 4) with("p0", p -> p.pet(null));
             if (t == 36) with("p1", p -> p.pet(null));
             if (t == 68) with("p2", p -> p.pet(null));
@@ -454,21 +464,21 @@ final class PetScenes {
         }
         d.cam.playerLook(at(0, 0, -3), at(0, 0, 3), true);
         hold(new ItemStack(ModItems.LASER_POINTER));
-        Vec3 look = at(0, 0.3, 3);
-        d.cam.cutTo(at(-3.2, 2.2, -0.2), look);
+        Vec3 look = at(0, 0.2, 3);
+        d.cam.cutTo(at(-0.6, 2.4, -0.6), look);
         d.run(5);
         d.shoot("laser_chase", 5, t -> {
-            double a = t * 0.07;
-            Vec3 dot = at(Math.sin(a) * 3.2, 0.03, 3 + Math.sin(a * 2) * 1.4);
+            double a = t * 0.06;
+            Vec3 dot = at(Math.sin(a) * 1.8, 0.03, 3.2 + Math.sin(a * 2) * 0.9);
             d.server(server -> LaserPointerItem.pointAt(server.overworld(), d.player(server), dot));
-            track(t, at(-3.2, 2.2, -0.2), lerp(look, dot, 0.35));
+            track(t, at(-0.6, 2.4, -0.6), lerp(look, dot, 0.3));
         });
     }
 
     private void feedOwner() {
         d.cmd("gamemode survival @p");
         d.cmd("effect clear @p minecraft:resistance");
-        pet("d", PetSpecies.TIDE_DRAGON, at(0, 0, 6), 180, true, true);
+        pet("d", PetSpecies.TIDE_DRAGON, at(0.8, 0, 3.6), 180, true, true);
         with("d", p -> {
             p.setMode(TamaPet.Mode.FOLLOW);
             p.equipBackpack();
@@ -479,7 +489,7 @@ final class PetScenes {
         d.cam.playerLook(at(0, 0, -1), at(0, 0.3, 4), true);
         d.run(30);
         d.server(server -> d.player(server).setHealth(4F));
-        d.shoot("feed_owner", 6, t -> d.cam.playerLook(at(0, 0, -1), lerp(at(0, 0.3, 4), posOf("d").add(0, 0.5, 0), 0.7), false));
+        d.shoot("feed_owner", 6, t -> d.cam.playerLook(at(0, 0, -1), posOf("d").add(0, 0.9, 0), false));
         d.hud(false);
         d.cmd("gamemode creative @p");
     }
@@ -487,7 +497,7 @@ final class PetScenes {
     private void roast() {
         pet("d", PetSpecies.DESERT_DRAGON, at(0, 0, 1.3), 180, true, false);
         hold(new ItemStack(Items.BEEF));
-        d.cam.playerLook(at(0, 0, 0), at(0, 0.5, 1.3), true);
+        d.cam.playerLook(at(0.4, 0, -1.4), at(0, 0.5, 1.3), true);
         Vec3 look = at(0, 0.6, 1.0);
         d.cam.cutTo(at(-1.9, 1.1, 0.4), look);
         d.run(5);
@@ -502,24 +512,25 @@ final class PetScenes {
     private void ore() {
         pet("g", PetSpecies.PEBBLE_GOLEM, at(0, 0, -14.6), 180, true, true);
         with("g", p -> p.setMode(TamaPet.Mode.SIT));
-        d.cam.playerLook(at(1.5, 0, -12.5), at(0, 1, -17), true);
+        d.cam.playerLook(at(3.5, 0, -9.0), at(0, 1, -17), true);
         d.cam.cutTo(at(1.4, 1.5, -12.2), at(0, 1.0, -16.5));
         d.run(150);   // talents warm up after taming
         d.shoot("ore_glow", 5, t -> track(t, lerp(at(1.4, 1.5, -12.2), at(0.8, 1.4, -12.6), FilmDirector.ease(t, 0, 100)), at(0, 1.0, -16.5)));
     }
 
     private void frost() {
-        pet("p", PetSpecies.FROST_PENGUIN, at(-10, 0, -10), 90, true, true);
+        pet("p", PetSpecies.FROST_PENGUIN, at(-10.2, 0, -10.6), 90, true, true);
         with("p", p -> p.setMode(TamaPet.Mode.FOLLOW));
         d.cmd("gamemode survival @p");
-        d.cam.playerLook(at(-11, 0, -10), at(-20, 0, -10), true);
+        d.cam.playerLook(at(-11.5, 0, -10), at(-20, 0, -10), true);
         Cam.freeWalk = true;
         d.run(10);
-        d.cam.cutTo(at(-15, 4.5, -4), at(-16, 0, -10));
+        d.cam.cutTo(at(-9.5, 2.6, -6.5), at(-12, 0, -10));
         d.ctx.getInput().holdKey(o -> o.keyUp);
         d.shoot("frost_steps", 5, t -> {
-            d.cam.playerAim(at(-30, 0, -10));
-            track(t, at(-15 - t * 0.06, 4.5, -4), at(-16 - t * 0.08, 0, -10));
+            d.cam.playerAim(at(-30, 1.6, -10));
+            Vec3 me = d.ctx.computeOnClient(mc -> mc.player.position());
+            track(t, me.add(2.6, 2.3, 3.6), me.add(0.8, 0.2, 0));
         });
         d.ctx.getInput().releaseKey(o -> o.keyUp);
         Cam.freeWalk = false;
@@ -537,19 +548,18 @@ final class PetScenes {
     }
 
     private void fly() {
-        pet("d", PetSpecies.DESERT_DRAGON, at(0, 0, -2), 0, true, true);
+        pet("d", PetSpecies.DESERT_DRAGON, at(6, 0, -12), 0, true, true);
         with("d", p -> p.setMode(TamaPet.Mode.FOLLOW));
-        d.cam.playerLook(at(0, 0, 0), at(0, 1, 10), true);
+        Vec3[] feet = {at(6, 0, -10)};
+        d.cam.playerLook(feet[0], feet[0].add(0, 1.4, 5), true);
         d.run(10);
-        Vec3[] feet = {at(0, 0, 0)};
-        d.cam.cutTo(at(-6, 3, 4), at(0, 1.5, 4));
         d.shoot("fly_follow", 6, t -> {
             if (t > 0 && t < 70) {
                 feet[0] = feet[0].add(0, 0, 0.32);
                 d.cam.playerLook(feet[0], feet[0].add(0, 1.4, 5), false);
             }
             Vec3 dragon = posOf("d");
-            track(t, new Vec3(dragon.x - 6.5, dragon.y + 1.6, dragon.z - 1.5), dragon.add(0, 0.4, 0));
+            track(t, new Vec3(dragon.x + 3.0, dragon.y + 0.9, dragon.z - 1.2), dragon.add(0, 0.4, 0));
         });
     }
 
@@ -635,16 +645,16 @@ final class PetScenes {
         d.cmd("time set 14500");
         PetSpecies[] who = {PetSpecies.FROST_PENGUIN, PetSpecies.EMBER_PUP};
         for (int i = 0; i < who.length; i++) {
-            pet("p" + i, who[i], at(-5.2 + i * 2.4, 0, -4.9), 180 + (i == 0 ? -35 : 35), true, false);
+            pet("p" + i, who[i], at(-5.15 + i * 2.3, 0, -5.5), i == 0 ? -90 : 90, true, false);
             with("p" + i, p -> {
                 p.setFlag(TamaPet.F_WARMING, true);
                 p.setInSittingPose(true);
             });
         }
-        Vec3 look = at(-4, 0.4, -5.7);
-        d.cam.cutTo(at(-3.4, 1.3, -2.6), look);
+        Vec3 look = at(-4, 0.35, -5.6);
+        d.cam.cutTo(at(-4.0, 1.5, -1.9), look);
         d.run(10);
-        d.shoot("campfire_warm", 3.5, t -> track(t, lerp(at(-3.4, 1.3, -2.6), at(-4.3, 1.2, -2.8), FilmDirector.ease(t, 0, 70)), look));
+        d.shoot("campfire_warm", 3.5, t -> track(t, lerp(at(-4.0, 1.5, -1.9), at(-4.2, 1.3, -2.5), FilmDirector.ease(t, 0, 70)), look));
         d.cmd("time set 5000");
     }
 
@@ -692,13 +702,18 @@ final class PetScenes {
     }
 
     /** Places a structure far from the garden with its pet forced in, and films the wild pet in it. */
-    private void structure(String id, PetSpecies species, int dx, String shot, Vec3 offset) {
+    private void structure(String id, PetSpecies species, BlockPos at, String shot, Vec3 offset) {
         var saved = new HashMap<>(PetSpawns.RULES);
         PetSpawns.RULES.replaceAll((k, r) -> new PetSpawns.Rule(r.species(), 1F));
-        BlockPos base = stage.offset(dx, 0, 0);
         d.cam.player();
-        d.cam.playerLook(new Vec3(base.getX(), base.getY() + 30, base.getZ()), new Vec3(base.getX(), base.getY(), base.getZ() + 5), true);
-        d.settle(200);
+        d.cam.playerLook(new Vec3(at.getX(), 140, at.getZ()), new Vec3(at.getX(), 60, at.getZ() + 5), true);
+        d.settle(300);
+        BlockPos base = d.fromServer(server -> {
+            ServerLevel l = server.overworld();
+            return new BlockPos(at.getX(), l.getHeight(Heightmap.Types.WORLD_SURFACE, at.getX(), at.getZ()), at.getZ());
+        });
+        d.cam.playerLook(new Vec3(base.getX(), base.getY() + 30, base.getZ()), Vec3.atCenterOf(base), true);
+        d.settle(100);
         d.cmd(String.format("place structure minecraft:%s %d %d %d", id, base.getX(), base.getY(), base.getZ()));
         PetSpawns.RULES.clear();
         PetSpawns.RULES.putAll(saved);
@@ -719,19 +734,122 @@ final class PetScenes {
         this.pets.put("w", found);
         Vec3 p = posOf("w");
         Vec3 look = p.add(0, 0.5, 0);
-        d.cam.cutTo(p.add(offset), look);
+        Vec3 off = clearView(look, offset);
+        d.cam.cutTo(p.add(off), look);
         d.run(10);
-        d.shoot(shot, 4.5, t -> track(t, lerp(p.add(offset), p.add(offset.scale(0.75)).add(0, 0.1, 0), FilmDirector.ease(t, 0, 90)), look));
+        d.shoot(shot, 4.5, t -> track(t, lerp(p.add(off), p.add(off.scale(0.75)).add(0, 0.1, 0), FilmDirector.ease(t, 0, 90)), look));
         d.still(shot);
     }
 
+    /** The first of sixteen directions round {@code look} from which the camera sees it unblocked. */
+    private Vec3 clearView(Vec3 look, Vec3 preferred) {
+        double r = Math.hypot(preferred.x, preferred.z), h = preferred.y;
+        double a0 = Math.atan2(preferred.z, preferred.x);
+        return d.fromServer(server -> {
+            ServerLevel l = server.overworld();
+            for (double scale : new double[]{1.0, 0.7, 0.5}) {
+                for (int i = 0; i < 16; i++) {
+                    double a = a0 + (i % 2 == 0 ? 1 : -1) * ((i + 1) / 2) * Math.PI / 8;
+                    Vec3 off = new Vec3(Math.cos(a) * r * scale, h * scale, Math.sin(a) * r * scale);
+                    Vec3 eye = look.add(off).subtract(0, 0.5, 0);
+                    var hit = l.clip(new net.minecraft.world.level.ClipContext(look, eye.add(off.normalize().scale(0.4)),
+                            net.minecraft.world.level.ClipContext.Block.VISUAL, net.minecraft.world.level.ClipContext.Fluid.NONE,
+                            net.minecraft.world.phys.shapes.CollisionContext.empty()));
+                    if (hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS) {
+                        return off;
+                    }
+                }
+            }
+            return preferred;
+        });
+    }
+
+    /** The nearest naturally generated desert pyramid, visited: its wild dragon (every structure has one here). */
     private void pyramid() {
-        structure("desert_pyramid", PetSpecies.DESERT_DRAGON, 160, "pyramid_wild", new Vec3(2.2, 1.3, 2.2));
+        BlockPos found = d.fromServer(server -> {
+            ServerLevel l = server.overworld();
+            var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.STRUCTURE,
+                    net.minecraft.resources.Identifier.withDefaultNamespace("desert_pyramid"));
+            var holder = l.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.STRUCTURE).getOrThrow(key);
+            var r = l.getChunkSource().getGenerator().findNearestMapStructure(l, net.minecraft.core.HolderSet.direct(holder), stage, 100, false);
+            return r == null ? null : r.getFirst();
+        });
+        if (found == null) {
+            FilmDirector.LOG.warn("[Film] no desert pyramid found");
+            return;
+        }
+        d.cam.player();
+        d.cam.playerLook(new Vec3(found.getX(), 150, found.getZ()), new Vec3(found.getX(), 60, found.getZ() + 5), true);
+        d.settle(400);
+        UUID id = null;
+        for (int i = 0; i < 20 && id == null; i++) {
+            d.run(10);
+            id = d.fromServer(server -> {
+                for (TamaPet p : server.overworld().getEntitiesOfClass(TamaPet.class, new AABB(found).inflate(48, 120, 48))) {
+                    if (p.species() == PetSpecies.DESERT_DRAGON && !p.isTame()) {
+                        p.setNoAi(true);
+                        return p.getUUID();
+                    }
+                }
+                return null;
+            });
+        }
+        if (id == null) {
+            FilmDirector.LOG.warn("[Film] the pyramid at {} has no dragon", found);
+            return;
+        }
+        this.pets.put("w", id);
+        Vec3 p = posOf("w");
+        d.cam.playerLook(p.add(0, 12, 0), p, true);
+        d.run(20);
+        Vec3 look = p.add(0, 0.5, 0);
+        Vec3 off = clearView(look, new Vec3(2.6, 1.4, 2.6));
+        d.cam.cutTo(p.add(off), look);
+        d.cam.nightVision();   // the halls inside are dim
+        d.run(10);
+        d.shoot("pyramid_wild", 4.5, t -> track(t, lerp(p.add(off), p.add(off.scale(0.72)).add(0, 0.1, 0), FilmDirector.ease(t, 0, 90)), look));
     }
 
     private void igloo() {
-        BlockPos b = stage.offset(-160, 0, 0);
-        structure("igloo", PetSpecies.FROST_PENGUIN, -160, "igloo_penguin", new Vec3(3.2, 1.6, -3.2));
+        BlockPos base = stage.offset(-60, 0, 0);
+        d.cam.playerLook(new Vec3(base.getX(), base.getY() + 20, base.getZ() - 10), Vec3.atCenterOf(base), true);
+        d.settle(150);
+        box(base.getX() - 12, base.getY(), base.getZ() - 12, base.getX() + 12, base.getY() + 12, base.getZ() + 12, "air");
+        box(base.getX() - 12, base.getY() - 3, base.getZ() - 12, base.getX() + 12, base.getY() - 1, base.getZ() + 12, "snow_block");
+        d.cmd(String.format("fillbiome %d %d %d %d %d %d minecraft:snowy_plains", base.getX() - 16, base.getY() - 4, base.getZ() - 16,
+                base.getX() + 15, base.getY() + 20, base.getZ() + 15));
+        d.cmd(String.format("place template minecraft:igloo/top %d %d %d", base.getX() - 3, base.getY(), base.getZ() - 3));
+        d.run(10);
+        // where is the door? the open block at ground level on the template's edge
+        BlockPos door = d.fromServer(server -> {
+            ServerLevel l = server.overworld();
+            for (int dx = -4; dx <= 6; dx++) {
+                for (int dz = -4; dz <= 6; dz++) {
+                    BlockPos q = base.offset(dx, 0, dz);
+                    boolean edge = l.getBlockState(q).isAir() && l.getBlockState(q.above()).isAir()
+                            && (l.getBlockState(q.north()).is(Blocks.SNOW_BLOCK) || l.getBlockState(q.south()).is(Blocks.SNOW_BLOCK))
+                            && l.getBlockState(q.east()).is(Blocks.SNOW_BLOCK) && l.getBlockState(q.west()).is(Blocks.SNOW_BLOCK);
+                    if (edge) {
+                        return q;
+                    }
+                }
+            }
+            return base.offset(0, 0, 5);
+        });
+        boolean southDoor = d.fromServer(server -> server.overworld().getBlockState(door.north()).is(Blocks.SNOW_BLOCK));
+        Vec3 out = Vec3.atBottomCenterOf(door).add(0, 0, southDoor ? 1.6 : -1.6);
+        pet("w", PetSpecies.FROST_PENGUIN, out, southDoor ? 0 : 180, false, false);
+        Vec3 look = out.add(0, 0.9, 0);
+        Vec3 from = out.add(southDoor ? 3.4 : -3.4, 1.6, southDoor ? 4.4 : -4.4);
+        Vec3 to = out.add(southDoor ? 2.0 : -2.0, 1.2, southDoor ? 2.8 : -2.8);
+        d.cam.cutTo(from, look);
+        d.run(10);
+        d.shoot("igloo_penguin", 4.5, t -> {
+            track(t, lerp(from, to, FilmDirector.ease(t, 0, 90)), look);
+            if (t == 40) {
+                with("w", p -> p.playAction(PetAction.LOOK_UP));
+            }
+        });
     }
 
     private void mimic() {
