@@ -34,6 +34,19 @@ BBBBBB..
 """, 8, 8), L("w=#A9C0FF", "b=#5F82E0", "B=#3F5FBF")))
 PARTICLE_JSON["zzz"] = ["zzz"]
 
+# ---------------------------------------------------------------- heart (small love heart for petting / taming)
+reg("heart", paint(M("""
+........
+.oo.oo..
+orrorro.
+owrrrro.
+orrrrdo.
+.orrdo..
+..odo...
+...o....
+""", 8, 8), L("o=#7A1838", "r=#FF4F7E", "w=#FFD3DE", "d=#D62F5C")))
+PARTICLE_JSON["heart"] = ["heart"]
+
 # ---------------------------------------------------------------- sparkle (4 frames, twinkle)
 SP = L("w=#FFFDF0", "y=#FFE98A", "o=#FFC94A")
 

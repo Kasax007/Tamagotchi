@@ -22,6 +22,7 @@ public final class PetParticles {
     public static void register() {
         ParticleProviderRegistry r = ParticleProviderRegistry.getInstance();
         r.register(ModParticles.ZZZ, sprites -> provider(sprites, Kind.ZZZ));
+        r.register(ModParticles.HEART, sprites -> provider(sprites, Kind.HEART));
         r.register(ModParticles.SPARKLE, sprites -> provider(sprites, Kind.SPARKLE));
         r.register(ModParticles.SWEAT, sprites -> provider(sprites, Kind.SWEAT));
         r.register(ModParticles.STINK, sprites -> provider(sprites, Kind.STINK));
@@ -39,7 +40,7 @@ public final class PetParticles {
                 RandomSource random) -> new PetParticle(level, x, y, z, xa, ya, za, sprites, kind, random);
     }
 
-    enum Kind { ZZZ, SPARKLE, SWEAT, STINK, LASER, LEAF, SONAR, EMOTE }
+    enum Kind { ZZZ, HEART, SPARKLE, SWEAT, STINK, LASER, LEAF, SONAR, EMOTE }
 
     static final class PetParticle extends SingleQuadParticle {
         private final SpriteSet sprites;
@@ -63,6 +64,13 @@ public final class PetParticles {
                     this.lifetime = 40;
                     this.quadSize = 0.14F;
                     this.yd = 0.02;
+                }
+                case HEART -> {
+                    this.lifetime = 22 + random.nextInt(10);
+                    this.quadSize = 0.075F + random.nextFloat() * 0.03F;
+                    this.xd = xa + (random.nextFloat() - 0.5F) * 0.02;
+                    this.yd = 0.045 + random.nextFloat() * 0.02;
+                    this.zd = za + (random.nextFloat() - 0.5F) * 0.02;
                 }
                 case SPARKLE -> {
                     this.lifetime = 14 + random.nextInt(8);
@@ -121,6 +129,13 @@ public final class PetParticles {
                     this.quadSize = this.baseSize * (0.6F + t * 0.8F);
                     this.alpha = t > 0.7F ? 1F - (t - 0.7F) / 0.3F : 1F;
                 }
+                case HEART -> {
+                    // pop in, float up with a little sway, fade out
+                    this.quadSize = this.baseSize * (t < 0.15F ? 0.4F + t / 0.15F * 0.75F : (t < 0.3F ? 1.15F - (t - 0.15F) : 1F));
+                    this.xd = this.xd * 0.9 + Math.sin(this.age * 0.35 + this.phase) * 0.004;
+                    this.yd *= 0.94;
+                    this.alpha = t > 0.75F ? 1F - (t - 0.75F) / 0.25F : 1F;
+                }
                 case SPARKLE -> setSpriteFromAge(this.sprites);
                 case STINK -> {
                     this.xd = Math.sin(this.age * 0.4 + this.phase) * 0.015;
@@ -149,7 +164,7 @@ public final class PetParticles {
 
         @Override
         protected int getLightCoords(float a) {
-            return this.kind == Kind.SPARKLE || this.kind == Kind.LASER || this.kind == Kind.SONAR || this.kind == Kind.EMOTE
+            return this.kind == Kind.HEART || this.kind == Kind.SPARKLE || this.kind == Kind.LASER || this.kind == Kind.SONAR || this.kind == Kind.EMOTE
                     ? 0xF000F0 : super.getLightCoords(a);
         }
 

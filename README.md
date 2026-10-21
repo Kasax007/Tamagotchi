@@ -67,4 +67,6 @@ Scratching Post · Pet House (shelter from rain). All craftable; see the recipe 
 
 Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,
 `tools/sfx`, `tools/gui`, `tools/data`) and regenerate every texture, model and sound. The client game test
-`./gradlew runClientGameTest` renders a review gallery into `build/run/clientGameTest/screenshots`.
+`./gradlew runClientGameTest` renders a review gallery into `build/run/clientGameTest/screenshots` and logs
+functional checks as `[TamaTest] PASS/FAIL`. Headless: start `Xvfb :98`, then run it with
+`DISPLAY=:98 SDL_VIDEO_FORCE_EGL=1` (needs the Mesa EGL libraries).

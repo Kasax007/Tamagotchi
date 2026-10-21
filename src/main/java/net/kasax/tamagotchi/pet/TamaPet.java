@@ -411,8 +411,8 @@ public class TamaPet extends TamableAnimal {
             this.clientAction = action;
             this.clientActionStart = this.tickCount;
             if (action == PetAction.PETTED || action == PetAction.TAMED) {
-                for (int i = 0; i < 5; i++) {
-                    level().addParticle(ParticleTypes.HEART, getRandomX(0.6), getY() + getBbHeight() + 0.1, getRandomZ(0.6), 0, 0.05, 0);
+                for (int i = 0; i < 4; i++) {
+                    level().addParticle(ModParticles.HEART, getRandomX(0.7), getY() + getBbHeight() * (0.7 + 0.3 * getRandom().nextFloat()), getRandomZ(0.7), 0, 0, 0);
                 }
             }
             return;

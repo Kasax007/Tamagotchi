@@ -237,8 +237,8 @@ def wheel_post_cells():
     return c
 
 
-def running_wheel():
-    m = new("running_wheel", dict(wood="running_wheel_wood", copper="running_wheel_copper"), "wood")
+def running_wheel(name="running_wheel", rim=False):
+    m = new(name, dict(wood="running_wheel_wood", copper="running_wheel_copper"), "wood")
     m.box((0, 0, 0), (16, 1, 16), all="wood")
     cells = wheel_post_cells()
     for (z0, y0, z1, y1) in merge_rects(cells):
@@ -246,6 +246,18 @@ def running_wheel():
             m.box((xa, y0, z0), (xb, y1, z1), all="wood")
     m.box((0, 7, 7), (1, 9, 9), all="copper", uv={d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")})
     m.box((15, 7, 7), (16, 9, 9), all="copper", uv={d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")})
+    if rim:
+        # the block entity spins the real wheel; the item gets a still one: eight rim slats, spokes and the axle
+        top, bottom = ((3, 14, 6), (13, 15, 10)), ((3, 1, 6), (13, 2, 10))
+        for frm, to in (top, bottom, ((3, 6, 14), (13, 10, 15)), ((3, 6, 1), (13, 10, 2))):
+            m.box(frm, to, all="wood")
+        for angle in (45, -45):
+            for frm, to in (top, bottom):
+                m.box(frm, to, all="wood", rotation={"angle": angle, "axis": "x", "origin": [8, 8, 8]})
+        for x in (3.5, 11.5):
+            m.box((x, 2, 7.5), (x + 1, 14, 8.5), all="wood")
+            m.box((x, 7.5, 2), (x + 1, 8.5, 14), all="wood")
+        m.box((3, 7, 7), (13, 9, 9), all="copper", uv={d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")})
 
 
 # ======================================================================================
@@ -341,7 +353,7 @@ def loot_table(block):
 
 
 def block_item(block):
-    return {"model": {"type": "minecraft:model", "model": model_ref(block)}}
+    return {"model": {"type": "minecraft:model", "model": model_ref(block + "_item" if block == "running_wheel" else block)}}
 
 
 def build_models():
@@ -355,11 +367,12 @@ def build_models():
     bouncy_mushroom(False)
     bouncy_mushroom(True)
     running_wheel()
+    running_wheel("running_wheel_item", rim=True)
     scratching_post()
     pet_house()
     # bounds check (models must stay inside the collision bounds)
     for name, m in MODELS.items():
-        base = name.replace("_fill1", "").replace("_fill2", "").replace("_fill3", "").replace("_filled", "").replace("_squished", "")
+        base = name.replace("_fill1", "").replace("_fill2", "").replace("_fill3", "").replace("_filled", "").replace("_squished", "").replace("_item", "")
         lo, hi = BOUNDS[base]
         mn, mx = m.bounds()
         assert all(mn[i] >= lo[i] for i in range(3)) and all(mx[i] <= hi[i] for i in range(3)), (name, mn, mx, lo, hi)

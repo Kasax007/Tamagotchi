@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 /** Custom particles: sleep Zs, sparkles, emote bubbles and the like. */
 public final class ModParticles {
     public static final SimpleParticleType ZZZ = FabricParticleTypes.simple();
+    public static final SimpleParticleType HEART = FabricParticleTypes.simple();
     public static final SimpleParticleType SPARKLE = FabricParticleTypes.simple();
     public static final SimpleParticleType SWEAT = FabricParticleTypes.simple();
     public static final SimpleParticleType STINK = FabricParticleTypes.simple();
@@ -31,6 +32,7 @@ public final class ModParticles {
 
     public static void initialize() {
         reg("zzz", ZZZ);
+        reg("heart", HEART);
         reg("sparkle", SPARKLE);
         reg("sweat", SWEAT);
         reg("stink", STINK);

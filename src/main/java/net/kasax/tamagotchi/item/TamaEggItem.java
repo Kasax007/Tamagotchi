@@ -7,6 +7,7 @@ import net.kasax.tamagotchi.pet.PetSpecies;
 import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModEntities;
 import net.kasax.tamagotchi.registry.ModItems;
+import net.kasax.tamagotchi.registry.ModParticles;
 import net.kasax.tamagotchi.registry.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -103,7 +104,7 @@ public class TamaEggItem extends Item {
         level.addFreshEntity(pet);
         pet.playAction(PetAction.TAMED);
         level.playSound(null, pos, ModSounds.PET_WAKE, SoundSource.NEUTRAL, 1.0F, 1.0F);
-        level.sendParticles(ParticleTypes.HEART, pet.getX(), pet.getY() + 0.8, pet.getZ(), 6, 0.3, 0.3, 0.3, 0.0);
+        level.sendParticles(ModParticles.HEART, pet.getX(), pet.getY() + 0.6, pet.getZ(), 8, 0.3, 0.3, 0.3, 0.0);
         level.sendParticles(ParticleTypes.POOF, pet.getX(), pet.getY() + 0.3, pet.getZ(), 10, 0.3, 0.2, 0.3, 0.02);
         stack.shrink(1);
         return InteractionResult.SUCCESS_SERVER;

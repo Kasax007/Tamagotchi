@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "tamagotchi:block/running_wheel"
+    "model": "tamagotchi:block/running_wheel_item"
   }
 }

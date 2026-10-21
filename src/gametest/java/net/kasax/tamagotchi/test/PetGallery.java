@@ -1,7 +1,9 @@
 package net.kasax.tamagotchi.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
@@ -9,13 +11,20 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
 import net.kasax.tamagotchi.block.FoodBowlBlock;
 import net.kasax.tamagotchi.block.PetBathBlock;
+import net.kasax.tamagotchi.block.RunningWheelBlock;
 import net.kasax.tamagotchi.pet.PetAction;
 import net.kasax.tamagotchi.pet.PetSpecies;
 import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModBlocks;
 import net.kasax.tamagotchi.registry.ModEntities;
 import net.kasax.tamagotchi.registry.ModItems;
+import net.kasax.tamagotchi.registry.ModTab;
+import net.kasax.tamagotchi.world.PetSpawns;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,9 +32,9 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +58,7 @@ public class PetGallery implements FabricClientGameTest {
         hud(false);
         try (TestSingleplayerContext sp = ctx.worldBuilder().create()) {
             this.server = sp.getServer();
+            cmd("gamemode creative @p");
             cmd("time set noon");
             cmd("weather clear");
             ctx.waitTicks(40);
@@ -76,6 +86,16 @@ public class PetGallery implements FabricClientGameTest {
 
     private void cmd(String c) {
         this.server.runCommand(c);
+    }
+
+    /** Teleports the camera and keeps the player flying there (landing switches creative flight off). */
+    private void cam(String where) {
+        cmd("tp @p " + where);
+        server.runOnServer(s -> {
+            ServerPlayer p = player(s);
+            p.getAbilities().flying = true;
+            p.onUpdateAbilities();
+        });
     }
 
     private void shot(String name) {
@@ -127,7 +147,7 @@ public class PetGallery implements FabricClientGameTest {
                 }
             }
         });
-        cmd(backpacks ? "tp @p 0 -55.5 9 160 32" : "tp @p 0 -57.2 -6.5 0 22");
+        cam(backpacks ? "0 -55.5 9 160 32" : "0 -57.2 -6.5 0 22");
         ctx.waitTicks(30);
         shot(backpacks ? "02_lineup_backpacks" : "01_lineup");
     }
@@ -136,8 +156,9 @@ public class PetGallery implements FabricClientGameTest {
         clear();
         PetSpecies[] all = PetSpecies.values();
         for (PetSpecies s : all) {
-            server.runOnServer(srv -> spawn(srv.overworld(), player(srv), s, 0.5, 0.5, 200F, false));
-            cmd("tp @p 1.9 -58.6 -1.6 30 20");
+            // three-quarter view from where a player would stand next to the pet
+            server.runOnServer(srv -> spawn(srv.overworld(), player(srv), s, 0.5, 0.5, 165F, false));
+            cmd("tp @p 1.65 -60 -1.49 30 29");
             ctx.waitTicks(15);
             shot("10_" + s.id() + "_a_idle");
             server.runOnServer(srv -> srv.overworld().getEntitiesOfClass(TamaPet.class, player(srv).getBoundingBox().inflate(8))
@@ -164,33 +185,39 @@ public class PetGallery implements FabricClientGameTest {
 
     private void furniture() {
         clear();
+        // front row: beds, bowl, bath; back row: the tall play blocks
+        BlockPos bed = new BlockPos(-4, Y, 0), bowl = new BlockPos(2, Y, 0), bath = new BlockPos(4, Y, 0);
+        BlockPos mushroom = new BlockPos(-3, Y, 3), wheel = new BlockPos(-1, Y, 3), post = new BlockPos(1, Y, 3);
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
-            Block[] blocks = {ModBlocks.PET_BED, ModBlocks.PET_BASKET, ModBlocks.DRAGON_NEST, ModBlocks.FOOD_BOWL, ModBlocks.PET_BATH,
-                    ModBlocks.BOUNCY_MUSHROOM, ModBlocks.RUNNING_WHEEL, ModBlocks.SCRATCHING_POST, ModBlocks.PET_HOUSE};
-            for (int i = 0; i < blocks.length; i++) {
-                BlockState st = blocks[i].defaultBlockState();
-                if (blocks[i] == ModBlocks.FOOD_BOWL) st = st.setValue(FoodBowlBlock.FILL, 3);
-                if (blocks[i] == ModBlocks.PET_BATH) st = st.setValue(PetBathBlock.FILLED, true);
-                level.setBlockAndUpdate(new BlockPos(-8 + i * 2, Y, 0), st);
-            }
+            level.setBlockAndUpdate(bed, ModBlocks.PET_BED.defaultBlockState());
+            level.setBlockAndUpdate(new BlockPos(-2, Y, 0), ModBlocks.PET_BASKET.defaultBlockState());
+            level.setBlockAndUpdate(new BlockPos(0, Y, 0), ModBlocks.DRAGON_NEST.defaultBlockState());
+            level.setBlockAndUpdate(bowl, ModBlocks.FOOD_BOWL.defaultBlockState().setValue(FoodBowlBlock.FILL, 3));
+            level.setBlockAndUpdate(bath, ModBlocks.PET_BATH.defaultBlockState().setValue(PetBathBlock.FILLED, true));
+            level.setBlockAndUpdate(mushroom, ModBlocks.BOUNCY_MUSHROOM.defaultBlockState());
+            level.setBlockAndUpdate(wheel, ModBlocks.RUNNING_WHEEL.defaultBlockState().setValue(RunningWheelBlock.FACING, Direction.EAST));
+            level.setBlockAndUpdate(post, ModBlocks.SCRATCHING_POST.defaultBlockState());
+            level.setBlockAndUpdate(new BlockPos(3, Y, 3), ModBlocks.PET_HOUSE.defaultBlockState());
         });
-        cmd("tp @p 0 -56 -8 0 25");
+        cam("0.5 -57.6 -4.5 0 30");
         ctx.waitTicks(30);
         shot("20_furniture");
-        // a pet running in the wheel, one sleeping in the bed
+        // every block in use: asleep in the bed, eating, bathing, running, scratching, bouncing
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
-            TamaPet runner = spawn(level, player(s), PetSpecies.VOID_KITTEN, 4.5, 0.5, 180, false);
-            runner.setFlag(TamaPet.F_RUNNING, true);
-            net.kasax.tamagotchi.block.RunningWheelBlock.setRunning(level, new BlockPos(4, Y, 0), true);
-            TamaPet sleeper = spawn(level, player(s), PetSpecies.FROST_PENGUIN, -7.5, 0.5, 200, false);
-            sleeper.setSleeping(true);
-            TamaPet bather = spawn(level, player(s), PetSpecies.JUNGLE_DRAGON, 0.5, 0.5, 180, false);
-            bather.setFlag(TamaPet.F_BATHING, true);
+            ServerPlayer p = player(s);
+            spawn(level, p, PetSpecies.FROST_PENGUIN, bed.getX() + 0.5, bed.getZ() + 0.5, 200, false).setSleeping(true);
+            spawn(level, p, PetSpecies.EMBER_PUP, bowl.getX() + 0.5, bowl.getZ() + 1.4, 180, false).playAction(PetAction.EAT);
+            spawn(level, p, PetSpecies.JUNGLE_DRAGON, bath.getX() + 0.5, bath.getZ() + 0.5, 200, false).setFlag(TamaPet.F_BATHING, true);
+            spawn(level, p, PetSpecies.VOID_KITTEN, wheel.getX() + 0.5, wheel.getZ() + 0.5, Direction.EAST.toYRot(), false).setFlag(TamaPet.F_RUNNING, true);
+            RunningWheelBlock.setRunning(level, wheel, true);
+            spawn(level, p, PetSpecies.PEBBLE_GOLEM, post.getX() + 1.45, post.getZ() + 0.5, 90, false).playAction(PetAction.SCRATCH);
+            TamaPet bouncer = spawn(level, p, PetSpecies.HEX_TOAD, mushroom.getX() + 0.5, mushroom.getZ() + 0.5, 200, false);
+            bouncer.snapTo(bouncer.getX(), Y + 0.75, bouncer.getZ(), 200, 0);
+            bouncer.playAction(PetAction.BOUNCE);
         });
-        cmd("tp @p 0 -57 -5 0 20");
-        ctx.waitTicks(20);
+        ctx.waitTicks(6);
         shot("21_furniture_in_use");
     }
 
@@ -222,6 +249,15 @@ public class PetGallery implements FabricClientGameTest {
                 mc.player.closeContainer();
             }
         });
+        // the creative tab with every item and block
+        ctx.runOnClient(mc -> {
+            CreativeModeInventoryScreen inv = new CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), false);
+            mc.gui.setScreen(inv);
+            inv.setSelectedTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
+        });
+        ctx.waitTicks(10);
+        shot("31_creative_tab");
+        ctx.runOnClient(mc -> mc.gui.setScreen(null));
         hud(false);
         ctx.waitTicks(5);
     }
@@ -246,7 +282,7 @@ public class PetGallery implements FabricClientGameTest {
                 pet.needs().energy = 80;
             }
         });
-        cmd("tp @p 0 -55 -4 0 32");
+        cam("0 -55 -4 0 32");
         for (int i = 1; i <= 6; i++) {
             ctx.waitTicks(60);
             shot("40_live_" + i);
@@ -320,5 +356,26 @@ public class PetGallery implements FabricClientGameTest {
         });
         check("a tamed pet faints into a Tama Egg", egg[0]);
         ctx.waitTicks(5);
+
+        // structure spawns: force the chance roll, place real structures, look for the wild pet
+        String[][] structures = {{"igloo", "frost_penguin", "40", "40"}, {"swamp_hut", "hex_toad", "-40", "40"},
+                {"desert_pyramid", "desert_dragon", "40", "-40"}, {"jungle_pyramid", "jungle_dragon", "-40", "-40"}};
+        Map<Identifier, PetSpawns.Rule> saved = new HashMap<>(PetSpawns.RULES);
+        server.runOnServer(s -> PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F)));
+        for (String[] st : structures) {
+            cmd("place structure minecraft:" + st[0] + " " + st[2] + " " + Y + " " + st[3]);
+        }
+        ctx.waitTicks(5);
+        for (String[] st : structures) {
+            int[] found = {0};
+            server.runOnServer(s -> found[0] = s.overworld().getEntitiesOfClass(TamaPet.class,
+                    new AABB(Integer.parseInt(st[2]), Y - 20, Integer.parseInt(st[3]), Integer.parseInt(st[2]), Y + 30, Integer.parseInt(st[3])).inflate(40),
+                    pet -> pet.species().id().equals(st[1]) && !pet.isTame()).size());
+            check("a wild " + st[1] + " lives in the placed " + st[0] + " (" + found[0] + ")", found[0] == 1);
+        }
+        server.runOnServer(s -> {
+            PetSpawns.RULES.clear();
+            PetSpawns.RULES.putAll(saved);
+        });
     }
 }

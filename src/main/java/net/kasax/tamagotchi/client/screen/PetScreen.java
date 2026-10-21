@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
@@ -129,7 +130,8 @@ public class PetScreen extends AbstractContainerScreen<PetMenu> {
             return;
         }
         // portrait
-        InventoryScreen.extractEntityInInventoryFollowsMouse(g, lx + 2, ly + 14, lx + 50, ly + 66, 20, 0.0625F, this.mouseX, this.mouseY, pet);
+        int size = Mth.clamp((int) (30 / Math.max(pet.getBbHeight(), pet.getBbWidth())), 22, 46);
+        InventoryScreen.extractEntityInInventoryFollowsMouse(g, lx + 2, ly + 14, lx + 50, ly + 66, size, 0.0625F, this.mouseX, this.mouseY, pet);
         lcdInfo(g, pet, lx, ly, lw);
     }
 

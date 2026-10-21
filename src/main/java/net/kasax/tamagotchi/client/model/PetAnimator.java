@@ -291,9 +291,9 @@ public final class PetAnimator {
                 if (!quadruped(m)) {
                     return;
                 }
-                rot(m.body, -0.42F, 0, 0);
-                off(m.body, 0, 2.0F, 0);
-                rot(m.head, 0.42F, 0, 0);
+                rot(m.body, -0.55F, 0, 0);
+                off(m.body, 0, 2.4F, 0);
+                rot(m.head, 0.5F, 0, 0);
                 rot(m.legFL, -0.12F, 0, 0);
                 rot(m.legFR, -0.12F, 0, 0);
                 for (ModelPart leg : new ModelPart[]{m.legBL, m.legBR}) {
@@ -312,8 +312,8 @@ public final class PetAnimator {
         switch (m.species) {
             case FROST_PENGUIN, PEBBLE_GOLEM -> {
                 off(m.body, 0, 1.6F, 0);
-                rot(m.body, 0.12F, 0, 0.08F);
-                rot(m.head, 0.35F, 0, 0.15F);
+                rot(m.body, 0.08F, 0, 0.08F);
+                rot(m.head, 0.1F, 0.15F, 0.32F);
                 setX(m.legL, -1.4F);
                 setX(m.legR, -1.4F);
                 off(m.legL, 0, 0.4F, 0);
@@ -352,8 +352,8 @@ public final class PetAnimator {
                 for (ModelPart leg : new ModelPart[]{m.legFL, m.legFR, m.legBL, m.legBR}) {
                     leg.y += 2.9F;
                 }
-                rot(m.head, 0.32F, 0.25F, 0.22F);
-                off(m.head, 0, 0.8F, 0);
+                rot(m.head, 0.1F, 0.42F, 0.3F);
+                off(m.head, 0, 1.0F, 0);
                 rot(m.tail, -0.45F, 0.9F, 0);
                 rot(m.tail2, 0, 0.7F, 0);
                 rot(m.tail3, 0, 0.5F, 0);

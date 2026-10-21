@@ -115,5 +115,7 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
 - [x] 11 Reactions (jukebox, campfire, cake, flowers, owner eating, thunder, rain shake, fireworks, play dates, level-up)
 - [x] 12 Structure spawning (mixin on StructureStart.placeInChunk)
 - [x] 13 Sounds (subagent, `tools/sfx`) + particles
-- [ ] 14 In-game screenshot review (`runClientGameTest` under xvfb) + polish
+- [x] 14 In-game screenshot review (`runClientGameTest` under xvfb) + polish: small custom hearts, clearer sit/sleep
+      poses, wheel runner faces across the axle, bigger portrait on the pet screen; functional checks (tame, backpack
+      on/spill, snack pouch, faint → egg, wild pets in placed structures) log `[TamaTest] PASS/FAIL`
 - [x] 15 README

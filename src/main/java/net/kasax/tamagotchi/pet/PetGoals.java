@@ -450,7 +450,7 @@ public final class PetGoals {
                 apple.finishUsingItem(level, owner);
                 this.pet.setSnacks(this.pet.snacks() - 1);
                 this.pet.playSound(ModSounds.PET_FEED_OWNER, 1.0F, 1.0F);
-                level.sendParticles(ParticleTypes.HEART, owner.getX(), owner.getY() + 1.8, owner.getZ(), 4, 0.3, 0.2, 0.3, 0.0);
+                level.sendParticles(ModParticles.HEART, owner.getX(), owner.getY() + 1.7, owner.getZ(), 5, 0.3, 0.2, 0.3, 0.0);
                 if (owner instanceof Player p) {
                     p.sendOverlayMessage(Component.translatable("message.tamagotchi.fed_you", this.pet.getName(), this.pet.snacks()));
                 }
@@ -862,6 +862,15 @@ public final class PetGoals {
                 case WHEEL -> {
                     this.pet.setFlag(TamaPet.F_RUNNING, true);
                     this.pet.setPos(c.x, this.pos.getY() + 0.1, c.z);
+                    BlockState wheel = level.getBlockState(this.pos);
+                    if (wheel.hasProperty(RunningWheelBlock.FACING)) {
+                        // run across the axle, like a hamster
+                        float yaw = wheel.getValue(RunningWheelBlock.FACING).toYRot();
+                        this.pet.setYRot(yaw);
+                        this.pet.setYBodyRot(yaw);
+                        this.pet.setYHeadRot(yaw);
+                        this.pet.getNavigation().stop();
+                    }
                     RunningWheelBlock.setRunning(level, this.pos, true);
                     if (this.arrivedTicks % 10 == 0) {
                         this.pet.needs().add(Need.FUN, 2.0F);

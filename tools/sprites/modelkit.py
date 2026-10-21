@@ -157,7 +157,23 @@ class Model:
             obj["ambientocclusion"] = False
         obj["textures"] = self.textures
         obj["elements"] = elements
+        gui = self.gui_display()
+        if gui:
+            obj["display"] = {"gui": gui}
         return obj
+
+    def gui_display(self):
+        """Inventory icon framing for furniture lower or narrower than a block: scale it up to fill the slot
+        and lift it to the slot's centre (same view as block/block: rotation 30/225/0, scale 0.625)."""
+        (x0, y0, z0), (x1, y1, z1) = self.bounds()
+        span = (x1 - x0) + (z1 - z0)
+        w = span * 0.7071                       # projected width at 225 degrees
+        h = 0.866 * (y1 - y0) + 0.3536 * span   # projected height at a 30 degree tilt
+        s = min(1.0, 0.625 * min(22.63 / w, 25.24 / h))
+        lift = (8 - (y0 + y1) / 2) * s * 0.866
+        if s < 0.63 and abs(lift) < 0.5:
+            return None
+        return {"rotation": [30, 225, 0], "translation": [0, round(lift, 2), 0], "scale": [round(s, 3)] * 3}
 
     def save(self, path):
         write_json(path, self.to_json())
