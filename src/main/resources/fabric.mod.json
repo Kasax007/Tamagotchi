@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "tamagotchi",
+  "version": "${version}",
+  "name": "Tamagotchi",
+  "description": "Find, tame and care for ten cute pixel pets.",
+  "authors": ["Kasax"],
+  "contact": {
+    "sources": "https://github.com/Kasax007/Tamagotchi",
+    "issues": "https://github.com/Kasax007/Tamagotchi/issues"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["net.kasax.tamagotchi.Tamagotchi"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
