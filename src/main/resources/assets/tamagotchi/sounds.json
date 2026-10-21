@@ -633,16 +633,13 @@
     "subtitle": "subtitles.tamagotchi.pebble_golem.ambient",
     "sounds": [
       {
-        "name": "tamagotchi:pebble_golem/ambient1",
-        "volume": 0.7
-      },
-      {
-        "name": "tamagotchi:pebble_golem/ambient2",
+        "name": "tamagotchi:pebble_golem/ambient3",
         "volume": 0.9
       },
       {
         "name": "tamagotchi:pebble_golem/ambient3",
-        "volume": 0.8
+        "volume": 0.8,
+        "pitch": 1.15
       },
       {
         "name": "minecraft:mob/sniffer/happy3",

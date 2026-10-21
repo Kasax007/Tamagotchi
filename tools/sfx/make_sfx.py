@@ -1551,25 +1551,7 @@ def hmm(r, dur, f0, vow, amp=None, vibrato=(4.5, 14.0, 0.2)):
     return syl(r, dur, f0, vow, amp=amp, scale=0.95, nasal=0.6, tilt=1.7, vibrato=vibrato, breath=0.04, qs=(5.0, 8.0, 10.0))
 
 
-@sfx('pebble_golem/ambient1')
-def _(r):  # a low, nosy "hmmm?" over a faint rumble and two pebble ticks
-    m = Mix()
-    m.add(hmm(r, 0.8, [(0, 150), (0.25, 172), (0.55, 160), (0.8, 138)], [(0, 'm'), (0.25, 'o'), (0.55, 'oo'), (0.8, 'm')],
-              amp=[(0, 0), (0.08, 1), (0.55, 0.9), (0.8, 0)]), 0.0, 1.0)
-    m.add(rl(rumble(r, 0.8), -9), 0.0)
-    m.add(stone_tick(r, 1300, -10), 0.38)
-    m.add(stone_tick(r, 1850, -13), 0.47)
-    return m.x
-
-
-@sfx('pebble_golem/ambient2')
-def _(r):  # pebbles clicking around a deep, sleepy "mm"
-    m = Mix()
-    for t0 in [0.0, 0.11, 0.17, 0.36, 0.42, 0.55]:
-        m.add(stone_tick(r, None, r.uniform(-9, -4)), t0)
-    m.add(hmm(r, 0.65, [(0, 125), (0.3, 118), (0.65, 110)], [(0, 'm'), (0.4, 'o'), (0.65, 'm')], amp=[(0, 0), (0.1, 1), (0.45, 0.8), (0.65, 0)]), 0.0, 0.7)
-    m.add(rl(rumble(r, 0.65, 130), -10), 0.0)
-    return m.x
+# (the golem's voiced "hmm" ambients were removed: they sounded like a villager)
 
 
 @sfx('pebble_golem/ambient3')
