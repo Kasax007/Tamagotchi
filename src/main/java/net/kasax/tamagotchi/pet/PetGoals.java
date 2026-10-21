@@ -26,7 +26,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -140,22 +139,59 @@ public final class PetGoals {
     // =====================================================================================
     // following / wandering
 
-    static final class PetFollowGoal extends FollowOwnerGoal {
+    /** Like vanilla FollowOwnerGoal, but works with every navigation (the Tide Dragon swims). */
+    static final class PetFollowGoal extends Goal {
         private final TamaPet pet;
+        private @Nullable LivingEntity owner;
+        private int recalc;
 
         PetFollowGoal(TamaPet pet) {
-            super(pet, 1.15, 9.0F, 2.5F);
             this.pet = pet;
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
         public boolean canUse() {
-            return this.pet.mode() == TamaPet.Mode.FOLLOW && !this.pet.isSleeping() && super.canUse();
+            LivingEntity o = this.pet.getOwner();
+            if (o == null || this.pet.mode() != TamaPet.Mode.FOLLOW || this.pet.isSleeping() || this.pet.unableToMoveToOwner()) {
+                return false;
+            }
+            if (this.pet.distanceToSqr(o) < 9.0 * 9.0) {
+                return false;
+            }
+            this.owner = o;
+            return true;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.pet.mode() == TamaPet.Mode.FOLLOW && !this.pet.isSleeping() && super.canContinueToUse();
+            return this.owner != null && !this.pet.getNavigation().isDone() && !this.pet.unableToMoveToOwner()
+                    && this.pet.mode() == TamaPet.Mode.FOLLOW && !this.pet.isSleeping() && this.pet.distanceToSqr(this.owner) > 2.5 * 2.5;
+        }
+
+        @Override
+        public void start() {
+            this.recalc = 0;
+        }
+
+        @Override
+        public void stop() {
+            this.owner = null;
+            this.pet.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            if (this.owner == null) {
+                return;
+            }
+            this.pet.getLookControl().setLookAt(this.owner, 10.0F, this.pet.getMaxHeadXRot());
+            if (this.pet.shouldTryTeleportToOwner()) {
+                this.pet.tryToTeleportToOwner();
+            } else if (--this.recalc <= 0) {
+                this.recalc = 10;
+                this.pet.getNavigation().moveTo(this.owner, 1.15);
+            }
         }
     }
 

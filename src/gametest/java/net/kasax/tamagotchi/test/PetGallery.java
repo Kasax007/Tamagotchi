@@ -57,6 +57,7 @@ public class PetGallery implements FabricClientGameTest {
             closeups();
             furniture();
             screen();
+            live();
             checks();
         }
         LOG.info("[TamaTest] ===== results =====");
@@ -223,6 +224,33 @@ public class PetGallery implements FabricClientGameTest {
         });
         hud(false);
         ctx.waitTicks(5);
+    }
+
+    /** Pets with their AI on, low needs, in a little playground: they should use the furniture by themselves. */
+    private void live() {
+        clear();
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            level.setBlockAndUpdate(new BlockPos(-3, Y, 3), ModBlocks.FOOD_BOWL.defaultBlockState().setValue(FoodBowlBlock.FILL, 3));
+            level.setBlockAndUpdate(new BlockPos(3, Y, 3), ModBlocks.PET_BATH.defaultBlockState().setValue(PetBathBlock.FILLED, true));
+            level.setBlockAndUpdate(new BlockPos(0, Y, 6), ModBlocks.BOUNCY_MUSHROOM.defaultBlockState());
+            level.setBlockAndUpdate(new BlockPos(-4, Y, 7), ModBlocks.RUNNING_WHEEL.defaultBlockState());
+            level.setBlockAndUpdate(new BlockPos(4, Y, 7), ModBlocks.SCRATCHING_POST.defaultBlockState());
+            PetSpecies[] who = {PetSpecies.EMBER_PUP, PetSpecies.FROST_PENGUIN, PetSpecies.VOID_KITTEN, PetSpecies.JUNGLE_DRAGON};
+            for (int i = 0; i < who.length; i++) {
+                TamaPet pet = spawn(level, player(s), who[i], -1.5 + i, 4.5, 180, true);
+                pet.setMode(TamaPet.Mode.WANDER);
+                pet.needs().hunger = i == 0 ? 30 : 80;
+                pet.needs().hygiene = i == 3 ? 30 : 80;
+                pet.needs().fun = i == 1 || i == 2 ? 25 : 80;
+                pet.needs().energy = 80;
+            }
+        });
+        cmd("tp @p 0 -55 -4 0 32");
+        for (int i = 1; i <= 6; i++) {
+            ctx.waitTicks(60);
+            shot("40_live_" + i);
+        }
     }
 
     // ------------------------------------------------------------------ functional checks

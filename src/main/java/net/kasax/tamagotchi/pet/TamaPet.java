@@ -83,6 +83,7 @@ public class TamaPet extends TamableAnimal {
     private static final EntityDataAccessor<Byte> DATA_SNACKS = SynchedEntityData.defineId(TamaPet.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<ItemStack> DATA_CARRIED = SynchedEntityData.defineId(TamaPet.class, EntityDataSerializers.ITEM_STACK);
 
+    private static final int DEFAULT_NEEDS = new PetNeeds().pack();
     public static final int BACKPACK_SLOTS = 27;
     public static final int MAX_SNACKS = 16;
 
@@ -101,6 +102,12 @@ public class TamaPet extends TamableAnimal {
     private @Nullable PetAction serverAction;
     private int lastOwnerLevel = -1;
 
+    private int scaredTicks;
+    private int regenSeconds;
+    private int reactCooldown;
+    private final net.minecraft.world.level.gameevent.DynamicGameEventListener<PetListener> listener =
+            new net.minecraft.world.level.gameevent.DynamicGameEventListener<>(new PetListener());
+
     // ---- client animation clocks ----
     public @Nullable PetAction clientAction;
     public int clientActionStart;
@@ -111,15 +118,15 @@ public class TamaPet extends TamableAnimal {
         super(type, level);
         this.species = ModEntities.speciesOf(type);
         this.setTame(false, false);
-        if (this.species.fireImmune()) {
+        if (species().fireImmune()) {
             this.setPathfindingMalus(PathType.LAVA, 8.0F);
             this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, 0.0F);
             this.setPathfindingMalus(PathType.FIRE, 0.0F);
         }
-        if (this.species.gait() == PetSpecies.Gait.SWIM || this.species.waterBreathing()) {
+        if (species().gait() == PetSpecies.Gait.SWIM || species().waterBreathing()) {
             this.setPathfindingMalus(PathType.WATER, 0.0F);
         }
-        if (this.species.gait() == PetSpecies.Gait.SWIM) {
+        if (species().gait() == PetSpecies.Gait.SWIM) {
             this.moveControl = new PetSwimMoveControl(this);
         }
         this.setPersistenceRequired();
@@ -137,7 +144,8 @@ public class TamaPet extends TamableAnimal {
     }
 
     public PetSpecies species() {
-        return this.species;
+        // registerGoals() and friends run inside the Mob constructor, before this.species is set
+        return this.species != null ? this.species : ModEntities.speciesOf(getType());
     }
 
     @Override
@@ -159,7 +167,7 @@ public class TamaPet extends TamableAnimal {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_NEEDS, this.needs.pack());
+        builder.define(DATA_NEEDS, DEFAULT_NEEDS);   // runs inside Entity's constructor, before our fields exist
         builder.define(DATA_STATE, 0);
         builder.define(DATA_BOND, (byte) 0);
         builder.define(DATA_SNACKS, (byte) 0);
@@ -268,13 +276,13 @@ public class TamaPet extends TamableAnimal {
 
     /** Usable storage slots right now (belly and/or backpack). */
     public int storageSlots() {
-        int n = this.species.hasBelly() ? BACKPACK_SLOTS : 0;
+        int n = species().hasBelly() ? BACKPACK_SLOTS : 0;
         return hasBackpack() ? n + BACKPACK_SLOTS : n;
     }
 
     /** First slot index of the backpack part. */
     public int backpackStart() {
-        return this.species.hasBelly() ? BACKPACK_SLOTS : 0;
+        return species().hasBelly() ? BACKPACK_SLOTS : 0;
     }
 
     public int snacks() {
@@ -555,7 +563,7 @@ public class TamaPet extends TamableAnimal {
         setMode(Mode.FOLLOW);
         setHealth(getMaxHealth());
         if (!hasCustomName()) {
-            List<String> names = this.species.names();
+            List<String> names = species().names();
             setCustomName(Component.literal(names.get(this.random.nextInt(names.size()))));
         }
         this.needs.addBond(10);
@@ -605,19 +613,19 @@ public class TamaPet extends TamableAnimal {
     }
 
     public boolean isPetFood(ItemStack stack) {
-        return stack.is(ModItems.PET_KIBBLE) || stack.is(this.species.favoriteTreat()) || this.species.diet().accepts(stack);
+        return stack.is(ModItems.PET_KIBBLE) || stack.is(species().favoriteTreat()) || species().diet().accepts(stack);
     }
 
     /** Hunger restored by one item. */
     public float foodValue(ItemStack stack) {
         if (stack.is(ModItems.PET_KIBBLE)) return 30;
-        if (stack.is(this.species.favoriteTreat())) return 35;
+        if (stack.is(species().favoriteTreat())) return 35;
         FoodProperties food = stack.get(DataComponents.FOOD);
         return food != null ? 6 + food.nutrition() * 4 : 18;
     }
 
     private void feedFrom(Player player, ItemStack stack) {
-        boolean favorite = stack.is(this.species.favoriteTreat());
+        boolean favorite = stack.is(species().favoriteTreat());
         eat(stack.copyWithCount(1));
         stack.consume(1, player);
         if (favorite) {
@@ -634,7 +642,7 @@ public class TamaPet extends TamableAnimal {
     public void eat(ItemStack one) {
         wakeUp();
         this.needs.add(Need.HUNGER, foodValue(one));
-        heal(one.is(this.species.favoriteTreat()) ? 8 : 4);
+        heal(one.is(species().favoriteTreat()) ? 8 : 4);
         playAction(PetAction.EAT);
         playSound(ModSounds.PET_EAT, 0.8F, getVoicePitch());
         if (level() instanceof ServerLevel level) {
@@ -675,12 +683,18 @@ public class TamaPet extends TamableAnimal {
             }
         }
         setFlag(F_AGGRESSIVE, getTarget() != null && getTarget().isAlive());
+        if (this.reactCooldown > 0) {
+            this.reactCooldown--;
+        }
+        if (this.scaredTicks > 0) {
+            setFlag(F_SCARED, --this.scaredTicks > 0);
+        }
         if (++this.ticksToNeeds >= 20) {
             this.ticksToNeeds = 0;
             secondTick(level);
         }
         Talents.tick(this, level);
-        if (this.species.gait() == PetSpecies.Gait.FLOAT && !onGround() && getDeltaMovement().y < -0.08) {
+        if (species().gait() == PetSpecies.Gait.FLOAT && !onGround() && getDeltaMovement().y < -0.08) {
             setDeltaMovement(getDeltaMovement().multiply(1.0, 0.6, 1.0));   // the wisp glides down
         }
     }
@@ -690,8 +704,9 @@ public class TamaPet extends TamableAnimal {
             return;
         }
         this.needs.tickSecond(isSleeping(), isInSittingPose());
-        // slow regeneration while fed
-        if (this.needs.hunger > 40 && getHealth() < getMaxHealth() && this.tickCount % 200 == 0) {
+        // slow regeneration while fed: one health point every ten seconds
+        if (this.needs.hunger > 40 && getHealth() < getMaxHealth() && ++this.regenSeconds >= 10) {
+            this.regenSeconds = 0;
             heal(1.0F);
         }
         syncNeeds();
@@ -907,6 +922,64 @@ public class TamaPet extends TamableAnimal {
         return hit;
     }
 
+    // ------------------------------------------------------------------ hearing the world
+
+    @Override
+    public void updateDynamicGameEventListener(java.util.function.BiConsumer<net.minecraft.world.level.gameevent.DynamicGameEventListener<?>, ServerLevel> action) {
+        if (level() instanceof ServerLevel serverLevel) {
+            action.accept(this.listener, serverLevel);
+        }
+    }
+
+    /** Note blocks make pets hop, bells make them perk up, explosions and lightning scare them. */
+    private class PetListener implements net.minecraft.world.level.gameevent.GameEventListener {
+        private final net.minecraft.world.level.gameevent.PositionSource source =
+                new net.minecraft.world.level.gameevent.EntityPositionSource(TamaPet.this, 0.5F);
+
+        @Override
+        public net.minecraft.world.level.gameevent.PositionSource getListenerSource() {
+            return this.source;
+        }
+
+        @Override
+        public int getListenerRadius() {
+            return 12;
+        }
+
+        @Override
+        public boolean handleGameEvent(ServerLevel level, net.minecraft.core.Holder<net.minecraft.world.level.gameevent.GameEvent> event,
+                                       net.minecraft.world.level.gameevent.GameEvent.Context context, Vec3 pos) {
+            if (event.is(net.minecraft.world.level.gameevent.GameEvent.EXPLODE) || event.is(net.minecraft.world.level.gameevent.GameEvent.LIGHTNING_STRIKE)) {
+                wakeUp();
+                TamaPet.this.scaredTicks = 80;
+                playSound(ModSounds.PET_SCARED, 0.7F, getVoicePitch());
+                return true;
+            }
+            if (isSleeping() || TamaPet.this.reactCooldown > 0 || getTarget() != null) {
+                return false;
+            }
+            if (event.is(net.minecraft.world.level.gameevent.GameEvent.NOTE_BLOCK_PLAY)) {
+                TamaPet.this.reactCooldown = 12;
+                getLookControl().setLookAt(pos.x, pos.y, pos.z);
+                playAction(PetAction.BOUNCE);
+                if (onGround()) {
+                    setDeltaMovement(getDeltaMovement().add(0, 0.3, 0));
+                }
+                level.sendParticles(ParticleTypes.NOTE, getX(), getY() + getBbHeight() + 0.3, getZ(), 0, random.nextInt(25) / 24.0, 0, 0, 1.0);
+                TamaPet.this.needs.add(Need.FUN, 1.5F);
+                return true;
+            }
+            if (event.is(net.minecraft.world.level.gameevent.GameEvent.BLOCK_CHANGE)
+                    && level.getBlockState(BlockPos.containing(pos)).is(net.minecraft.world.level.block.Blocks.BELL)) {
+                TamaPet.this.reactCooldown = 30;
+                getLookControl().setLookAt(pos.x, pos.y, pos.z);
+                playAction(PetAction.LOOK_UP);
+                return true;
+            }
+            return false;
+        }
+    }
+
     // ------------------------------------------------------------------ misc vanilla hooks
 
     @Override
@@ -926,12 +999,12 @@ public class TamaPet extends TamableAnimal {
 
     @Override
     public boolean canBreatheUnderwater() {
-        return this.species.waterBreathing() || this.species.gait() == PetSpecies.Gait.SWIM;
+        return species().waterBreathing() || species().gait() == PetSpecies.Gait.SWIM;
     }
 
     @Override
     protected void travelInWater(Vec3 input, double baseGravity, boolean isFalling, double oldY) {
-        if (this.species.gait() != PetSpecies.Gait.SWIM) {
+        if (species().gait() != PetSpecies.Gait.SWIM) {
             super.travelInWater(input, baseGravity, isFalling, oldY);
             return;
         }
@@ -942,12 +1015,12 @@ public class TamaPet extends TamableAnimal {
 
     @Override
     public boolean isPushedByFluid() {
-        return this.species.gait() != PetSpecies.Gait.SWIM;
+        return species().gait() != PetSpecies.Gait.SWIM;
     }
 
     @Override
     protected boolean canFlyToOwner() {
-        return this.species.flying();
+        return species().flying();
     }
 
     @Override
