@@ -1,0 +1,1342 @@
+{
+  "desert_dragon.ambient": {
+    "subtitle": "subtitles.tamagotchi.desert_dragon.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:desert_dragon/ambient1",
+        "volume": 0.3
+      },
+      {
+        "name": "tamagotchi:desert_dragon/ambient2",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/strider/idle2",
+        "pitch": 1.35
+      },
+      {
+        "name": "minecraft:mob/strider/idle3",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "desert_dragon.happy": {
+    "subtitle": "subtitles.tamagotchi.desert_dragon.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:desert_dragon/happy1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamagotchi:desert_dragon/happy2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/strider/happy1",
+        "pitch": 1.3
+      },
+      {
+        "name": "minecraft:mob/strider/happy5",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "desert_dragon.hurt": {
+    "subtitle": "subtitles.tamagotchi.desert_dragon.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:desert_dragon/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/strider/hurt2",
+        "pitch": 1.35
+      },
+      {
+        "name": "minecraft:mob/strider/hurt1",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "desert_dragon.death": {
+    "subtitle": "subtitles.tamagotchi.desert_dragon.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:desert_dragon/death1",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/strider/death2",
+        "pitch": 1.3
+      },
+      {
+        "name": "minecraft:mob/strider/death4",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "desert_dragon.attack": {
+    "subtitle": "subtitles.tamagotchi.desert_dragon.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:desert_dragon/attack1",
+        "volume": 0.75
+      },
+      {
+        "name": "tamagotchi:desert_dragon/attack2",
+        "volume": 0.7
+      }
+    ]
+  },
+  "jungle_dragon.ambient": {
+    "subtitle": "subtitles.tamagotchi.jungle_dragon.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:jungle_dragon/ambient1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamagotchi:jungle_dragon/ambient2",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/parrot/idle2",
+        "volume": 0.85
+      },
+      {
+        "name": "minecraft:mob/parrot/idle4"
+      }
+    ]
+  },
+  "jungle_dragon.happy": {
+    "subtitle": "subtitles.tamagotchi.jungle_dragon.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:jungle_dragon/happy1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamagotchi:jungle_dragon/happy2",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/parrot/idle6",
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:mob/parrot/idle3",
+        "pitch": 1.2,
+        "volume": 0.55
+      }
+    ]
+  },
+  "jungle_dragon.hurt": {
+    "subtitle": "subtitles.tamagotchi.jungle_dragon.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:jungle_dragon/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/parrot/hurt1",
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/parrot/hurt2",
+        "volume": 0.8
+      }
+    ]
+  },
+  "jungle_dragon.death": {
+    "subtitle": "subtitles.tamagotchi.jungle_dragon.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:jungle_dragon/death1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/parrot/death2",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/parrot/death4",
+        "pitch": 0.95,
+        "volume": 0.85
+      }
+    ]
+  },
+  "jungle_dragon.attack": {
+    "subtitle": "subtitles.tamagotchi.jungle_dragon.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:jungle_dragon/attack1"
+      },
+      {
+        "name": "tamagotchi:jungle_dragon/attack2"
+      }
+    ]
+  },
+  "tide_dragon.ambient": {
+    "subtitle": "subtitles.tamagotchi.tide_dragon.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:tide_dragon/ambient1",
+        "volume": 0.25
+      },
+      {
+        "name": "tamagotchi:tide_dragon/ambient2",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/dolphin/idle4",
+        "pitch": 1.1
+      },
+      {
+        "name": "minecraft:mob/dolphin/idle5",
+        "pitch": 1.15,
+        "volume": 0.7
+      }
+    ]
+  },
+  "tide_dragon.happy": {
+    "subtitle": "subtitles.tamagotchi.tide_dragon.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:tide_dragon/happy1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamagotchi:tide_dragon/happy2",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/dolphin/play1",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "tide_dragon.hurt": {
+    "subtitle": "subtitles.tamagotchi.tide_dragon.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:tide_dragon/hurt1",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/baby_nautilus/hurt_land3",
+        "pitch": 1.1,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/baby_nautilus/hurt_land1",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "tide_dragon.death": {
+    "subtitle": "subtitles.tamagotchi.tide_dragon.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:tide_dragon/death1",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/dolphin/death2",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/axolotl/death1",
+        "volume": 0.95
+      }
+    ]
+  },
+  "tide_dragon.attack": {
+    "subtitle": "subtitles.tamagotchi.tide_dragon.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:tide_dragon/attack1",
+        "volume": 0.7
+      },
+      {
+        "name": "tamagotchi:tide_dragon/attack2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "frost_penguin.ambient": {
+    "subtitle": "subtitles.tamagotchi.frost_penguin.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:frost_penguin/ambient1",
+        "volume": 0.4
+      },
+      {
+        "name": "tamagotchi:frost_penguin/ambient2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/chicken/say3",
+        "pitch": 1.25
+      },
+      {
+        "name": "minecraft:mob/horse/donkey/idle3",
+        "pitch": 1.5
+      }
+    ]
+  },
+  "frost_penguin.happy": {
+    "subtitle": "subtitles.tamagotchi.frost_penguin.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:frost_penguin/happy1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamagotchi:frost_penguin/happy2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/parrot/idle5",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "frost_penguin.hurt": {
+    "subtitle": "subtitles.tamagotchi.frost_penguin.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:frost_penguin/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/chicken/baby_chicken/hurt1",
+        "pitch": 0.9
+      },
+      {
+        "name": "minecraft:mob/horse/donkey/hit2",
+        "pitch": 1.3,
+        "volume": 0.55
+      }
+    ]
+  },
+  "frost_penguin.death": {
+    "subtitle": "subtitles.tamagotchi.frost_penguin.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:frost_penguin/death1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/chicken/baby_chicken/death",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "frost_penguin.attack": {
+    "subtitle": "subtitles.tamagotchi.frost_penguin.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:frost_penguin/attack1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamagotchi:frost_penguin/attack2",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ember_pup.ambient": {
+    "subtitle": "subtitles.tamagotchi.ember_pup.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:ember_pup/ambient1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamagotchi:ember_pup/ambient2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/ambient1",
+        "pitch": 1.1,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/wolf/puglin/bark2",
+        "pitch": 1.4,
+        "volume": 0.3
+      }
+    ]
+  },
+  "ember_pup.happy": {
+    "subtitle": "subtitles.tamagotchi.ember_pup.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:ember_pup/happy1",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/ambient4",
+        "pitch": 1.2,
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/ambient7",
+        "pitch": 1.2,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/fox/idle1",
+        "pitch": 1.15
+      }
+    ]
+  },
+  "ember_pup.hurt": {
+    "subtitle": "subtitles.tamagotchi.ember_pup.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:ember_pup/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/hurt2",
+        "pitch": 1.15,
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/hurt3",
+        "pitch": 1.15,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/fox/hurt2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "ember_pup.death": {
+    "subtitle": "subtitles.tamagotchi.ember_pup.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:ember_pup/death1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/wolf/puglin/death",
+        "pitch": 1.25,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/fox/death1",
+        "pitch": 1.1,
+        "volume": 0.35
+      }
+    ]
+  },
+  "ember_pup.attack": {
+    "subtitle": "subtitles.tamagotchi.ember_pup.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:ember_pup/attack1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamagotchi:ember_pup/attack2",
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:mob/fox/bite2",
+        "pitch": 0.9,
+        "volume": 0.6
+      }
+    ]
+  },
+  "sculk_wisp.ambient": {
+    "subtitle": "subtitles.tamagotchi.sculk_wisp.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:sculk_wisp/ambient1",
+        "volume": 0.65
+      },
+      {
+        "name": "tamagotchi:sculk_wisp/ambient2",
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient3",
+        "pitch": 1.6
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient6",
+        "pitch": 1.6,
+        "volume": 0.8
+      }
+    ]
+  },
+  "sculk_wisp.happy": {
+    "subtitle": "subtitles.tamagotchi.sculk_wisp.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:sculk_wisp/happy1",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient7",
+        "pitch": 1.75,
+        "volume": 0.75
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient9",
+        "pitch": 1.75
+      }
+    ]
+  },
+  "sculk_wisp.hurt": {
+    "subtitle": "subtitles.tamagotchi.sculk_wisp.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:sculk_wisp/hurt1",
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/allay/hurt1",
+        "pitch": 1.1,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/allay/hurt2",
+        "pitch": 1.1,
+        "volume": 0.6
+      }
+    ]
+  },
+  "sculk_wisp.death": {
+    "subtitle": "subtitles.tamagotchi.sculk_wisp.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:sculk_wisp/death1",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/vex/death1",
+        "pitch": 0.9
+      },
+      {
+        "name": "minecraft:mob/vex/death2",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "sculk_wisp.attack": {
+    "subtitle": "subtitles.tamagotchi.sculk_wisp.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:sculk_wisp/attack1",
+        "volume": 0.8
+      },
+      {
+        "name": "tamagotchi:sculk_wisp/attack2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "void_kitten.ambient": {
+    "subtitle": "subtitles.tamagotchi.void_kitten.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:void_kitten/ambient1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamagotchi:void_kitten/ambient2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/cat/meow2",
+        "pitch": 1.4,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/cat/meow3",
+        "pitch": 1.45
+      }
+    ]
+  },
+  "void_kitten.happy": {
+    "subtitle": "subtitles.tamagotchi.void_kitten.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:void_kitten/happy1",
+        "volume": 0.9
+      },
+      {
+        "name": "tamagotchi:void_kitten/happy2",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:mob/cat/meow1",
+        "pitch": 1.55
+      }
+    ]
+  },
+  "void_kitten.hurt": {
+    "subtitle": "subtitles.tamagotchi.void_kitten.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:void_kitten/hurt1",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/cat/hitt1",
+        "pitch": 1.3
+      },
+      {
+        "name": "minecraft:mob/cat/hitt3",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "void_kitten.death": {
+    "subtitle": "subtitles.tamagotchi.void_kitten.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:void_kitten/death1",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:mob/cat/ocelot/death1",
+        "pitch": 1.3,
+        "volume": 0.95
+      },
+      {
+        "name": "minecraft:mob/cat/ocelot/death3",
+        "pitch": 1.3,
+        "volume": 0.95
+      }
+    ]
+  },
+  "void_kitten.attack": {
+    "subtitle": "subtitles.tamagotchi.void_kitten.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:void_kitten/attack1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamagotchi:void_kitten/attack2",
+        "volume": 0.95
+      },
+      {
+        "name": "minecraft:mob/endermen/portal2",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "pebble_golem.ambient": {
+    "subtitle": "subtitles.tamagotchi.pebble_golem.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:pebble_golem/ambient1",
+        "volume": 0.7
+      },
+      {
+        "name": "tamagotchi:pebble_golem/ambient2",
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:mob/villager/idle1",
+        "pitch": 0.75
+      },
+      {
+        "name": "minecraft:mob/sniffer/happy3",
+        "pitch": 1.3,
+        "volume": 0.95
+      }
+    ]
+  },
+  "pebble_golem.happy": {
+    "subtitle": "subtitles.tamagotchi.pebble_golem.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:pebble_golem/happy1",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/sniffer/happy2",
+        "pitch": 1.4
+      },
+      {
+        "name": "minecraft:mob/sniffer/happy4",
+        "pitch": 1.4,
+        "volume": 0.95
+      }
+    ]
+  },
+  "pebble_golem.hurt": {
+    "subtitle": "subtitles.tamagotchi.pebble_golem.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:pebble_golem/hurt1",
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/armadillo/hurt4",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/armadillo/hurt5",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/coppergolem/regular/hurt3"
+      }
+    ]
+  },
+  "pebble_golem.death": {
+    "subtitle": "subtitles.tamagotchi.pebble_golem.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:pebble_golem/death1",
+        "volume": 0.75
+      },
+      {
+        "name": "minecraft:mob/armadillo/death3",
+        "pitch": 1.2,
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/armadillo/death4",
+        "pitch": 1.2,
+        "volume": 0.7
+      }
+    ]
+  },
+  "pebble_golem.attack": {
+    "subtitle": "subtitles.tamagotchi.pebble_golem.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:pebble_golem/attack1"
+      },
+      {
+        "name": "tamagotchi:pebble_golem/attack2"
+      },
+      {
+        "name": "minecraft:item/mace/smash_ground1",
+        "pitch": 1.2,
+        "volume": 0.9
+      }
+    ]
+  },
+  "hex_toad.ambient": {
+    "subtitle": "subtitles.tamagotchi.hex_toad.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:hex_toad/ambient1",
+        "volume": 0.65
+      },
+      {
+        "name": "tamagotchi:hex_toad/ambient2",
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/frog/idle1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/frog/idle4",
+        "pitch": 1.25
+      }
+    ]
+  },
+  "hex_toad.happy": {
+    "subtitle": "subtitles.tamagotchi.hex_toad.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:hex_toad/happy1",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/frog/idle1",
+        "pitch": 1.45
+      },
+      {
+        "name": "minecraft:mob/frog/idle4",
+        "pitch": 1.5
+      }
+    ]
+  },
+  "hex_toad.hurt": {
+    "subtitle": "subtitles.tamagotchi.hex_toad.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:hex_toad/hurt1",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/frog/hurt1",
+        "pitch": 1.15,
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:mob/frog/hurt3",
+        "pitch": 1.15,
+        "volume": 0.85
+      },
+      {
+        "name": "minecraft:mob/frog/hurt2",
+        "pitch": 1.2,
+        "volume": 0.7
+      }
+    ]
+  },
+  "hex_toad.death": {
+    "subtitle": "subtitles.tamagotchi.hex_toad.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:hex_toad/death1",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/frog/death1",
+        "pitch": 1.2,
+        "volume": 0.85
+      },
+      {
+        "name": "minecraft:mob/frog/death2",
+        "pitch": 1.2,
+        "volume": 0.9
+      }
+    ]
+  },
+  "hex_toad.attack": {
+    "subtitle": "subtitles.tamagotchi.hex_toad.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:hex_toad/attack1",
+        "volume": 0.85
+      },
+      {
+        "name": "tamagotchi:hex_toad/attack2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "mimic.ambient": {
+    "subtitle": "subtitles.tamagotchi.mimic.ambient",
+    "sounds": [
+      {
+        "name": "tamagotchi:mimic/ambient1",
+        "volume": 0.85
+      },
+      {
+        "name": "tamagotchi:mimic/ambient2"
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway3",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:block/chest/open",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "mimic.happy": {
+    "subtitle": "subtitles.tamagotchi.mimic.happy",
+    "sounds": [
+      {
+        "name": "tamagotchi:mimic/happy1",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway2",
+        "pitch": 1.3
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway4",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "mimic.hurt": {
+    "subtitle": "subtitles.tamagotchi.mimic.hurt",
+    "sounds": [
+      {
+        "name": "tamagotchi:mimic/hurt1",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:block/chest/close_locked",
+        "pitch": 1.1,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway3",
+        "pitch": 1.5,
+        "volume": 0.7
+      }
+    ]
+  },
+  "mimic.death": {
+    "subtitle": "subtitles.tamagotchi.mimic.death",
+    "sounds": [
+      {
+        "name": "tamagotchi:mimic/death1"
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_deactivate"
+      }
+    ]
+  },
+  "mimic.attack": {
+    "subtitle": "subtitles.tamagotchi.mimic.attack",
+    "sounds": [
+      {
+        "name": "tamagotchi:mimic/attack1"
+      },
+      {
+        "name": "tamagotchi:mimic/attack2"
+      },
+      {
+        "name": "minecraft:block/chest/close1",
+        "pitch": 1.3,
+        "volume": 0.95
+      }
+    ]
+  },
+  "talent.roast": {
+    "subtitle": "subtitles.tamagotchi.talent.roast",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/roast1",
+        "volume": 0.7
+      },
+      {
+        "name": "tamagotchi:talent/roast2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "talent.grow": {
+    "subtitle": "subtitles.tamagotchi.talent.grow",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/grow1",
+        "volume": 0.6
+      }
+    ]
+  },
+  "talent.blessing": {
+    "subtitle": "subtitles.tamagotchi.talent.blessing",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/blessing1",
+        "volume": 0.6
+      }
+    ]
+  },
+  "talent.freeze": {
+    "subtitle": "subtitles.tamagotchi.talent.freeze",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/freeze1"
+      }
+    ]
+  },
+  "talent.warm": {
+    "subtitle": "subtitles.tamagotchi.talent.warm",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/warm1"
+      }
+    ]
+  },
+  "talent.ping": {
+    "subtitle": "subtitles.tamagotchi.talent.ping",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/ping1",
+        "volume": 0.45
+      }
+    ]
+  },
+  "talent.magnet": {
+    "subtitle": "subtitles.tamagotchi.talent.magnet",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/magnet1",
+        "volume": 0.6
+      }
+    ]
+  },
+  "talent.sniff": {
+    "subtitle": "subtitles.tamagotchi.talent.sniff",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/sniff1",
+        "volume": 0.75
+      },
+      {
+        "name": "tamagotchi:talent/sniff2",
+        "volume": 0.65
+      }
+    ]
+  },
+  "talent.brew": {
+    "subtitle": "subtitles.tamagotchi.talent.brew",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/brew1",
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:block/brewing_stand/brew1",
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:block/brewing_stand/brew2",
+        "pitch": 1.15
+      }
+    ]
+  },
+  "talent.treasure": {
+    "subtitle": "subtitles.tamagotchi.talent.treasure",
+    "sounds": [
+      {
+        "name": "tamagotchi:talent/treasure1"
+      }
+    ]
+  },
+  "pet.petting": {
+    "subtitle": "subtitles.tamagotchi.pet.petting",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/petting1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamagotchi:pet/petting2",
+        "volume": 0.3
+      }
+    ]
+  },
+  "pet.eat": {
+    "subtitle": "subtitles.tamagotchi.pet.eat",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/eat1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:pet/eat2",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:random/eat3",
+        "pitch": 1.3,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:random/eat1",
+        "pitch": 1.3,
+        "volume": 0.9
+      }
+    ]
+  },
+  "pet.yawn": {
+    "subtitle": "subtitles.tamagotchi.pet.yawn",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/yawn1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamagotchi:pet/yawn2",
+        "volume": 0.35
+      }
+    ]
+  },
+  "pet.snore": {
+    "subtitle": "subtitles.tamagotchi.pet.snore",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/snore1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:pet/snore2",
+        "volume": 0.55
+      }
+    ]
+  },
+  "pet.splash": {
+    "subtitle": "subtitles.tamagotchi.pet.splash",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/splash1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:pet/splash2",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:liquid/splash",
+        "pitch": 1.5
+      }
+    ]
+  },
+  "pet.shake": {
+    "subtitle": "subtitles.tamagotchi.pet.shake",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/shake1",
+        "volume": 0.55
+      },
+      {
+        "name": "tamagotchi:pet/shake2",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/wolf/shake",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "pet.tame": {
+    "subtitle": "subtitles.tamagotchi.pet.tame",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/tame1",
+        "volume": 0.55
+      },
+      {
+        "name": "tamagotchi:pet/tame2",
+        "volume": 0.55
+      }
+    ]
+  },
+  "pet.faint": {
+    "subtitle": "subtitles.tamagotchi.pet.faint",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/faint1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamagotchi:pet/faint2",
+        "volume": 0.45
+      }
+    ]
+  },
+  "pet.wake": {
+    "subtitle": "subtitles.tamagotchi.pet.wake",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/wake1"
+      },
+      {
+        "name": "tamagotchi:pet/wake2"
+      }
+    ]
+  },
+  "pet.celebrate": {
+    "subtitle": "subtitles.tamagotchi.pet.celebrate",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/celebrate1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamagotchi:pet/celebrate2",
+        "volume": 0.3
+      }
+    ]
+  },
+  "pet.scared": {
+    "subtitle": "subtitles.tamagotchi.pet.scared",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/scared1",
+        "volume": 0.25
+      },
+      {
+        "name": "tamagotchi:pet/scared2",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/whine1",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "pet.feed_owner": {
+    "subtitle": "subtitles.tamagotchi.pet.feed_owner",
+    "sounds": [
+      {
+        "name": "tamagotchi:pet/feed_owner1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamagotchi:pet/feed_owner2",
+        "volume": 0.5
+      }
+    ]
+  },
+  "pager.beep": {
+    "subtitle": "subtitles.tamagotchi.pager.beep",
+    "sounds": [
+      {
+        "name": "tamagotchi:pager/beep1",
+        "volume": 0.15
+      },
+      {
+        "name": "tamagotchi:pager/beep2",
+        "volume": 0.15
+      },
+      {
+        "name": "tamagotchi:pager/beep3",
+        "volume": 0.15
+      }
+    ]
+  },
+  "pager.open": {
+    "subtitle": "subtitles.tamagotchi.pager.open",
+    "sounds": [
+      {
+        "name": "tamagotchi:pager/open1",
+        "volume": 0.15
+      },
+      {
+        "name": "tamagotchi:pager/open2",
+        "volume": 0.15
+      }
+    ]
+  },
+  "toy.squeak": {
+    "subtitle": "subtitles.tamagotchi.toy.squeak",
+    "sounds": [
+      {
+        "name": "tamagotchi:toy/squeak1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamagotchi:toy/squeak2",
+        "volume": 0.25
+      }
+    ]
+  },
+  "toy.laser": {
+    "subtitle": "subtitles.tamagotchi.toy.laser",
+    "sounds": [
+      {
+        "name": "tamagotchi:toy/laser1",
+        "volume": 0.3
+      },
+      {
+        "name": "tamagotchi:toy/laser2",
+        "volume": 0.25
+      }
+    ]
+  },
+  "toy.feather": {
+    "subtitle": "subtitles.tamagotchi.toy.feather",
+    "sounds": [
+      {
+        "name": "tamagotchi:toy/feather1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:toy/feather2",
+        "volume": 0.45
+      }
+    ]
+  },
+  "block.bounce": {
+    "subtitle": "subtitles.tamagotchi.block.bounce",
+    "sounds": [
+      {
+        "name": "tamagotchi:block/bounce1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:block/bounce2",
+        "volume": 0.35
+      }
+    ]
+  },
+  "block.wheel": {
+    "subtitle": "subtitles.tamagotchi.block.wheel",
+    "sounds": [
+      {
+        "name": "tamagotchi:block/wheel1",
+        "volume": 0.65
+      }
+    ]
+  },
+  "block.bowl_fill": {
+    "subtitle": "subtitles.tamagotchi.block.bowl_fill",
+    "sounds": [
+      {
+        "name": "tamagotchi:block/bowl_fill1",
+        "volume": 0.75
+      },
+      {
+        "name": "tamagotchi:block/bowl_fill2",
+        "volume": 0.45
+      }
+    ]
+  },
+  "item.brush": {
+    "subtitle": "subtitles.tamagotchi.item.brush",
+    "sounds": [
+      {
+        "name": "tamagotchi:item/brush1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:item/brush2",
+        "volume": 0.55
+      }
+    ]
+  },
+  "backpack.equip": {
+    "subtitle": "subtitles.tamagotchi.backpack.equip",
+    "sounds": [
+      {
+        "name": "tamagotchi:backpack/equip1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamagotchi:backpack/equip2",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:item/armor/equip_leather1",
+        "pitch": 1.1
+      },
+      {
+        "name": "minecraft:item/armor/equip_leather5",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "backpack.spill": {
+    "subtitle": "subtitles.tamagotchi.backpack.spill",
+    "sounds": [
+      {
+        "name": "tamagotchi:backpack/spill1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamagotchi:backpack/spill2",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:item/bundle/drop_contents3"
+      }
+    ]
+  }
+}

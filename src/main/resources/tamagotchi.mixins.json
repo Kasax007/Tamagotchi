@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.kasax.tamagotchi.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "StructureStartMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
