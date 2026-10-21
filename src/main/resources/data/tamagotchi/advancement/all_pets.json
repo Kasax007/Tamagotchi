@@ -1,0 +1,174 @@
+{
+  "parent": "tamagotchi:first_friend",
+  "criteria": {
+    "desert_dragon": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:desert_dragon"
+          }
+        }
+      }
+    },
+    "jungle_dragon": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:jungle_dragon"
+          }
+        }
+      }
+    },
+    "tide_dragon": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:tide_dragon"
+          }
+        }
+      }
+    },
+    "frost_penguin": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:frost_penguin"
+          }
+        }
+      }
+    },
+    "ember_pup": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:ember_pup"
+          }
+        }
+      }
+    },
+    "sculk_wisp": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:sculk_wisp"
+          }
+        }
+      }
+    },
+    "void_kitten": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:void_kitten"
+          }
+        }
+      }
+    },
+    "pebble_golem": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:pebble_golem"
+          }
+        }
+      }
+    },
+    "hex_toad": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:hex_toad"
+          }
+        }
+      }
+    },
+    "mimic": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "tamagotchi:mimic"
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.tamagotchi.all_pets.title"
+    },
+    "description": {
+      "translate": "advancements.tamagotchi.all_pets.description"
+    },
+    "icon": {
+      "id": "tamagotchi:golden_biscuit"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "requirements": [
+    [
+      "desert_dragon"
+    ],
+    [
+      "jungle_dragon"
+    ],
+    [
+      "tide_dragon"
+    ],
+    [
+      "frost_penguin"
+    ],
+    [
+      "ember_pup"
+    ],
+    [
+      "sculk_wisp"
+    ],
+    [
+      "void_kitten"
+    ],
+    [
+      "pebble_golem"
+    ],
+    [
+      "hex_toad"
+    ],
+    [
+      "mimic"
+    ]
+  ],
+  "rewards": {
+    "experience": 250
+  }
+}

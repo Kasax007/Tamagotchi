@@ -96,6 +96,16 @@ lang.update({
     'gui.tamagotchi.need.energy': 'Energy: %s / 100',
     'gui.tamagotchi.need.hygiene': 'Hygiene: %s / 100',
 })
+lang.update({
+    'advancements.tamagotchi.root.title': 'Tamagotchi',
+    'advancements.tamagotchi.root.description': 'Get a Tamagotchi Heart. Rare pets hide in pyramids, temples, igloos, monuments and more...',
+    'advancements.tamagotchi.first_friend.title': 'A New Best Friend',
+    'advancements.tamagotchi.first_friend.description': 'Tame a pet with a Tamagotchi Heart',
+    'advancements.tamagotchi.pager.title': 'Beep Beep!',
+    'advancements.tamagotchi.pager.description': 'Get a Tama Pager to check on your pets',
+    'advancements.tamagotchi.all_pets.title': "Gotta Pet 'Em All",
+    'advancements.tamagotchi.all_pets.description': 'Tame all ten pets',
+})
 subs = os.path.join(REPO, 'tools/sfx/subtitles_en_us.json')
 if os.path.exists(subs):
     lang.update(json.load(open(subs)))

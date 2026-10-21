@@ -55,6 +55,7 @@ public class TamaEggItem extends Item {
         ItemStack egg = new ItemStack(ModItems.TAMA_EGG);
         egg.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
         egg.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(pet.species().id()), List.of()));
+        egg.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         return egg;
     }
 

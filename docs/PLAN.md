@@ -101,19 +101,19 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
 
 ## 7. Progress
 
-- [ ] 0 Project skeleton, toolchain, 26.3 API notes (`docs/api-notes.md`)
-- [ ] 1 Core entity + species + registration + spawn eggs + creative tab
-- [ ] 2 Art pipeline + 10 pet models/textures (review contact sheets)
-- [ ] 3 Renderer, animations, expressions, backpack model, emissive + held-item layers
-- [ ] 4 Interactions: tame, pet, feed, backpack add/remove/spill, sit/follow/wander, leash, snack pouch
-- [ ] 5 Needs, mood, bond, emotes, pager beeps
-- [ ] 6 Combat, retreat-and-eat, feed owner, faint → egg
-- [ ] 7 Pet screen (menu, screen, packets, GUI art)
-- [ ] 8 Items: toys, foods, brush, recipes, item art
-- [ ] 9 Blocks + block entities + wheel renderer + pet AI for blocks
-- [ ] 10 Talents (10)
-- [ ] 11 Reactions
-- [ ] 12 Structure spawning
-- [ ] 13 Sounds + particles
-- [ ] 14 Game tests + screenshot review + polish
-- [ ] 15 README, CurseForge text, changelog
+- [x] 0 Project skeleton, toolchain (Loom 1.17.21, Java 25; container needs `~/.gradle/init.d` mirror for Maven Central 429s)
+- [x] 1 Core entity + species + registration + spawn eggs + creative tab
+- [x] 2 Art pipeline (`tools/petart`) + 10 pet models/textures with 7 expressions
+- [x] 3 Renderer, procedural animator, expressions, glow + held-item layers, particles
+- [x] 4 Interactions: tame, pet, feed, backpack add/remove/spill, sit/follow/wander, leash, snack pouch
+- [x] 5 Needs, mood, bond, emotes, pager beeps
+- [x] 6 Combat (10 attack styles), retreat-and-eat, feed owner, faint → Tama Egg
+- [x] 7 Pet screen (menu, LCD-style screen, buttons via clickMenuButton)
+- [x] 8 Items, food, recipes, item art (subagent, `tools/sprites`)
+- [x] 9 Blocks + wheel renderer + pet AI for furniture (art by subagent)
+- [x] 10 Talents (10)
+- [x] 11 Reactions (jukebox, campfire, cake, flowers, owner eating, thunder, rain shake, fireworks, play dates, level-up)
+- [x] 12 Structure spawning (mixin on StructureStart.placeInChunk)
+- [x] 13 Sounds (subagent, `tools/sfx`) + particles
+- [ ] 14 In-game screenshot review (`runClientGameTest` under xvfb) + polish
+- [x] 15 README

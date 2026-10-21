@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "heart": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "tamagotchi:tamagotchi_heart"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.tamagotchi.root.title"
+    },
+    "description": {
+      "translate": "advancements.tamagotchi.root.description"
+    },
+    "icon": {
+      "id": "tamagotchi:tamagotchi_heart"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "background": "minecraft:gui/advancements/backgrounds/husbandry"
+  },
+  "requirements": [
+    [
+      "heart"
+    ]
+  ]
+}
