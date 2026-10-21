@@ -19,6 +19,7 @@ import block_models
 import block_tex
 import eggs
 import items
+import items3d
 import particles
 from pxl import ASSETS, DATA, OUT, save_png, vstack, write_json, write_mcmeta
 from render import load_model, render_model, textures_used
@@ -40,6 +41,8 @@ def build_items():
             "textures": {"layer0": f"{NS}:item/{name}"},
         })
         write_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
+    # tama_pager / laser_pointer: 2D sprite in the inventory, 3D cuboid model in hands, on the ground, in frames
+    items3d.build()
 
 
 def build_eggs():

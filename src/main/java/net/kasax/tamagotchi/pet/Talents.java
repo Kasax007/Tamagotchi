@@ -215,8 +215,7 @@ public final class Talents {
             BlockTags.COPPER_ORES, BlockItemTags.COAL_ORES.block());
 
     private static void oreSniffer(TamaPet pet, ServerLevel level, LivingEntity owner) {
-        if (pet.tickCount % 20 != 0 || !pet.talentReady() || !pet.moodAllowsTalent() || pet.distanceToSqr(owner) > 12 * 12
-                || level.canSeeSky(owner.blockPosition())) {
+        if (pet.tickCount % 20 != 0 || !pet.talentReady() || !pet.moodAllowsTalent() || pet.distanceToSqr(owner) > 12 * 12) {
             return;
         }
         BlockPos o = pet.blockPosition();
@@ -262,6 +261,8 @@ public final class Talents {
             level.sendParticles(ModParticles.SPARKLE, p.x, p.y, p.z, 1, 0.02, 0.02, 0.02, 0.0);
         }
         level.sendParticles(ParticleTypes.WAX_OFF, to.x, to.y, to.z, 12, 0.4, 0.4, 0.4, 0.0);
+        // the ore glows through the walls for twenty seconds
+        net.kasax.tamagotchi.world.OreMarkers.mark(level, best, level.getBlockState(best), 20 * 20, 0xFFE27A);
         level.playSound(null, pet.blockPosition(), ModSounds.TALENT_SNIFF, SoundSource.NEUTRAL, 1.0F, 1.0F);
         message(owner, "message.tamagotchi.talent.ore", pet, level.getBlockState(best).getBlock().getName());
     }

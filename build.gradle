@@ -11,6 +11,11 @@ base {
 }
 
 repositories {
+	// recipe viewers, only for the compatibility test runs (-PwithJei / -PwithRei)
+	exclusiveContent {
+		forRepository { maven { url = "https://api.modrinth.com/maven" } }
+		filter { includeGroup "maven.modrinth" }
+	}
 }
 
 fabricApi {
@@ -32,6 +37,21 @@ dependencies {
 	// No mappings line: Minecraft 26.x ships unobfuscated.
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// optional recipe-viewer plugins (src/main/java/.../compat); only compiled against, never bundled
+	compileOnly "maven.modrinth:jei:31.16.0.87"
+	compileOnly "maven.modrinth:rei:26.3.824+fabric"
+	compileOnly "maven.modrinth:architectury-api:22.0.5+fabric"
+
+	// ./gradlew runClientGameTest -PwithJei (or -PwithRei) loads the recipe viewer next to the mod
+	if (project.hasProperty("withJei")) {
+		localRuntime "maven.modrinth:jei:31.16.0.87"
+	}
+	if (project.hasProperty("withRei")) {
+		localRuntime "maven.modrinth:rei:26.3.824+fabric"
+		localRuntime "maven.modrinth:architectury-api:22.0.5+fabric"
+		localRuntime "maven.modrinth:cloth-config:26.3.159+fabric"
+	}
 }
 
 processResources {

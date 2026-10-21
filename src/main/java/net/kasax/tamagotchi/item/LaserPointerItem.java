@@ -45,6 +45,8 @@ public class LaserPointerItem extends TooltipItem {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         player.startUsingItem(hand);
+        // one click when the laser switches on, no repeats while it is held
+        level.playSound(null, player.blockPosition(), ModSounds.TOY_LASER, SoundSource.PLAYERS, 0.3F, 1.0F);
         return InteractionResult.CONSUME;
     }
 
@@ -73,9 +75,6 @@ public class LaserPointerItem extends TooltipItem {
         Vec3 p = hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i()).scale(0.04));
         DOTS.put(user.getUUID(), new Dot(p, level.getGameTime(), level.dimension()));
         server.sendParticles(ModParticles.LASER_DOT, p.x, p.y, p.z, 1, 0, 0, 0, 0);
-        if (ticksRemaining % 30 == 0) {
-            server.playSound(null, user.blockPosition(), ModSounds.TOY_LASER, SoundSource.PLAYERS, 0.25F, 1.0F);
-        }
     }
 
     @Override

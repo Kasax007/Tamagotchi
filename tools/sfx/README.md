@@ -16,10 +16,10 @@ Notes: custom files are peak-normalized to about -3 dBFS; per-variant `volume` i
 
 ### Desert Dragon
 
-- `desert_dragon.ambient` - Warm baby-dragon chirp: a rolled little growl flips into a rising chirp, or a long soft growl with a tiny squeak; plus pitched-up vanilla strider idles. (custom: ambient1, ambient2; vanilla: mob/strider/idle2 x1.35, mob/strider/idle3 x1.3)
-- `desert_dragon.happy` - 'Chi-chi-chirrup!': two quick chirps and a trilling one, or a purr that ends in a mew; plus pitched-up strider coos. (custom: happy1, happy2; vanilla: mob/strider/happy1 x1.3, mob/strider/happy5 x1.3)
-- `desert_dragon.hurt` - Short 'kyeh!' squeal with a raspy edge; plus pitched-up strider hurt cries. (custom: hurt1; vanilla: mob/strider/hurt2 x1.35, mob/strider/hurt1 x1.3)
-- `desert_dragon.death` - Long falling whine that turns into a growl and fades; plus pitched-up strider death cries. (custom: death1; vanilla: mob/strider/death2 x1.3, mob/strider/death4 x1.3)
+- `desert_dragon.ambient` - Warm baby-dragon chirp: a rolled little growl flips into a rising chirp, a long soft growl with a tiny squeak, a soft 'pi-pip', or a tonal 'mrr-eep'. (custom: ambient1, ambient2, ambient3, ambient4)
+- `desert_dragon.happy` - 'Chi-chi-chirrup!': two quick chirps and a trilling one, a gentle purr that ends in a mew, rising 'pi-pi-piiii!' peeps, or a swinging 'wee-oo-wee' warble. (custom: happy1, happy2, happy3, happy4)
+- `desert_dragon.hurt` - Short 'kyeh!' squeal with a raspy edge, a sliding 'eep!', or two falling 'yip-ip' squeaks. (custom: hurt1, hurt2, hurt3)
+- `desert_dragon.death` - Long falling whine that turns into a growl, or slowing falling peeps that sink into a coo. (custom: death1, death2)
 - `desert_dragon.attack` - Small fire puff: breathy 'fwoof', a warm thump and a few ember sparks (two takes). (custom: attack1, attack2)
 
 ### Jungle Dragon
@@ -72,7 +72,7 @@ Notes: custom files are peak-normalized to about -3 dBFS; per-variant `volume` i
 
 ### Pebble Golem
 
-- `pebble_golem.ambient` - Low, nosy 'hmmm?' over a faint rumble and two pebble ticks, or pebbles clicking around a sleepy 'mm'; plus a deep vanilla villager 'hmm' and a sniffer rumble. (custom: ambient1, ambient2; vanilla: mob/villager/idle1 x0.75, mob/sniffer/happy3 x1.3)
+- `pebble_golem.ambient` - Low, nosy 'hmmm?' over a faint rumble and two pebble ticks, pebbles clicking around a sleepy 'mm', or a little shuffle of pebbles and hollow stone knocks; plus a sniffer rumble. (custom: ambient1, ambient2, ambient3; vanilla: mob/sniffer/happy3 x1.3)
 - `pebble_golem.happy` - 'Hm-HM!' with a tinkle of pebbles; plus pitched-up sniffer purrs. (custom: happy1; vanilla: mob/sniffer/happy2 x1.4, mob/sniffer/happy4 x1.4)
 - `pebble_golem.hurt` - 'Oof!' grunt with a stone clack and a few falling pebbles; plus vanilla armadillo and copper-golem grunts. (custom: hurt1; vanilla: mob/armadillo/hurt4, mob/armadillo/hurt5, mob/coppergolem/regular/hurt3)
 - `pebble_golem.death` - Sinking hum, crumbling rubble and one last soft thud; plus vanilla armadillo moans. (custom: death1; vanilla: mob/armadillo/death3 x1.2, mob/armadillo/death4 x1.2)
@@ -109,7 +109,7 @@ Notes: custom files are peak-normalized to about -3 dBFS; per-variant `volume` i
 
 ### Shared pet sounds
 
-- `pet.petting` - Contented purr with a soft coo on top, or a two-note dove-like coo and a purr tail. (custom: petting1, petting2)
+- `pet.petting` - Soft, clearly tonal sounds (no purr noise, so they stay cute when pitched down for dragons): a happy rolling trill that ends in a chirp with a tiny sparkle, or two round 'coo-coo' notes with a bell sparkle. (custom: petting1, petting2)
 - `pet.eat` - Nom-nom-nom: three soft chews, or four quick chews and a gulp; plus pitched-up vanilla eating bites. (custom: eat1, eat2; vanilla: random/eat3 x1.3, random/eat1 x1.3)
 - `pet.yawn` - Big breathy 'aaah-hm' with a little squeak, or a shorter yawn ending in a rising squeak. (custom: yawn1, yawn2)
 - `pet.snore` - Tiny snore: a rattly 'hnnk' in, a soft 'fwooo' out (second take adds a little whistle). (custom: snore1, snore2)
@@ -127,7 +127,7 @@ Notes: custom files are peak-normalized to about -3 dBFS; per-variant `volume` i
 - `pager.beep` - Authentic virtual-pet piezo square-wave beeps: double beep twice, a rising 'bee-bee-beep', or a low 'bip-bip'. (custom: beep1, beep2, beep3)
 - `pager.open` - Short square-wave UI 'bleep-bloop' (or 'bloop-bleep'). (custom: open1, open2)
 - `toy.squeak` - Rubbery squeaky-toy squeak, or a lower double 'ee-eek'. (custom: squeak1, squeak2)
-- `toy.laser` - Soft electronic 'zip' into a gentle humming tone (long and short). (custom: laser1, laser2)
+- `toy.laser` - A very short soft electronic 'bip' (double bip about 0.14 s, single bip 0.10 s), meant to play once when pointing starts. (custom: laser1, laser2)
 - `toy.feather` - Soft airy swish with a faint flutter (up-and-over, and back). (custom: feather1, feather2)
 
 ### Blocks and items

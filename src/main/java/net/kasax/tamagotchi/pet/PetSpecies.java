@@ -126,6 +126,9 @@ public enum PetSpecies {
     public boolean fireImmune() { return this.props.fireImmune; }
     public boolean waterBreathing() { return this.props.waterBreathing; }
     public boolean flying() { return this.props.flying; }
+
+    /** The dragons: they fly when it is faster or when they feel like it. */
+    public boolean winged() { return this == DESERT_DRAGON || this == JUNGLE_DRAGON || this == TIDE_DRAGON; }
     /** The mimic carries 27 slots in its belly even without a backpack. */
     public boolean hasBelly() { return this.props.belly; }
     public List<String> names() { return this.props.names; }

@@ -44,24 +44,28 @@ public class RunningWheelRenderer implements BlockEntityRenderer<RunningWheelBlo
         this.wheel = ctx.bakeLayer(LAYER);
     }
 
-    /** A 14 px wheel: twelve rim slats around the X axis, four spokes and a hub. */
+    /** Axle height in pixels (matches the stand in the block model). */
+    public static final float HUB_Y = 12F;
+
+    /**
+     * A big hamster wheel (radius 11 px) around the local Z axis, which points to the open front: eighteen rim
+     * slats, eight spokes on the back only so you can see the pet inside, and a short axle into the stand.
+     */
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        for (int i = 0; i < 12; i++) {
-            float a = i * Mth.TWO_PI / 12F;
-            root.addOrReplaceChild("slat" + i, CubeListBuilder.create().texOffs(0, 0).addBox(-5, 6, -2, 10, 1, 4),
-                    PartPose.offsetAndRotation(0, 0, 0, a, 0, 0));
+        for (int i = 0; i < 18; i++) {
+            float a = i * Mth.TWO_PI / 18F;
+            root.addOrReplaceChild("slat" + i, CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, 10, -6, 3, 1, 12),
+                    PartPose.offsetAndRotation(0, 0, 0, 0, 0, a));
         }
-        for (int i = 0; i < 4; i++) {
-            float a = i * Mth.PI / 4F;
-            root.addOrReplaceChild("spoke" + i, CubeListBuilder.create().texOffs(0, 6).addBox(-0.5F, -6, -0.5F, 1, 12, 1),
-                    PartPose.offsetAndRotation(-4.6F, 0, 0, a, 0, 0));
-            root.addOrReplaceChild("spoke_b" + i, CubeListBuilder.create().texOffs(0, 6).addBox(-0.5F, -6, -0.5F, 1, 12, 1),
-                    PartPose.offsetAndRotation(4.6F, 0, 0, a, 0, 0));
+        for (int i = 0; i < 8; i++) {
+            float a = i * Mth.TWO_PI / 8F;
+            root.addOrReplaceChild("spoke" + i, CubeListBuilder.create().texOffs(32, 0).addBox(-0.5F, 0, -0.5F, 1, 10, 1),
+                    PartPose.offsetAndRotation(0, 0, -5.5F, 0, 0, a));
         }
-        root.addOrReplaceChild("hub", CubeListBuilder.create().texOffs(8, 6).addBox(-6, -1, -1, 12, 2, 2), PartPose.ZERO);
-        return LayerDefinition.create(mesh, 32, 16);
+        root.addOrReplaceChild("hub", CubeListBuilder.create().texOffs(40, 0).addBox(-1.5F, -1.5F, -7, 3, 3, 2), PartPose.ZERO);
+        return LayerDefinition.create(mesh, 64, 32);
     }
 
     @Override
@@ -88,9 +92,9 @@ public class RunningWheelRenderer implements BlockEntityRenderer<RunningWheelBlo
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.rotateDegrees(Axis.YP, 180 - state.facing.toYRot());
-        poseStack.rotate(Axis.XP, state.angle);
+        poseStack.translate(0.5F, HUB_Y / 16F, 0.5F);
+        poseStack.rotateDegrees(Axis.YP, -state.facing.toYRot());   // local +Z = the open front
+        poseStack.rotate(Axis.ZP, state.angle);
         collector.submitModelPart(this.wheel, poseStack, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         poseStack.popPose();
     }

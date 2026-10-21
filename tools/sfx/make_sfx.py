@@ -845,7 +845,7 @@ def _(r):  # "chi-chi-chirrup!": two quick chirps, then a trilling one
 def _(r):  # purr into a little "mew"
     m = Mix()
     m.add(syl(r, 0.4, [(0, 190), (0.2, 225), (0.4, 205)], [(0, 'uh'), (0.4, 'o')], tilt=1.0, vibrato=None,
-              amp=[(0, 0), (0.1, 0.7), (0.3, 0.8), (0.4, 0)], rough=(29, 0.85), breath=0.08), 0.0, 0.8)
+              amp=[(0, 0), (0.1, 0.7), (0.3, 0.8), (0.4, 0)], rough=(29, 0.45), breath=0.02), 0.0, 0.6)
     m.add(syl(r, 0.3, [(0, 780), (0.09, 1150), (0.3, 880)], [(0, 'm'), (0.05, 'e'), (0.3, 'a')],
               vibrato=(6.5, 28, 0.12), amp=[(0, 0), (0.02, 1), (0.22, 0.85), (0.3, 0)]), 0.3, 1.0)
     return m.x
@@ -862,6 +862,77 @@ def _(r):  # long falling whine that turns into a growl and fades
     return syl(r, 0.95, [(0, 1100), (0.2, 980), (0.55, 720), (0.95, 430)], [(0, 'a'), (0.5, 'o'), (0.95, 'u')],
                vibrato=(6, 38, 0.25), rough=(40, [(0, 0.0), (0.4, 0.1), (0.95, 0.55)]),
                amp=[(0, 0), (0.03, 1), (0.6, 0.8), (0.95, 0)], breath=0.08)
+
+
+def dpeep(r, dur, f_pts, vibrato=None, amp=None, h=(1.0, 0.2, 0.06)):
+    """Warm little-dragon peep: a soft, nearly pure tone (a touch of 2nd/3rd harmonic), never noisy."""
+    return whistle(dur, f_pts, r, h=h, vibrato=vibrato, amp=amp, a=0.008, rel=0.03)
+
+
+@sfx('desert_dragon/ambient3')
+def _(r):  # "pi-pip": two soft peeps, the second one a little higher
+    m = Mix()
+    m.add(dpeep(r, 0.09, [(0, 1050), (0.035, 1450), (0.09, 1350)]), 0.0, 0.9)
+    m.add(dpeep(r, 0.11, [(0, 1150), (0.04, 1650), (0.11, 1500)], vibrato=(12, 40, 0.04)), 0.14, 1.0)
+    return m.x
+
+
+@sfx('desert_dragon/ambient4')
+def _(r):  # "mrr-eep": a soft tonal coo that tips up into a peep
+    m = Mix()
+    m.add(syl(r, 0.24, [(0, 190), (0.1, 235), (0.24, 250)], [(0, 'uh'), (0.24, 'o')], tilt=1.3, vibrato=(5, 18, 0.05),
+              amp=[(0, 0), (0.04, 0.9), (0.18, 0.85), (0.24, 0)]), 0.0, 0.7)
+    m.add(dpeep(r, 0.2, [(0, 900), (0.07, 1500), (0.2, 1300)], vibrato=(9, 45, 0.06),
+                amp=[(0, 0), (0.012, 1), (0.14, 0.85), (0.2, 0)]), 0.2, 1.0)
+    return m.x
+
+
+@sfx('desert_dragon/happy3')
+def _(r):  # "pi-pi-piiii!": three rising peeps, the last one sings
+    m = Mix()
+    m.add(dpeep(r, 0.08, [(0, 950), (0.03, 1250), (0.08, 1200)]), 0.0, 0.85)
+    m.add(dpeep(r, 0.08, [(0, 1100), (0.03, 1450), (0.08, 1400)]), 0.12, 0.92)
+    m.add(dpeep(r, 0.34, [(0, 1250), (0.1, 1900), (0.22, 1750), (0.34, 1500)], vibrato=(8, 60, 0.08),
+                amp=[(0, 0), (0.012, 1), (0.24, 0.85), (0.34, 0)]), 0.25, 1.0)
+    m.add(rl(sparkle(0.25, r, 4, 3500, 6500, True, 1.0), -22), 0.4)
+    return m.x
+
+
+@sfx('desert_dragon/happy4')
+def _(r):  # "wee-oo-wee": a gentle warble that swings up and down
+    m = Mix()
+    m.add(dpeep(r, 0.42, [(0, 950), (0.12, 1550), (0.24, 1150), (0.34, 1650), (0.42, 1400)], vibrato=(7, 35, 0.05),
+                amp=[(0, 0), (0.015, 1), (0.3, 0.9), (0.42, 0)]), 0.0, 1.0)
+    m.add(syl(r, 0.34, [(0, 300), (0.14, 360), (0.34, 320)], [(0, 'oo'), (0.34, 'o')], tilt=1.5, vibrato=(5, 20, 0.1),
+              amp=[(0, 0), (0.06, 1), (0.24, 0.8), (0.34, 0)]), 0.0, 0.3)
+    return m.x
+
+
+@sfx('desert_dragon/hurt2')
+def _(r):  # "eep!": one quick sliding peep
+    return dpeep(r, 0.18, [(0, 1100), (0.03, 1900), (0.18, 1000)], vibrato=(16, 50, 0.02),
+                 amp=[(0, 0), (0.006, 1), (0.1, 0.9), (0.18, 0)], h=(1.0, 0.3, 0.1))
+
+
+@sfx('desert_dragon/hurt3')
+def _(r):  # "yip-ip": two falling squeaks
+    m = Mix()
+    m.add(dpeep(r, 0.11, [(0, 1700), (0.11, 1000)], h=(1.0, 0.3, 0.1)), 0.0, 1.0)
+    m.add(dpeep(r, 0.13, [(0, 1500), (0.13, 800)], h=(1.0, 0.3, 0.1)), 0.14, 0.85)
+    return m.x
+
+
+@sfx('desert_dragon/death2')
+def _(r):  # a little falling "pi-pi-pii-oo" that slows down and sinks
+    m = Mix()
+    t = 0.0
+    for i, f in enumerate([1700, 1450, 1150, 900]):
+        d = 0.09 + 0.03 * i
+        m.add(dpeep(r, d, [(0, f * 1.06), (d, f * 0.95)], vibrato=(7, 30, 0.0)), t, 1.0 - 0.12 * i)
+        t += d + 0.05 + 0.02 * i
+    m.add(syl(r, 0.4, [(0, 330), (0.4, 190)], [(0, 'o'), (0.4, 'u')], tilt=1.5, vibrato=(5, 25, 0.1),
+              amp=[(0, 0), (0.08, 1), (0.28, 0.7), (0.4, 0)]), t - 0.1, 0.35)
+    return m.x
 
 
 @sfx('desert_dragon/attack1')
@@ -1372,16 +1443,17 @@ def ender_shimmer(r, dur, f=2300.0, glide=0.0):
     return y * swell(dur, 0.35, 1.3)
 
 
-def purr(r, dur, rate=26.0, f_lo=1100.0):
-    """A soft purr: low-passed noise chopped at ~26 Hz plus a faint pulsing voice."""
+def purr(r, dur, rate=24.0, f_lo=900.0):
+    """A very soft, high purr: a mostly tonal pulsing voice with just a whisper of low-passed noise.
+    (Levelled by callers with rl(), so the gentleness is in the character: no low rattle, little noise.)"""
     n = N(dur)
-    nz = lp(white(n, r), f_lo, 2)
+    nz = bp(white(n, r), 350.0, f_lo, 2)
     rt = rate * drift(n, r, 0.04, 3.0)
-    pulse = (0.5 + 0.5 * np.cos(phase(rt))) ** 3
-    y = rl(nz * (0.15 + 0.85 * pulse), 0.0)
-    v = syl(r, dur, [(0, 105), (dur, 98)], [(0, 'uh'), (dur, 'o')], tilt=1.2, vibrato=None, rough=(rate, 0.9),
-            amp=[(0, 0), (dur * 0.2, 1), (dur * 0.8, 1), (dur, 0)])
-    return (y + 0.8 * rl(v, 0.0)) * swell(dur, 0.35, 1.0)
+    pulse = (0.5 + 0.5 * np.cos(phase(rt))) ** 2
+    y = rl(nz * (0.3 + 0.7 * pulse), 0.0)
+    v = syl(r, dur, [(0, 185), (dur, 170)], [(0, 'uh'), (dur, 'o')], tilt=1.5, vibrato=(4.5, 12, 0.1), rough=(rate, 0.45),
+            amp=[(0, 0), (dur * 0.25, 1), (dur * 0.75, 1), (dur, 0)])
+    return (0.25 * y + rl(v, 0.0)) * swell(dur, 0.4, 1.0)
 
 
 @sfx('void_kitten/ambient1')
@@ -1405,7 +1477,7 @@ def _(r):  # a short questioning "mrp?"
 @sfx('void_kitten/happy1')
 def _(r):  # purr with a happy "mrrp!" on top
     m = Mix()
-    m.add(rl(purr(r, 0.6), -4), 0.0)
+    m.add(rl(purr(r, 0.6), -9), 0.0)
     m.add(meow(r, 0.22, [(0, 700), (0.07, 1000), (0.22, 850)], [(0, 'm'), (0.05, 'e'), (0.22, 'a')], amp=[(0, 0), (0.015, 1), (0.15, 0.85), (0.22, 0)]), 0.12, 1.0)
     m.add(rl(ender_shimmer(r, 0.5, 2500.0, 0.1), -19), 0.15)
     return reverb(m.x, 0.5, 0.15)
@@ -1497,6 +1569,17 @@ def _(r):  # pebbles clicking around a deep, sleepy "mm"
         m.add(stone_tick(r, None, r.uniform(-9, -4)), t0)
     m.add(hmm(r, 0.65, [(0, 125), (0.3, 118), (0.65, 110)], [(0, 'm'), (0.4, 'o'), (0.65, 'm')], amp=[(0, 0), (0.1, 1), (0.45, 0.8), (0.65, 0)]), 0.0, 0.7)
     m.add(rl(rumble(r, 0.65, 130), -10), 0.0)
+    return m.x
+
+
+@sfx('pebble_golem/ambient3')
+def _(r):  # "tk-tok-tk-tk": a little shuffle of pebbles and two hollow stone knocks over a faint rumble
+    m = Mix()
+    for t0, f, lv, sz in [(0.0, 900, -5, 1.2), (0.09, 1400, -8, 1.0), (0.31, 1100, -9, 1.0), (0.42, 820, -7, 1.2), (0.5, 1550, -12, 0.9)]:
+        m.add(stone_tick(r, f, lv, sz), t0)
+    m.add(pl(modes(0.14, [(250, 1.0, 0.035), (590, 0.45, 0.016), (1020, 0.2, 0.008)], r, click=0.25), -3), 0.18)
+    m.add(pl(modes(0.12, [(310, 1.0, 0.03), (700, 0.4, 0.014)], r, click=0.25), -5), 0.25)
+    m.add(rl(rumble(r, 0.62, 120, (9, 0.6)), -16), 0.0)
     return m.x
 
 
@@ -1901,23 +1984,31 @@ def _(r):  # a little "ehm-hm" cough, then coins clinking
 # ---------------------------------------------------------------------------------------------------
 
 
+def soft_note(r, dur, f_pts, vibrato=(5.5, 22, 0.1), amp=None, h=(1.0, 0.12, 0.03)):
+    """Round, clearly tonal petting note (sine + a trace of overtones, no noise)."""
+    return whistle(dur, f_pts, r, h=h, vibrato=vibrato, amp=amp, a=0.015, rel=0.06)
+
+
 @sfx('pet/petting1')
-def _(r):  # a contented purr with a soft coo on top
+def _(r):  # "mm-hee-ip": a happy little trill that rolls up into a soft chirp, with a tiny sparkle
     m = Mix()
-    m.add(rl(purr(r, 0.95), -3))
-    m.add(coo(r, 0.5, [(0, 380), (0.18, 460), (0.5, 400)], [(0, 'u'), (0.2, 'o'), (0.5, 'u')], breath=0.12, vibrato=(5.5, 22, 0.1),
-              amp=[(0, 0), (0.1, 1), (0.35, 0.85), (0.5, 0)]), 0.05, 0.8)
+    m.add(soft_note(r, 0.55, [(0, 640), (0.1, 760), (0.3, 860), (0.55, 760)], vibrato=(11, 55, 0.12),
+                    amp=[(0, 0), (0.06, 0.85), (0.38, 1), (0.55, 0)]), 0.0, 1.0)
+    m.add(soft_note(r, 0.2, [(0, 1120), (0.08, 1500), (0.2, 1380)], vibrato=(7, 20, 0.0),
+                    amp=[(0, 0), (0.02, 1), (0.13, 0.8), (0.2, 0)]), 0.36, 0.5)
+    m.add(rl(sparkle(0.3, r, 4, 3000, 5200, True, 1.0), -22), 0.5)
     return m.x
 
 
 @sfx('pet/petting2')
-def _(r):  # a two-note dove-like coo and a purr tail
+def _(r):  # "coo-coo~": two soft, bell-round notes and a gentle sparkle
     m = Mix()
-    m.add(coo(r, 0.26, [(0, 420), (0.1, 540), (0.26, 500)], [(0, 'u'), (0.26, 'o')], breath=0.1, vibrato=(6, 20, 0.05),
-              amp=[(0, 0), (0.04, 1), (0.18, 0.85), (0.26, 0)]), 0.0)
-    m.add(coo(r, 0.34, [(0, 470), (0.12, 560), (0.34, 430)], [(0, 'u'), (0.34, 'o')], breath=0.1, vibrato=(6, 20, 0.05),
-              amp=[(0, 0), (0.05, 1), (0.22, 0.85), (0.34, 0)]), 0.3)
-    m.add(rl(purr(r, 0.4), -9), 0.55)
+    m.add(soft_note(r, 0.3, [(0, 560), (0.1, 700), (0.3, 660)], vibrato=(5.5, 18, 0.08),
+                    amp=[(0, 0), (0.05, 1), (0.2, 0.85), (0.3, 0)]), 0.0, 1.0)
+    m.add(soft_note(r, 0.42, [(0, 640), (0.12, 820), (0.42, 700)], vibrato=(6, 22, 0.1),
+                    amp=[(0, 0), (0.06, 1), (0.28, 0.85), (0.42, 0)]), 0.33, 1.0)
+    m.add(pl(bell(1750, 0.3, 0.6, 0.1, 'soft'), -16), 0.52)
+    m.add(pl(bell(2300, 0.3, 0.6, 0.1, 'soft'), -19), 0.62)
     return m.x
 
 
@@ -2261,28 +2352,24 @@ def _(r):  # a lower double squeak, "ee-eek"
     return m.x
 
 
-@sfx('toy/laser1')
-def _(r):  # soft electronic "zip" into a gentle hum
+def bip(f, dur):
+    """A soft, short electronic "bip": a round sine with a hint of 2nd harmonic and a quick fade."""
+    t = T(dur)
+    y = np.sin(TAU * f * t) + 0.22 * np.sin(TAU * 2 * f * t)
+    return y * tone_env(dur, 0.004, 0.025)
+
+
+@sfx('toy/laser1', peak=-5.0)
+def _(r):  # a soft double "bip-bip" (about a tenth of a second each)
     m = Mix()
-    zf = curve([(0, 350), (0.12, 2200)], 0.14, log=True)
-    m.add(fm(zf, 2.0, curve([(0, 1.2), (0.14, 0.0)], 0.14)) * tone_env(0.14, 0.01, 0.03), 0.0, 0.8)
-    d = 0.5
-    t = T(d)
-    hum = (np.sin(TAU * 440 * t) + 0.3 * np.sin(TAU * 880 * t) + 0.1 * np.sin(TAU * 1320 * t)) * (0.8 + 0.2 * np.sin(TAU * 7 * t))
-    m.add(lp(hum, 3500, 2) * adsr(d, 0.04, 0.05, 0.7, 0.25), 0.1, 0.5)
+    m.add(bip(1900, 0.055), 0.0, 0.9)
+    m.add(bip(2500, 0.065), 0.075, 1.0)
     return m.x
 
 
-@sfx('toy/laser2')
-def _(r):  # a shorter, higher zip
-    m = Mix()
-    zf = curve([(0, 500), (0.09, 2800)], 0.11, log=True)
-    m.add(fm(zf, 2.0, curve([(0, 1.0), (0.11, 0.0)], 0.11)) * tone_env(0.11, 0.008, 0.03), 0.0, 0.8)
-    d = 0.3
-    t = T(d)
-    hum = (np.sin(TAU * 660 * t) + 0.3 * np.sin(TAU * 1320 * t)) * (0.8 + 0.2 * np.sin(TAU * 8 * t))
-    m.add(lp(hum, 3500, 2) * adsr(d, 0.03, 0.04, 0.7, 0.18), 0.08, 0.45)
-    return m.x
+@sfx('toy/laser2', peak=-5.0)
+def _(r):  # one short, slightly lower "bip"
+    return bip(1700, 0.1)
 
 
 @sfx('toy/feather1')

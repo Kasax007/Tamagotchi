@@ -19,6 +19,7 @@ BOUNDS = {
     "pet_bath": ((1, 0, 1), (15, 10, 15)),
     "bouncy_mushroom": ((0, 0, 0), (16, 10, 16)),
     "running_wheel": ((0, 0, 0), (16, 16, 16)),
+    "running_wheel_item": ((-3, 0, 0), (19, 24, 16)),
     "scratching_post": ((2, 0, 2), (14, 16, 14)),
     "pet_house": ((0, 0, 0), (16, 16, 16)),
 }
@@ -216,48 +217,43 @@ def bouncy_mushroom(squished):
 
 
 # ======================================================================================
-# 7. running_wheel  (stand only, facing = north)
+# 7. running_wheel  (stand only, facing = north: the open side of the wheel faces north, the stand is behind it)
 # ======================================================================================
-def wheel_post_cells():
-    c = set()
-    for y in range(6, 10):                                         # hub plate (cells in (z, y))
-        for z in range(6, 10):
-            if y == 9 and z in (6, 9):
-                continue
-            c.add((z, y))
-    legs = {5: (5, 7), 4: (4, 6), 3: (4, 6), 2: (3, 5), 1: (2, 4)}
-    for y, (a, b) in legs.items():
-        for z in range(a, b + 1):
-            c.add((z, y))
-            c.add((15 - z, y))
-    for z in (7, 8):
-        c.add((z, 3))
-    for z in range(6, 10):
-        c.add((z, 2))
-    return c
+WHEEL_HUB_Y = 12          # axle height in px; the block entity draws an 11 px radius wheel around it
+CU = {d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")}
 
 
 def running_wheel(name="running_wheel", rim=False):
     m = new(name, dict(wood="running_wheel_wood", copper="running_wheel_copper"), "wood")
-    m.box((0, 0, 0), (16, 1, 16), all="wood")
-    cells = wheel_post_cells()
-    for (z0, y0, z1, y1) in merge_rects(cells):
-        for (xa, xb) in ((1, 3), (13, 15)):
-            m.box((xa, y0, z0), (xb, y1, z1), all="wood")
-    m.box((0, 7, 7), (1, 9, 9), all="copper", uv={d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")})
-    m.box((15, 7, 7), (16, 9, 9), all="copper", uv={d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")})
+    # base frame
+    m.box((1, 0, 1), (15, 1, 3), all="wood")
+    m.box((1, 0, 13), (15, 1, 15), all="wood")
+    m.box((1, 0, 3), (3, 1, 13), all="wood")
+    m.box((13, 0, 3), (15, 1, 13), all="wood")
+    # A-frame behind the wheel, up to the axle
+    for y in range(1, WHEEL_HUB_Y):
+        lx = 2 + (y - 1) * 5 // (WHEEL_HUB_Y - 1)
+        m.box((lx, y, 14), (lx + 2, y + 1, 16), all="wood")
+        m.box((14 - lx, y, 14), (16 - lx, y + 1, 16), all="wood")
+    m.box((6, WHEEL_HUB_Y - 2, 14), (10, WHEEL_HUB_Y + 2, 16), all="wood")
+    m.box((7, WHEEL_HUB_Y - 1, 13), (9, WHEEL_HUB_Y + 1, 14), all="copper", uv=CU)
     if rim:
-        # the block entity spins the real wheel; the item gets a still one: eight rim slats, spokes and the axle
-        top, bottom = ((3, 14, 6), (13, 15, 10)), ((3, 1, 6), (13, 2, 10))
-        for frm, to in (top, bottom, ((3, 6, 14), (13, 10, 15)), ((3, 6, 1), (13, 10, 2))):
-            m.box(frm, to, all="wood")
-        for angle in (45, -45):
-            for frm, to in (top, bottom):
-                m.box(frm, to, all="wood", rotation={"angle": angle, "axis": "x", "origin": [8, 8, 8]})
-        for x in (3.5, 11.5):
-            m.box((x, 2, 7.5), (x + 1, 14, 8.5), all="wood")
-            m.box((x, 7.5, 2), (x + 1, 8.5, 14), all="wood")
-        m.box((3, 7, 7), (13, 9, 9), all="copper", uv={d: (0, 0, 2, 2) for d in ("north", "south", "east", "west", "up", "down")})
+        # the block entity spins the real wheel; the item gets a still one: 16 rim slats, back spokes
+        c = WHEEL_HUB_Y
+        top, bottom = ((6.5, c + 10, 2), (9.5, c + 11, 13)), ((6.5, c - 11, 2), (9.5, c - 10, 13))
+        side_l, side_r = ((-3, c - 1.5, 2), (-2, c + 1.5, 13)), ((18, c - 1.5, 2), (19, c + 1.5, 13))
+        rot = lambda a: {"angle": a, "axis": "z", "origin": [8, c, 8]}
+        for frm, to in (top, bottom):
+            for a in (-45, -22.5, 0, 22.5, 45):
+                m.box(frm, to, all="wood", rotation=rot(a) if a else None)
+        for frm, to in (side_l, side_r):
+            for a in (-22.5, 0, 22.5):
+                m.box(frm, to, all="wood", rotation=rot(a) if a else None)
+        spoke_v, spoke_h = ((7.5, c - 10, 12), (8.5, c + 10, 13)), ((-2, c - 0.5, 12), (18, c + 0.5, 13))
+        m.box(*spoke_v, all="wood")
+        m.box(*spoke_h, all="wood")
+        m.box(*spoke_v, all="wood", rotation=rot(45))
+        m.box(*spoke_v, all="wood", rotation=rot(-45))
 
 
 # ======================================================================================
@@ -372,7 +368,7 @@ def build_models():
     pet_house()
     # bounds check (models must stay inside the collision bounds)
     for name, m in MODELS.items():
-        base = name.replace("_fill1", "").replace("_fill2", "").replace("_fill3", "").replace("_filled", "").replace("_squished", "").replace("_item", "")
+        base = name.replace("_fill1", "").replace("_fill2", "").replace("_fill3", "").replace("_filled", "").replace("_squished", "")
         lo, hi = BOUNDS[base]
         mn, mx = m.bounds()
         assert all(mn[i] >= lo[i] for i in range(3)) and all(mx[i] <= hi[i] for i in range(3)), (name, mn, mx, lo, hi)

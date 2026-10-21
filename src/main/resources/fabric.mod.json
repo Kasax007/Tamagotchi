@@ -19,6 +19,12 @@
     ],
     "client": [
       "net.kasax.tamagotchi.client.TamagotchiClient"
+    ],
+    "jei_mod_plugin": [
+      "net.kasax.tamagotchi.compat.JeiCompat"
+    ],
+    "rei_client": [
+      "net.kasax.tamagotchi.compat.ReiCompat"
     ]
   },
   "depends": {

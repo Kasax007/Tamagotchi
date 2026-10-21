@@ -119,3 +119,18 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
       poses, wheel runner faces across the axle, bigger portrait on the pet screen; functional checks (tame, backpack
       on/spill, snack pouch, faint → egg, wild pets in placed structures) log `[TamaTest] PASS/FAIL`
 - [x] 15 README
+
+### Round 2 (user feedback)
+
+- [x] CurseForge page with graphics + BisectHosting banner (`docs/curseforge/`)
+- [x] Tamacon: craftable in-game guide (`TamaconScreen`, text in `tools/data/gen_data.py`)
+- [x] Controls: sneak + right-click opens the pet screen; shears take the backpack off; the pager toggles stay/follow
+- [x] Golden apples live in the backpack; the pet feeds a hurt owner from it; no more spin when given one
+- [x] Dragons fly (to catch up, onto ledges, or for fun), no fall damage
+- [x] Laser pointer clicks once; Ember Pup swims fast in lava; the wisp never sets off sculk sensors
+- [x] No villager / strider sounds; softer petting sound (no "lawnmower" purr)
+- [x] Ore Sniffer: the ore glows through walls (block display marker, 20 s)
+- [x] Running wheel: big open hamster wheel, the pet runs inside it across the axle
+- [x] JEI + REI plugins (info pages), checked in-game with `-PwithJei` / `-PwithRei`
+- [x] 3D models in hand for the Tama Pager and Laser Pointer
+- [x] Natural world generation check: jungle temple, ocean monument and desert pyramid all get their pet

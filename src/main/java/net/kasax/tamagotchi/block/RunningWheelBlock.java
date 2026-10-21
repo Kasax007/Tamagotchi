@@ -33,9 +33,8 @@ public class RunningWheelBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty RUNNING = BooleanProperty.create("running");
     private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Shapes.or(
-            Block.box(0, 0, 1, 16, 1, 15),
-            Block.box(1, 1, 6, 3, 10, 10),
-            Block.box(13, 1, 6, 15, 10, 10)));
+            Block.box(1, 0, 1, 15, 1, 15),
+            Block.box(2, 1, 14, 14, 14, 16)));
 
     public RunningWheelBlock(Properties properties) {
         super(properties);

@@ -105,30 +105,26 @@ def icons():
 
 
 def wheel():
-    """32x16 texture for RunningWheelRenderer: slat box at (0,0) 10x1x4, spoke at (0,6) 1x12x1, hub at (8,6) 12x2x2."""
-    img = Image.new('RGBA', (32, 16), (0, 0, 0, 0))
-    light, base, dark, deep = (226, 190, 128), (201, 160, 98), (160, 117, 66), (120, 84, 46)
-    copper, copper_l, copper_d = (196, 110, 70), (226, 146, 98), (140, 72, 46)
-    # slat: box UV for w=10,h=1,d=4 at (0,0): top (4,0)-(14,4), bottom (14,0)-(24,4), sides row y=4
-    for x in range(0, 28):
-        for y in range(0, 5):
-            c = base if (x + y) % 5 else light
-            if y == 4:
-                c = dark
-            img.putpixel((x, y), c + (255,))
-    for x in (4, 9, 13, 18, 23):
-        for y in range(0, 4):
-            img.putpixel((x, y), deep + (255,))
-    # spoke (1x12x1 at 0,6): region 4 x 13
-    for x in range(0, 4):
-        for y in range(6, 19 if 19 < 16 else 16):
-            img.putpixel((x, y), (dark if x % 2 else base) + (255,))
-    # hub (12x2x2 at 8,6): region 28 x 4 -> clipped to 24 wide
-    for x in range(8, 32):
-        for y in range(6, 10):
-            c = copper_l if y == 6 else copper if y < 9 else copper_d
-            img.putpixel((x, y), c + (255,))
-    os.makedirs(os.path.join(TEX, 'entity'), exist_ok=True)
+    """64x32 texture of the running wheel's block-entity model: rim slats (3x1x12 at 0,0), spokes (1x10x1 at 32,0),
+    copper hub (3x3x2 at 40,0)."""
+    import random
+    rnd = random.Random(7)
+    img = Image.new('RGBA', (64, 32), (0, 0, 0, 0))
+    px = img.load()
+
+    def wood(u0, v0, w, h, base, dark, light):
+        for y in range(v0, v0 + h):
+            for x in range(u0, u0 + w):
+                r = rnd.random()
+                px[x, y] = (dark if r < 0.18 else light if r < 0.32 else base) + (255,)
+
+    wood(0, 0, 30, 13, (196, 140, 84), (168, 112, 62), (214, 164, 104))
+    for x in range(30):
+        px[x, 12] = (140, 92, 50, 255)
+    wood(32, 0, 4, 11, (150, 98, 56), (122, 78, 44), (170, 116, 70))
+    for y in range(5):
+        for x in range(40, 50):
+            px[x, y] = ((205, 120, 72) if (x + y) % 3 else (232, 156, 100)) + (255,)
     img.save(os.path.join(TEX, 'entity/running_wheel.png'))
 
 

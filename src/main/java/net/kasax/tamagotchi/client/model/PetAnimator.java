@@ -91,6 +91,7 @@ public final class PetAnimator {
         boolean sleeping = s.has(TamaPet.F_SLEEPING);
         boolean running = s.has(TamaPet.F_RUNNING);
         boolean bathing = s.has(TamaPet.F_BATHING);
+        boolean flying = s.has(TamaPet.F_FLYING);
 
         if (m.backpack != null) {
             m.backpack.visible = s.has(TamaPet.F_BACKPACK);
@@ -104,6 +105,8 @@ public final class PetAnimator {
 
         if (running) {
             gait(m, s, t * 1.5F, 1F, t);
+        } else if (flying) {
+            fly(m, s, t);
         } else if (!sleeping && !s.sitting && !bathing && !s.has(TamaPet.F_SLIDING)) {
             gait(m, s, pos, spd, t);
         }
@@ -365,6 +368,26 @@ public final class PetAnimator {
         }
     }
 
+    /** Dragon flight: big wing beats, legs tucked, tail streaming behind, a gentle bob. */
+    static void fly(PetModel m, PetRenderState s, float t) {
+        float beat = Mth.sin(t * 1.1F);
+        rot(m.wingL, 0, 0, beat * 0.75F - 0.15F);
+        rot(m.wingR, 0, 0, -beat * 0.75F + 0.15F);
+        rot(m.body, 0.18F, 0, 0);
+        rot(m.head, -0.15F, 0, 0);
+        m.rootPart().y += Mth.sin(t * 1.1F + 1.2F) * 0.7F;
+        if (quadruped(m)) {
+            m.legFL.xRot = -0.9F;
+            m.legFR.xRot = -0.9F;
+            m.legBL.xRot = 1.0F;
+            m.legBR.xRot = 1.0F;
+        }
+        rot(m.tail, 0.25F, Mth.sin(t * 0.35F) * 0.2F, 0);
+        rot(m.tail2, -0.1F, Mth.sin(t * 0.35F - 0.6F) * 0.25F, 0);
+        rot(m.earL, 0.4F, 0, 0);
+        rot(m.earR, 0.4F, 0, 0);
+    }
+
     static void slide(PetModel m, PetRenderState s, float t) {
         // belly slide on snow and ice
         rot(m.body, 1.25F, 0, 0);
@@ -541,7 +564,7 @@ public final class PetAnimator {
                 float jumps = a == PetAction.TAMED ? 2 : 1;
                 float jt = (t * jumps) % 1F;
                 root.y -= hop(jt, 0.1F, 0.9F) * 5.5F;
-                rot(m.body, 0, hop(jt, 0.1F, 0.9F) > 0 ? ramp(jt, 0.1F, 0.9F) * Mth.TWO_PI : 0, 0);
+                root.yRot += hop(jt, 0.1F, 0.9F) > 0 ? env(ramp(jt, 0.1F, 0.9F)) * Mth.TWO_PI : 0;   // the whole pet twirls
                 rot(m.wingL, 0, 0, Mth.sin(t * PI * 12) * 0.6F * e);
                 rot(m.wingR, 0, 0, -Mth.sin(t * PI * 12) * 0.6F * e);
                 rot(m.armL, 0, 0, -1.6F * e);

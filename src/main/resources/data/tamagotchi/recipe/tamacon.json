@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:book",
+    "minecraft:pink_dye",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "id": "tamagotchi:tamacon"
+  }
+}

@@ -56,5 +56,7 @@ public class TamagotchiClient implements ClientModInitializer {
         BlockEntityRendererRegistry.register(ModBlocks.RUNNING_WHEEL_BE, RunningWheelRenderer::new);
         PetParticles.register();
         MenuScreens.register(ModMenus.PET_MENU, PetScreen::new);
+        net.kasax.tamagotchi.item.TamaconItem.openScreen = () -> net.minecraft.client.Minecraft.getInstance().gui.setScreen(
+                new net.kasax.tamagotchi.client.screen.TamaconScreen());
     }
 }

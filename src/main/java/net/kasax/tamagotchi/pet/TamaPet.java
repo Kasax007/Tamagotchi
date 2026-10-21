@@ -76,6 +76,7 @@ public class TamaPet extends TamableAnimal {
     public static final int F_RUNNING = 1 << 9;
     public static final int F_SLIDING = 1 << 10;
     public static final int F_CHASING = 1 << 11;
+    public static final int F_FLYING = 1 << 12;
 
     private static final EntityDataAccessor<Integer> DATA_NEEDS = SynchedEntityData.defineId(TamaPet.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(TamaPet.class, EntityDataSerializers.INT);
@@ -85,13 +86,14 @@ public class TamaPet extends TamableAnimal {
 
     private static final int DEFAULT_NEEDS = new PetNeeds().pack();
     public static final int BACKPACK_SLOTS = 27;
-    public static final int MAX_SNACKS = 16;
 
     private final PetSpecies species;
     private final PetNeeds needs = new PetNeeds();
     /** Slots 0..26 = belly (mimic only) or backpack, 27..53 = the mimic's backpack. */
     private final SimpleContainer inventory = new SimpleContainer(BACKPACK_SLOTS * 2);
-    private int snacks;
+    private int legacySnacks;
+    private int flightTicks;
+    private @Nullable Vec3 flightGoal;
     private @Nullable BlockPos home;
     private int ticksToNeeds;
     private int emoteCooldown = 100;
@@ -232,7 +234,9 @@ public class TamaPet extends TamableAnimal {
         this.needs.save(output);
         output.putBoolean("Backpack", hasBackpack());
         output.putBoolean("Wander", hasFlag(F_WANDER));
-        output.putInt("Snacks", this.snacks);
+        if (this.legacySnacks > 0) {
+            output.putInt("Snacks", this.legacySnacks);
+        }
         if (this.home != null) {
             output.store("Home", BlockPos.CODEC, this.home);
         }
@@ -249,14 +253,13 @@ public class TamaPet extends TamableAnimal {
         this.needs.load(input);
         setFlag(F_BACKPACK, input.getBooleanOr("Backpack", false));
         setFlag(F_WANDER, input.getBooleanOr("Wander", false));
-        this.snacks = input.getIntOr("Snacks", 0);
+        this.legacySnacks = input.getIntOr("Snacks", 0);   // old snack pouch: moved into storage on the first tick
         this.home = input.read("Home", BlockPos.CODEC).orElse(null);
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(input.childOrEmpty("Inventory"), items);
         for (int i = 0; i < items.size(); i++) {
             this.inventory.setItem(i, items.get(i));
         }
-        this.entityData.set(DATA_SNACKS, (byte) this.snacks);
         syncNeeds();
     }
 
@@ -285,13 +288,34 @@ public class TamaPet extends TamableAnimal {
         return species().hasBelly() ? BACKPACK_SLOTS : 0;
     }
 
-    public int snacks() {
-        return this.snacks;
+    public static boolean isSnack(ItemStack stack) {
+        return stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE);
     }
 
-    public void setSnacks(int value) {
-        this.snacks = Mth.clamp(value, 0, MAX_SNACKS);
-        this.entityData.set(DATA_SNACKS, (byte) this.snacks);
+    /** Golden apples in the belly/backpack: the pet brings you one when your health is low. */
+    public int snacks() {
+        int n = 0;
+        for (int i = 0, slots = storageSlots(); i < slots; i++) {
+            ItemStack s = this.inventory.getItem(i);
+            if (isSnack(s)) {
+                n += s.getCount();
+            }
+        }
+        return n;
+    }
+
+    /** Takes one golden apple out of storage (plain ones first). */
+    public ItemStack takeSnack() {
+        for (net.minecraft.world.item.Item kind : new net.minecraft.world.item.Item[]{Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE}) {
+            for (int i = 0, slots = storageSlots(); i < slots; i++) {
+                if (this.inventory.getItem(i).is(kind)) {
+                    ItemStack one = this.inventory.removeItem(i, 1);
+                    this.inventory.setChanged();
+                    return one;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     /** Puts a stack into belly/backpack slots; returns what didn't fit. */
@@ -473,7 +497,7 @@ public class TamaPet extends TamableAnimal {
             return InteractionResult.PASS;
         }
 
-        // sneak + right-click: backpack on / off (or sit when there is no backpack)
+        // sneak + right-click: open the pet screen / backpack on (chest) / backpack off (shears)
         if (player.isSecondaryUseActive()) {
             if (stack.is(Items.CHEST) && !hasBackpack()) {
                 if (!client) {
@@ -482,35 +506,42 @@ public class TamaPet extends TamableAnimal {
                 }
                 return InteractionResult.SUCCESS;
             }
-            if (stack.isEmpty()) {
+            if (stack.is(Items.SHEARS) && hasBackpack()) {
                 if (!client) {
-                    if (hasBackpack()) {
-                        removeBackpack(true);
-                    } else {
-                        setMode(isOrderedToSit() ? Mode.FOLLOW : Mode.SIT);
-                        player.sendOverlayMessage(Component.translatable(isOrderedToSit() ? "message.tamagotchi.stay" : "message.tamagotchi.follow", getName()));
-                    }
+                    removeBackpack(true);
+                    playSound(net.minecraft.sounds.SoundEvents.SHEEP_SHEAR, 0.7F, 1.3F);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            if (stack.isEmpty()) {
+                if (player instanceof ServerPlayer sp) {
+                    openPetScreen(sp);
                 }
                 return InteractionResult.SUCCESS;
             }
         }
 
+        // the pager is the remote: stay <-> follow
         if (stack.is(ModItems.TAMA_PAGER)) {
-            if (player instanceof ServerPlayer sp) {
-                openPetScreen(sp);
+            if (!client) {
+                setMode(isOrderedToSit() ? Mode.FOLLOW : Mode.SIT);
+                player.sendOverlayMessage(Component.translatable(isOrderedToSit() ? "message.tamagotchi.stay" : "message.tamagotchi.follow", getName()));
+                playSound(ModSounds.PAGER_OPEN, 0.5F, isOrderedToSit() ? 0.8F : 1.2F);
             }
             return InteractionResult.SUCCESS;
         }
-        if (stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
-            if (this.snacks >= MAX_SNACKS) {
-                return InteractionResult.PASS;
-            }
+        if (isSnack(stack)) {
             if (!client) {
-                setSnacks(this.snacks + 1);
-                stack.consume(1, player);
-                playAction(PetAction.CELEBRATE);
-                playSound(ModSounds.PET_CELEBRATE, 0.8F, getVoicePitch());
-                player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_stored", getName(), this.snacks));
+                if (storageSlots() == 0) {
+                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_no_backpack", getName()));
+                } else if (!canStore(stack)) {
+                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_full", getName()));
+                } else {
+                    store(stack.split(1));
+                    playAction(PetAction.SNIFF);
+                    playSound(ModSounds.BACKPACK_EQUIP, 0.6F, 1.4F);
+                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_stored", getName(), snacks()));
+                }
             }
             return InteractionResult.SUCCESS;
         }
@@ -652,6 +683,117 @@ public class TamaPet extends TamableAnimal {
         syncNeeds();
     }
 
+    // ------------------------------------------------------------------ flying (dragons)
+
+    public boolean isFlying() {
+        return hasFlag(F_FLYING);
+    }
+
+    private boolean mayFly() {
+        return species().winged() && !isOrderedToSit() && !isSleeping() && !isLeashed() && !isPassenger() && !isInWater()
+                && !isInLava() && (getTarget() == null || !getTarget().isAlive()) && !hasFlag(F_RUNNING) && !hasFlag(F_BATHING);
+    }
+
+    /** Takes off; with a goal it flies there and back down, without one it flies after its owner. */
+    public void startFlying(@Nullable Vec3 goal, int ticks) {
+        if (!mayFly()) {
+            return;
+        }
+        if (!isFlying()) {
+            setFlag(F_FLYING, true);
+            setNoGravity(true);
+            setDeltaMovement(getDeltaMovement().add(0, 0.3, 0));
+            wakeUp();
+        }
+        this.flightGoal = goal;
+        this.flightTicks = ticks;
+    }
+
+    private void land() {
+        setFlag(F_FLYING, false);
+        setNoGravity(false);
+        this.flightGoal = null;
+        this.flightTicks = 0;
+    }
+
+    private void tickFlight(ServerLevel level) {
+        if (!species().winged()) {
+            return;
+        }
+        LivingEntity owner = getOwner();
+        boolean withOwner = isTame() && owner != null && owner.level() == level() && mode() == Mode.FOLLOW;
+        if (!isFlying()) {
+            if (!mayFly()) {
+                return;
+            }
+            if (withOwner) {
+                // flying is faster: catch up from far away or when the owner is up on a ledge
+                double d = distanceToSqr(owner);
+                net.minecraft.world.level.pathfinder.Path path = getNavigation().getPath();
+                boolean stuck = path == null || !path.canReach();
+                if (d > 11 * 11 && d < 64 * 64 || d > 4 * 4 && owner.getY() - getY() > 2.5 && stuck) {
+                    startFlying(null, 400);
+                }
+            } else if (onGround() && this.random.nextInt(isTame() ? 1400 : 2800) == 0 && (!isTame() || this.needs.mood().atLeast(Mood.HAPPY))) {
+                // and sometimes just for the joy of it
+                startFlying(position().add(this.random.nextGaussian() * 5, 3 + this.random.nextFloat() * 3, this.random.nextGaussian() * 5),
+                        90 + this.random.nextInt(80));
+            }
+            return;
+        }
+        this.flightTicks--;
+        if (!mayFly() || this.flightTicks <= 0 && onGround()) {
+            land();
+            return;
+        }
+        Vec3 target;
+        boolean following = this.flightGoal == null;
+        if (following) {
+            if (!withOwner) {
+                land();
+                return;
+            }
+            double dx = getX() - owner.getX(), dz = getZ() - owner.getZ();
+            if (dx * dx + dz * dz < 3.5 * 3.5) {
+                if (onGround()) {
+                    land();
+                    return;
+                }
+                target = new Vec3(getX() - dx * 0.2, owner.getY() - 1, getZ() - dz * 0.2);   // glide down beside the owner
+            } else {
+                target = owner.position().add(0, 1.8, 0);
+            }
+        } else {
+            if (this.flightTicks < 40 || position().distanceToSqr(this.flightGoal) < 1.5) {
+                if (onGround()) {
+                    land();
+                    return;
+                }
+                this.flightGoal = new Vec3(getX(), getY() - 4, getZ());
+            }
+            target = this.flightGoal;
+        }
+        Vec3 to = target.subtract(position());
+        double len = to.length();
+        double speed = following ? Math.min(0.6, 0.22 + len * 0.025) : 0.2;
+        Vec3 want = len > 0.01 ? to.scale(speed / len) : Vec3.ZERO;
+        if (this.horizontalCollision) {
+            want = want.add(0, 0.3, 0);
+        }
+        Vec3 v = getDeltaMovement();
+        setDeltaMovement(v.add(want.subtract(v).scale(0.18)));
+        getNavigation().stop();
+        if (want.horizontalDistanceSqr() > 0.002) {
+            float yaw = (float) (Mth.atan2(want.z, want.x) * Mth.RAD_TO_DEG) - 90F;
+            setYRot(Mth.rotLerp(0.35F, getYRot(), yaw));
+            setYBodyRot(getYRot());
+            setYHeadRot(getYRot());
+        }
+        if (this.tickCount % 8 == 0) {
+            playSound(net.minecraft.sounds.SoundEvents.ENDER_DRAGON_FLAP, 0.2F, 1.9F + this.random.nextFloat() * 0.2F);
+        }
+    }
+
     // ------------------------------------------------------------------ ticking
 
     @Override
@@ -694,6 +836,17 @@ public class TamaPet extends TamableAnimal {
             secondTick(level);
         }
         Talents.tick(this, level);
+        if (this.legacySnacks > 0 && this.tickCount > 5) {
+            ItemStack left = store(new ItemStack(Items.GOLDEN_APPLE, this.legacySnacks));
+            if (!left.isEmpty()) {
+                spawnAtLocation(level, left);
+            }
+            this.legacySnacks = 0;
+        }
+        tickFlight(level);
+        if (this.tickCount % 10 == 0) {
+            this.entityData.set(DATA_SNACKS, (byte) Math.min(127, snacks()));   // shown on the pet screen
+        }
         if (species().gait() == PetSpecies.Gait.FLOAT && !onGround() && getDeltaMovement().y < -0.08) {
             setDeltaMovement(getDeltaMovement().multiply(1.0, 0.6, 1.0));   // the wisp glides down
         }
@@ -1011,6 +1164,30 @@ public class TamaPet extends TamableAnimal {
         moveRelative(0.1F, input);
         move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
         setDeltaMovement(getDeltaMovement().scale(0.9));
+    }
+
+    @Override
+    public boolean dampensVibrations() {
+        return species() == PetSpecies.SCULK_WISP;   // a sculk creature does not set off sculk sensors
+    }
+
+    @Override
+    public boolean causeFallDamage(double fallDistance, float damageModifier, DamageSource source) {
+        return !species().winged() && super.causeFallDamage(fallDistance, damageModifier, source);
+    }
+
+    @Override
+    protected void travelInFluid(Vec3 input) {
+        if (isInLava() && species().fireImmune()) {
+            // lava is the ember pup's pool: swim almost as fast as walking and stay near the surface
+            moveRelative(0.09F, input);
+            move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
+            Vec3 v = getDeltaMovement().scale(0.8);
+            double depth = getFluidHeight(net.minecraft.tags.FluidTags.LAVA);
+            setDeltaMovement(v.x, depth > getBbHeight() * 0.4 ? v.y + 0.025 : v.y - 0.01, v.z);
+            return;
+        }
+        super.travelInFluid(input);
     }
 
     @Override

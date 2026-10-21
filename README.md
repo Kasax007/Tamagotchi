@@ -30,16 +30,18 @@ Ember Pup, Sculk Wisp and Mimic bite back. Hold a Tamagotchi Heart and they come
 | On your pet | |
 |---|---|
 | Right-click, empty hand | Pet it ♥ |
+| Sneak + right-click, empty hand | Pet screen: needs, mood, bond, talent, **backpack**, Sit / Follow / Wander |
 | Sneak + right-click **with a chest** | Backpack on (27 slots) |
-| Sneak + right-click, empty hand | Backpack off – **everything inside spills out**; without a backpack: Sit / Stay ↔ Follow |
-| Right-click with the **Tama Pager** | Pet screen: needs, mood, bond, talent, Sit / Follow / Wander, backpack |
+| Sneak + right-click **with shears** | Backpack off – **everything inside spills out** |
+| Right-click with the **Tama Pager** | Sit / Stay ↔ Follow |
 | Right-click with food / treat | Feed it |
-| Right-click with a **golden apple** | Into its snack pouch – it feeds you one when your health is low |
+| Right-click with a **golden apple** | Into its backpack – it brings you one when your health is low |
 | Right-click with the Pet Brush | Groom it |
 | Lead / Name Tag | Work like on any pet |
 
-The Tama Pager also works in the air (nearest own pet within 64 blocks) and **beeps** when a pet is hungry,
-bored, sleepy, dirty or hurt. You get a free pager the first time you tame a pet.
+Use the Tama Pager in the air to open the screen of your nearest pet (within 64 blocks); it **beeps** when a pet is
+hungry, bored, sleepy, dirty or hurt. You get a free pager the first time you tame a pet. The craftable **Tamacon**
+(book + pink dye + redstone) is the in-game guide to everything.
 
 ![The pager screen](docs/screenshots/pet_screen.jpg)
 
@@ -56,7 +58,7 @@ bubbles over the pet's head. Happy pets use their talent; sad pets don't; misera
 * **Energy** – sleeping in a Pet Bed / Basket / Dragon Nest at night or when tired
 * **Hygiene** – Pet Brush or a filled Pet Bath
 
-In a fight a pet helps like a wolf. Below a third of its health it stops, runs to you and eats food from its
+The three dragons fly when that is faster (or just for fun). In a fight a pet helps like a wolf. Below a third of its health it stops, runs to you and eats food from its
 backpack to heal. Tamed pets never die: they **faint into a Tama Egg** that keeps everything – use the egg to wake them up.
 
 Pets also react to the world: they dance to jukeboxes, warm up at campfires, sniff flowers, beg for cake and for
@@ -70,6 +72,10 @@ to your bed, and the penguin belly-slides on snow and ice.
 Pet Bed, Pet Basket, Dragon Nest (sleep) · Food Bowl (fill with food) · Pet Bath (fill with a water bucket) ·
 Bouncy Mushroom (everyone bounces) · Running Wheel (gives a redstone signal while a pet runs in it) ·
 Scratching Post · Pet House (shelter from rain). All craftable; see the recipe book.
+
+## Compatibility
+
+JEI and REI show every recipe plus info pages on where to find each pet (optional plugins in `compat/`).
 
 ## Building
 

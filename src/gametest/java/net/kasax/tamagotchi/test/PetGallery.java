@@ -30,6 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -62,14 +63,19 @@ public class PetGallery implements FabricClientGameTest {
             cmd("time set noon");
             cmd("weather clear");
             ctx.waitTicks(40);
+            if (recipeViewerCheck()) {
+                return;
+            }
             lineup(false);
             lineup(true);
             closeups();
             furniture();
             screen();
             live();
+            extras();
             checks();
         }
+        naturalSpawns();
         LOG.info("[TamaTest] ===== results =====");
         for (String r : this.results) {
             LOG.info("[TamaTest] {}", r);
@@ -196,7 +202,7 @@ public class PetGallery implements FabricClientGameTest {
             level.setBlockAndUpdate(bowl, ModBlocks.FOOD_BOWL.defaultBlockState().setValue(FoodBowlBlock.FILL, 3));
             level.setBlockAndUpdate(bath, ModBlocks.PET_BATH.defaultBlockState().setValue(PetBathBlock.FILLED, true));
             level.setBlockAndUpdate(mushroom, ModBlocks.BOUNCY_MUSHROOM.defaultBlockState());
-            level.setBlockAndUpdate(wheel, ModBlocks.RUNNING_WHEEL.defaultBlockState().setValue(RunningWheelBlock.FACING, Direction.EAST));
+            level.setBlockAndUpdate(wheel, ModBlocks.RUNNING_WHEEL.defaultBlockState().setValue(RunningWheelBlock.FACING, Direction.NORTH));
             level.setBlockAndUpdate(post, ModBlocks.SCRATCHING_POST.defaultBlockState());
             level.setBlockAndUpdate(new BlockPos(3, Y, 3), ModBlocks.PET_HOUSE.defaultBlockState());
         });
@@ -211,6 +217,7 @@ public class PetGallery implements FabricClientGameTest {
             spawn(level, p, PetSpecies.EMBER_PUP, bowl.getX() + 0.5, bowl.getZ() + 1.4, 180, false).playAction(PetAction.EAT);
             spawn(level, p, PetSpecies.JUNGLE_DRAGON, bath.getX() + 0.5, bath.getZ() + 0.5, 200, false).setFlag(TamaPet.F_BATHING, true);
             spawn(level, p, PetSpecies.VOID_KITTEN, wheel.getX() + 0.5, wheel.getZ() + 0.5, Direction.EAST.toYRot(), false).setFlag(TamaPet.F_RUNNING, true);
+            level.getEntitiesOfClass(TamaPet.class, new net.minecraft.world.phys.AABB(wheel)).forEach(r -> r.setPos(r.getX(), Y + 0.13, r.getZ()));
             RunningWheelBlock.setRunning(level, wheel, true);
             spawn(level, p, PetSpecies.PEBBLE_GOLEM, post.getX() + 1.45, post.getZ() + 0.5, 90, false).playAction(PetAction.SCRATCH);
             TamaPet bouncer = spawn(level, p, PetSpecies.HEX_TOAD, mushroom.getX() + 0.5, mushroom.getZ() + 0.5, 200, false);
@@ -230,7 +237,7 @@ public class PetGallery implements FabricClientGameTest {
             pet.store(new ItemStack(Items.BREAD, 12));
             pet.store(new ItemStack(Items.TORCH, 32));
             pet.store(new ItemStack(ModItems.PET_KIBBLE, 8));
-            pet.setSnacks(3);
+            pet.store(new ItemStack(Items.GOLDEN_APPLE, 3));
             pet.needs().hunger = 40;
             pet.needs().fun = 85;
             pet.needs().energy = 60;
@@ -289,6 +296,176 @@ public class PetGallery implements FabricClientGameTest {
         }
     }
 
+    /** With JEI or REI loaded (-PwithJei / -PwithRei): list the mod's items and open a recipe, nothing else. */
+    private boolean recipeViewerCheck() {
+        String viewer = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("jei") ? "jei"
+                : net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("roughlyenoughitems") ? "rei" : null;
+        if (viewer == null) {
+            return false;
+        }
+        cmd("gamemode survival @p");
+        hud(true);
+        ctx.waitTicks(10);
+        ctx.runOnClient(mc -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        ctx.waitTicks(20);
+        double[] win = new double[2];
+        ctx.runOnClient(mc -> {
+            win[0] = mc.getWindow().getScreenWidth();
+            win[1] = mc.getWindow().getScreenHeight();
+        });
+        ctx.getInput().setCursorPos(win[0] * Double.parseDouble(System.getProperty("tama.sx", "0.84")),
+                win[1] * Double.parseDouble(System.getProperty("tama.sy", "0.94")));
+        ctx.getInput().pressMouse(0);
+        ctx.waitTicks(2);
+        ctx.getInput().typeChars("@tamagotchi");
+        ctx.waitTicks(20);
+        shot("60_" + viewer + "_items");
+        // the recipe of the Tamacon and the info page of a spawn egg, opened through our own plugin
+        String plugin = viewer.equals("jei") ? "net.kasax.tamagotchi.compat.JeiCompat" : "net.kasax.tamagotchi.compat.ReiCompat";
+        ItemStack[] show = {new ItemStack(ModItems.TAMACON), new ItemStack(ModItems.SPAWN_EGGS.get(PetSpecies.JUNGLE_DRAGON))};
+        for (int i = 0; i < show.length; i++) {
+            ItemStack stack = show[i];
+            ctx.runOnClient(mc -> {
+                try {
+                    Class.forName(plugin).getMethod("showRecipes", ItemStack.class).invoke(null, stack);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            ctx.waitTicks(20);
+            shot("6" + (i + 1) + "_" + viewer + "_" + (i == 0 ? "tamacon_recipe" : "egg_info"));
+        }
+        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        return true;
+    }
+
+    /** Wheel close-up, a flying dragon, the ore glow and the Tamacon. */
+    private void extras() {
+        clear();
+        BlockPos wheel = new BlockPos(0, Y, 2);
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            level.setBlockAndUpdate(wheel, ModBlocks.RUNNING_WHEEL.defaultBlockState().setValue(RunningWheelBlock.FACING, Direction.NORTH));
+            TamaPet runner = spawn(level, player(s), PetSpecies.DESERT_DRAGON, 0.5, 2.5, Direction.EAST.toYRot(), false);
+            runner.setPos(0.5, Y + 0.13, 2.5);
+            runner.setFlag(TamaPet.F_RUNNING, true);
+            RunningWheelBlock.setRunning(level, wheel, true);
+        });
+        cam("1.6 -59.2 0.4 35 18");
+        ctx.waitTicks(20);
+        shot("50_wheel");
+        clear();
+        // a dragon flies after its owner when that is faster
+        boolean[] flew = {false};
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            level.setBlockAndUpdate(wheel, Blocks.AIR.defaultBlockState());
+            TamaPet d = spawn(level, player(s), PetSpecies.JUNGLE_DRAGON, 0.5, -14.5, 0, true);
+            d.setMode(TamaPet.Mode.FOLLOW);
+        });
+        cam("0.5 -59 6 180 5");
+        boolean[] close = {false};
+        for (int i = 0; i < 60 && !close[0]; i++) {
+            ctx.waitTicks(2);
+            server.runOnServer(s -> s.overworld().getEntitiesOfClass(TamaPet.class, player(s).getBoundingBox().inflate(40))
+                    .forEach(p -> {
+                        flew[0] |= p.isFlying();
+                        close[0] |= p.isFlying() && p.distanceTo(player(s)) < 8;
+                    }));
+        }
+        shot("51_flying_dragon");
+        check("a dragon far from its owner flies after it", flew[0]);
+        clear();
+        // the pebble golem's ore glows through the wall
+        int[] markers = {0};
+        cmd("fill -3 -61 4 3 -58 6 stone");
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            level.setBlockAndUpdate(new BlockPos(0, -60, 5), Blocks.DIAMOND_ORE.defaultBlockState());
+            spawn(level, player(s), PetSpecies.PEBBLE_GOLEM, 0.5, 2.5, 0, true).setMode(TamaPet.Mode.SIT);
+        });
+        cam("0.5 -59 -1.5 0 10");
+        ctx.waitTicks(240);   // talents warm up for ten seconds after taming
+        server.runOnServer(s -> markers[0] = s.overworld().getEntitiesOfClass(net.minecraft.world.entity.Display.BlockDisplay.class,
+                player(s).getBoundingBox().inflate(12), net.minecraft.world.entity.Entity::isCurrentlyGlowing).size());
+        shot("52_ore_glow");
+        check("the pebble golem makes a nearby ore glow (" + markers[0] + ")", markers[0] == 1);
+        cmd("fill -3 -61 4 3 -58 6 air");
+        cmd("fill -3 -61 4 3 -61 6 grass_block");
+        clear();
+        // the Tamacon guide
+        ctx.runOnClient(mc -> mc.gui.setScreen(new net.kasax.tamagotchi.client.screen.TamaconScreen()));
+        ctx.waitTicks(5);
+        shot("53_tamacon_contents");
+        ctx.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT);
+        ctx.waitTicks(3);
+        shot("54_tamacon_page");
+        for (int i = 0; i < 9; i++) {
+            ctx.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT);
+        }
+        ctx.waitTicks(3);
+        shot("55_tamacon_page");
+        for (int i = 0; i < 6; i++) {
+            ctx.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT);
+        }
+        ctx.waitTicks(3);
+        shot("56_tamacon_page");
+        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        // the 3D pager and laser pointer, in first and third person
+        cam("0.5 -60 0.5 0 15");
+        hud(true);
+        Item[] held = {ModItems.TAMA_PAGER, ModItems.LASER_POINTER};
+        for (Item item : held) {
+            server.runOnServer(s -> player(s).setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(item)));
+            ctx.waitTicks(10);
+            shot("57_held_" + BuiltInRegistries.ITEM.getKey(item).getPath());
+            ctx.runOnClient(mc -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT));
+            ctx.waitTicks(10);
+            shot("58_held_3rd_" + BuiltInRegistries.ITEM.getKey(item).getPath());
+            ctx.runOnClient(mc -> mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON));
+        }
+        server.runOnServer(s -> player(s).setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY));
+        hud(false);
+    }
+
+    /** A real (not flat) world: pets must turn up in naturally generated jungle temples and ocean monuments. */
+    private void naturalSpawns() {
+        Map<Identifier, PetSpawns.Rule> saved = new HashMap<>(PetSpawns.RULES);
+        PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F));
+        String[][] targets = {{"jungle_pyramid", "jungle_dragon"}, {"monument", "tide_dragon"}, {"desert_pyramid", "desert_dragon"}};
+        try (TestSingleplayerContext sp = ctx.worldBuilder().setUseConsistentSettings(false)
+                .adjustSettings(s -> s.setSeed("tamagotchi")).create()) {
+            this.server = sp.getServer();
+            cmd("gamemode spectator @p");
+            for (String[] t : targets) {
+                BlockPos[] at = {null};
+                server.runOnServer(s -> {
+                    ServerLevel level = s.overworld();
+                    var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.STRUCTURE, Identifier.withDefaultNamespace(t[0]));
+                    var holder = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.STRUCTURE).getOrThrow(key);
+                    var found = level.getChunkSource().getGenerator().findNearestMapStructure(level,
+                            net.minecraft.core.HolderSet.direct(holder), BlockPos.ZERO, 100, false);
+                    at[0] = found == null ? null : found.getFirst();
+                });
+                if (at[0] == null) {
+                    check("found a " + t[0] + " to search", false);
+                    continue;
+                }
+                cmd("tp @p " + at[0].getX() + " 120 " + at[0].getZ());
+                int[] n = {0};
+                for (int i = 0; i < 40 && n[0] == 0; i++) {
+                    ctx.waitTicks(20);
+                    server.runOnServer(s -> n[0] = s.overworld().getEntitiesOfClass(TamaPet.class,
+                            new AABB(at[0]).inflate(72, 200, 72), p -> p.species().id().equals(t[1])).size());
+                }
+                check("natural " + t[0] + " at " + at[0].getX() + " " + at[0].getZ() + " has a wild " + t[1] + " (" + n[0] + ")", n[0] >= 1);
+            }
+        } finally {
+            PetSpawns.RULES.clear();
+            PetSpawns.RULES.putAll(saved);
+        }
+    }
+
     // ------------------------------------------------------------------ functional checks
 
     private void check(String name, boolean ok) {
@@ -314,6 +491,8 @@ public class PetGallery implements FabricClientGameTest {
         // backpack on with sneak + chest, then off spills everything
         int[] spilled = {0};
         boolean[] equipped = {false};
+        boolean[] screenOpened = {false};
+        boolean[] pagerSits = {false};
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
             ServerPlayer p = player(s);
@@ -326,11 +505,22 @@ public class PetGallery implements FabricClientGameTest {
             pet.store(new ItemStack(Items.APPLE, 3));
             p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
+            screenOpened[0] = p.containerMenu instanceof net.kasax.tamagotchi.menu.PetMenu;
+            p.closeContainer();
+            p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+            pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
             p.setShiftKeyDown(false);
+            p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ModItems.TAMA_PAGER));
+            pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
+            pagerSits[0] = pet.isOrderedToSit();
+            pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
+            pagerSits[0] &= !pet.isOrderedToSit();
             spilled[0] = level.getEntitiesOfClass(ItemEntity.class, pet.getBoundingBox().inflate(4)).size();
         });
         check("sneak + chest equips a backpack", equipped[0]);
-        check("sneak + empty hand spills the backpack (" + spilled[0] + " item entities)", spilled[0] >= 3);
+        check("sneak + empty hand opens the pet screen", screenOpened[0]);
+        check("sneak + shears takes the backpack off and spills it (" + spilled[0] + " item entities)", spilled[0] >= 3);
+        check("the Tama Pager toggles stay / follow", pagerSits[0]);
 
         // golden apple goes into the snack pouch
         int[] snacks = {0};
@@ -338,11 +528,25 @@ public class PetGallery implements FabricClientGameTest {
             ServerPlayer p = player(s);
             TamaPet pet = s.overworld().getEntitiesOfClass(TamaPet.class, p.getBoundingBox().inflate(8)).get(0);
             p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.GOLDEN_APPLE, 2));
+            pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);   // no backpack: refused
+            snacks[0] = pet.snacks() == 0 && p.getMainHandItem().getCount() == 2 ? 0 : -100;
+            pet.equipBackpack();
             pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
             pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
-            snacks[0] = pet.snacks();
+            snacks[0] += pet.snacks();
+            // the pet feeds a hurt owner from its backpack
+            p.setHealth(4F);
         });
-        check("golden apples fill the snack pouch (" + snacks[0] + ")", snacks[0] == 2);
+        check("golden apples go into the backpack (" + snacks[0] + ")", snacks[0] == 2);
+        ctx.waitTicks(60);
+        int[] fed = {0};
+        server.runOnServer(s -> {
+            ServerPlayer p = player(s);
+            TamaPet pet = s.overworld().getEntitiesOfClass(TamaPet.class, p.getBoundingBox().inflate(8)).get(0);
+            fed[0] = pet.snacks();
+            p.setHealth(p.getMaxHealth());
+        });
+        check("a hurt owner gets a golden apple from the backpack (" + fed[0] + " left)", fed[0] == 1);
 
         // fainting leaves a Tama Egg that brings the pet back
         boolean[] egg = {false};

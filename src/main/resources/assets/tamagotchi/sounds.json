@@ -11,12 +11,12 @@
         "volume": 0.6
       },
       {
-        "name": "minecraft:mob/strider/idle2",
-        "pitch": 1.35
+        "name": "tamagotchi:desert_dragon/ambient3",
+        "volume": 0.22
       },
       {
-        "name": "minecraft:mob/strider/idle3",
-        "pitch": 1.3
+        "name": "tamagotchi:desert_dragon/ambient4",
+        "volume": 0.34
       }
     ]
   },
@@ -32,12 +32,12 @@
         "volume": 0.3
       },
       {
-        "name": "minecraft:mob/strider/happy1",
-        "pitch": 1.3
+        "name": "tamagotchi:desert_dragon/happy3",
+        "volume": 0.25
       },
       {
-        "name": "minecraft:mob/strider/happy5",
-        "pitch": 1.3
+        "name": "tamagotchi:desert_dragon/happy4",
+        "volume": 0.27
       }
     ]
   },
@@ -49,12 +49,12 @@
         "volume": 0.3
       },
       {
-        "name": "minecraft:mob/strider/hurt2",
-        "pitch": 1.35
+        "name": "tamagotchi:desert_dragon/hurt2",
+        "volume": 0.25
       },
       {
-        "name": "minecraft:mob/strider/hurt1",
-        "pitch": 1.3
+        "name": "tamagotchi:desert_dragon/hurt3",
+        "volume": 0.25
       }
     ]
   },
@@ -66,12 +66,8 @@
         "volume": 0.2
       },
       {
-        "name": "minecraft:mob/strider/death2",
-        "pitch": 1.3
-      },
-      {
-        "name": "minecraft:mob/strider/death4",
-        "pitch": 1.3
+        "name": "tamagotchi:desert_dragon/death2",
+        "volume": 0.34
       }
     ]
   },
@@ -645,8 +641,8 @@
         "volume": 0.9
       },
       {
-        "name": "minecraft:mob/villager/idle1",
-        "pitch": 0.75
+        "name": "tamagotchi:pebble_golem/ambient3",
+        "volume": 0.8
       },
       {
         "name": "minecraft:mob/sniffer/happy3",
@@ -1233,11 +1229,11 @@
     "sounds": [
       {
         "name": "tamagotchi:toy/laser1",
-        "volume": 0.3
+        "volume": 0.35
       },
       {
         "name": "tamagotchi:toy/laser2",
-        "volume": 0.25
+        "volume": 0.35
       }
     ]
   },

@@ -28,6 +28,7 @@ public final class ModItems {
 
     public static final Item TAMAGOTCHI_HEART = reg("tamagotchi_heart", TooltipItem::new, new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
     public static final Item TAMA_PAGER = reg("tama_pager", TamaPagerItem::new, new Item.Properties().stacksTo(1));
+    public static final Item TAMACON = reg("tamacon", net.kasax.tamagotchi.item.TamaconItem::new, new Item.Properties().stacksTo(1));
     public static final Item PET_BRUSH = reg("pet_brush", TooltipItem::new, new Item.Properties().durability(160));
     public static final Item LASER_POINTER = reg("laser_pointer", LaserPointerItem::new, new Item.Properties().stacksTo(1));
     public static final Item SQUEAKY_BALL = reg("squeaky_ball", SqueakyBallItem::new, new Item.Properties().stacksTo(16));

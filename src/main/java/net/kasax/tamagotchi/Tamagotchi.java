@@ -30,6 +30,7 @@ public class Tamagotchi implements ModInitializer {
         ModItems.initialize();
         ModMenus.initialize();
         ModTab.initialize();
+        net.kasax.tamagotchi.world.OreMarkers.initialize();
         LOGGER.info("Tamagotchi ready: {} pets", net.kasax.tamagotchi.pet.PetSpecies.values().length);
     }
 }

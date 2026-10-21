@@ -70,7 +70,8 @@ public final class PetSpawns {
         if ((center.getX() >> 4) != chunkPos.x() || (center.getZ() >> 4) != chunkPos.z()) {
             return;
         }
-        RandomSource rng = RandomSource.create(level.getSeed() ^ center.asLong() * 31L ^ key.identifier().hashCode());
+        RandomSource rng = RandomSource.create(net.minecraft.world.level.levelgen.RandomSupport.mixStafford13(
+                level.getSeed() ^ center.asLong() * 31L ^ key.identifier().hashCode()));
         if (rng.nextFloat() >= rule.chance()) {
             return;
         }

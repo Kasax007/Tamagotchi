@@ -289,6 +289,30 @@ static("laser_pointer", rows_of(cv), L(
 
 
 # ======================================================================================
+# tamacon  (the pet encyclopedia: a pink pocket book with a tiny LCD and an egg-with-heart emblem)
+# ======================================================================================
+static("tamacon", [
+    "................",
+    ".qRhhhhhhhhhhh..",
+    ".qRllzzzzzzzlbk.",
+    ".gYllz15151Zlbm.",
+    ".gYllz11111Zlbk.",
+    ".qRllz41514Zlbm.",
+    ".qRllZZZZZZZlbk.",
+    ".qRllllllllllbm.",
+    ".qRllllkkklllbk.",
+    ".qRlllkRkRmllbm.",
+    ".gYlllkRRRmllbk.",
+    ".gYlllkkRknllbm.",
+    ".qRllllnnnlllbk.",
+    ".qRsssssssssssk.",
+    ".qqkmkmkmkmkmkm.",
+    "................",
+], L("hlbsS=shellpink", "z=#9B83A8", "Z=#5F4B73", "12345=lcd", "r=heartpink.1", "R=heartpink.2", "q=heartpink.3",
+     "Y=gold.2", "g=gold.3", "k=cream.1", "m=cream.2", "n=cream.3"), strength=0.30)
+
+
+# ======================================================================================
 # squeaky_ball  (red & yellow ball with a white star)
 # ======================================================================================
 static("squeaky_ball", [

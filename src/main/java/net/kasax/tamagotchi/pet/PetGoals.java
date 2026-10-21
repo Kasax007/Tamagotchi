@@ -165,7 +165,7 @@ public final class PetGoals {
 
         @Override
         public boolean canContinueToUse() {
-            return this.owner != null && !this.pet.getNavigation().isDone() && !this.pet.unableToMoveToOwner()
+            return this.owner != null && (this.pet.isFlying() || !this.pet.getNavigation().isDone()) && !this.pet.unableToMoveToOwner()
                     && this.pet.mode() == TamaPet.Mode.FOLLOW && !this.pet.isSleeping() && this.pet.distanceToSqr(this.owner) > 2.5 * 2.5;
         }
 
@@ -186,7 +186,11 @@ public final class PetGoals {
                 return;
             }
             this.pet.getLookControl().setLookAt(this.owner, 10.0F, this.pet.getMaxHeadXRot());
-            if (this.pet.shouldTryTeleportToOwner()) {
+            if (this.pet.isFlying()) {
+                return;   // the dragon steers itself in the air
+            }
+            boolean flier = this.pet.species().winged() && this.pet.distanceToSqr(this.owner) < 48 * 48;
+            if (this.pet.shouldTryTeleportToOwner() && !flier) {
                 this.pet.tryToTeleportToOwner();
             } else if (--this.recalc <= 0) {
                 this.recalc = 10;
@@ -443,12 +447,17 @@ public final class PetGoals {
             this.pet.getNavigation().stop();
             if (this.pet.currentAction() != PetAction.FEED_OWNER) {
                 this.pet.playAction(PetAction.FEED_OWNER);
+                this.pet.setCarried(new ItemStack(Items.GOLDEN_APPLE));   // holds it up to you
                 return;
             }
             if (!this.fed && this.pet.level() instanceof ServerLevel level) {
-                ItemStack apple = new ItemStack(Items.GOLDEN_APPLE);
+                ItemStack apple = this.pet.takeSnack();
+                if (apple.isEmpty()) {
+                    this.fed = true;
+                    return;
+                }
+                this.pet.setCarried(ItemStack.EMPTY);
                 apple.finishUsingItem(level, owner);
-                this.pet.setSnacks(this.pet.snacks() - 1);
                 this.pet.playSound(ModSounds.PET_FEED_OWNER, 1.0F, 1.0F);
                 level.sendParticles(ModParticles.HEART, owner.getX(), owner.getY() + 1.7, owner.getZ(), 5, 0.3, 0.2, 0.3, 0.0);
                 if (owner instanceof Player p) {
@@ -861,11 +870,11 @@ public final class PetGoals {
                 }
                 case WHEEL -> {
                     this.pet.setFlag(TamaPet.F_RUNNING, true);
-                    this.pet.setPos(c.x, this.pos.getY() + 0.1, c.z);
+                    this.pet.setPos(c.x, this.pos.getY() + 0.13, c.z);
                     BlockState wheel = level.getBlockState(this.pos);
                     if (wheel.hasProperty(RunningWheelBlock.FACING)) {
                         // run across the axle, like a hamster
-                        float yaw = wheel.getValue(RunningWheelBlock.FACING).toYRot();
+                        float yaw = wheel.getValue(RunningWheelBlock.FACING).getClockWise().toYRot();
                         this.pet.setYRot(yaw);
                         this.pet.setYBodyRot(yaw);
                         this.pet.setYHeadRot(yaw);
