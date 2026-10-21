@@ -5,6 +5,8 @@ A Fabric mod for **Minecraft 26.3**: ten rare pets hide in the world's structure
 your best friend: it follows you, carries a backpack, helps you fight, feeds you golden apples when you are hurt
 and has a special talent.
 
+![The ten pets](docs/screenshots/lineup.jpg)
+
 ## The pets
 
 | Pet | Lives in (chance per structure) | Talent | Favourite treat |
@@ -39,6 +41,10 @@ Ember Pup, Sculk Wisp and Mimic bite back. Hold a Tamagotchi Heart and they come
 The Tama Pager also works in the air (nearest own pet within 64 blocks) and **beeps** when a pet is hungry,
 bored, sleepy, dirty or hurt. You get a free pager the first time you tame a pet.
 
+![The pager screen](docs/screenshots/pet_screen.jpg)
+
+![Idle, petted, sitting with a backpack, asleep](docs/screenshots/pets.jpg)
+
 ## Taking care of it
 
 Four needs – **Hunger, Fun, Energy, Hygiene** – make up the **Mood**, shown on the pager screen and as little
@@ -58,6 +64,8 @@ your food, hide from thunderstorms, shake off water, cheer when you level up, pl
 to your bed, and the penguin belly-slides on snow and ice.
 
 ## Furniture
+
+![Furniture in use](docs/screenshots/furniture.jpg)
 
 Pet Bed, Pet Basket, Dragon Nest (sleep) · Food Bowl (fill with food) · Pet Bath (fill with a water bucket) ·
 Bouncy Mushroom (everyone bounces) · Running Wheel (gives a redstone signal while a pet runs in it) ·
