@@ -81,7 +81,9 @@ final class PetScenes {
             case "campfire_warm" -> s::campfire;
             case "pet_screen" -> s::petScreen;
             case "tamacon_book" -> s::tamacon;
-            case "pyramid_wild" -> s::pyramid;
+            case "pyramid_wild" -> () -> s.natural("desert_pyramid", PetSpecies.DESERT_DRAGON, "pyramid_wild");
+            case "jungle_wild" -> () -> s.natural("jungle_pyramid", PetSpecies.JUNGLE_DRAGON, "jungle_wild");
+            case "monument_wild" -> () -> s.natural("monument", PetSpecies.TIDE_DRAGON, "monument_wild");
             case "igloo_penguin" -> s::igloo;
             case "mimic_chamber" -> s::mimic;
             default -> null;
@@ -764,18 +766,18 @@ final class PetScenes {
         });
     }
 
-    /** The nearest naturally generated desert pyramid, visited: its wild dragon (every structure has one here). */
-    private void pyramid() {
+    /** The nearest naturally generated structure of a kind, visited: its wild pet (every structure has one here). */
+    private void natural(String structure, PetSpecies species, String shot) {
         BlockPos found = d.fromServer(server -> {
             ServerLevel l = server.overworld();
             var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.STRUCTURE,
-                    net.minecraft.resources.Identifier.withDefaultNamespace("desert_pyramid"));
+                    net.minecraft.resources.Identifier.withDefaultNamespace(structure));
             var holder = l.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.STRUCTURE).getOrThrow(key);
             var r = l.getChunkSource().getGenerator().findNearestMapStructure(l, net.minecraft.core.HolderSet.direct(holder), stage, 100, false);
             return r == null ? null : r.getFirst();
         });
         if (found == null) {
-            FilmDirector.LOG.warn("[Film] no desert pyramid found");
+            FilmDirector.LOG.warn("[Film] no {} found", structure);
             return;
         }
         d.cam.player();
@@ -786,7 +788,7 @@ final class PetScenes {
             d.run(10);
             id = d.fromServer(server -> {
                 for (TamaPet p : server.overworld().getEntitiesOfClass(TamaPet.class, new AABB(found).inflate(48, 120, 48))) {
-                    if (p.species() == PetSpecies.DESERT_DRAGON && !p.isTame()) {
+                    if (p.species() == species && !p.isTame()) {
                         p.setNoAi(true);
                         return p.getUUID();
                     }
@@ -795,7 +797,7 @@ final class PetScenes {
             });
         }
         if (id == null) {
-            FilmDirector.LOG.warn("[Film] the pyramid at {} has no dragon", found);
+            FilmDirector.LOG.warn("[Film] the {} at {} has no {}", structure, found, species.id());
             return;
         }
         this.pets.put("w", id);
@@ -807,7 +809,7 @@ final class PetScenes {
         d.cam.cutTo(p.add(off), look);
         d.cam.nightVision();   // the halls inside are dim
         d.run(10);
-        d.shoot("pyramid_wild", 4.5, t -> track(t, lerp(p.add(off), p.add(off.scale(0.72)).add(0, 0.1, 0), FilmDirector.ease(t, 0, 90)), look));
+        d.shoot(shot, 4.5, t -> track(t, lerp(p.add(off), p.add(off.scale(0.72)).add(0, 0.1, 0), FilmDirector.ease(t, 0, 90)), look));
     }
 
     private void igloo() {
