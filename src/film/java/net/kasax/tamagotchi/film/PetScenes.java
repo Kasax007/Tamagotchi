@@ -271,6 +271,15 @@ final class PetScenes {
         return d.fromServer(server -> server.overworld().getEntity(id) instanceof TamaPet p ? p.position() : Vec3.ZERO);
     }
 
+    /** Where the client draws the pet (it trails the server by a few ticks of smoothing). */
+    private Vec3 clientPos(String name) {
+        int id = d.fromServer(server -> server.overworld().getEntity(this.pets.get(name)) instanceof TamaPet p ? p.getId() : -1);
+        return d.ctx.computeOnClient(mc -> {
+            Entity e = mc.level == null ? null : mc.level.getEntity(id);
+            return e == null ? Vec3.ZERO : e.position();
+        });
+    }
+
     private void hold(ItemStack stack) {
         d.server(server -> d.player(server).setItemInHand(InteractionHand.MAIN_HAND, stack.copy()));
     }
@@ -554,15 +563,17 @@ final class PetScenes {
         with("d", p -> p.setMode(TamaPet.Mode.FOLLOW));
         Vec3[] feet = {at(6, 0, -10)};
         d.cam.playerLook(feet[0], feet[0].add(0, 1.4, 5), true);
+        Cam.freeWalk = true;   // under the free camera the player only tells the server where it went while this is on
         d.run(10);
         d.shoot("fly_follow", 6, t -> {
-            if (t > 0 && t < 70) {
-                feet[0] = feet[0].add(0, 0, 0.32);
+            if (t > 0 && t < 60) {
+                feet[0] = feet[0].add(0, 0, 0.6);   // faster than the dragon walks: it takes off
                 d.cam.playerLook(feet[0], feet[0].add(0, 1.4, 5), false);
             }
-            Vec3 dragon = posOf("d");
+            Vec3 dragon = clientPos("d");
             track(t, new Vec3(dragon.x + 3.0, dragon.y + 0.9, dragon.z - 1.2), dragon.add(0, 0.4, 0));
         });
+        Cam.freeWalk = false;
     }
 
     private void fight() {
@@ -787,7 +798,7 @@ final class PetScenes {
         for (int i = 0; i < 20 && id == null; i++) {
             d.run(10);
             id = d.fromServer(server -> {
-                for (TamaPet p : server.overworld().getEntitiesOfClass(TamaPet.class, new AABB(found).inflate(48, 120, 48))) {
+                for (TamaPet p : server.overworld().getEntitiesOfClass(TamaPet.class, new AABB(found).inflate(96, 120, 96))) {
                     if (p.species() == species && !p.isTame()) {
                         p.setNoAi(true);
                         return p.getUUID();
