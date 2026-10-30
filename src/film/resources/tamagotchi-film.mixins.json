@@ -10,12 +10,14 @@
     "NoCrosshairMixin",
     "NoToastMixin",
     "FilmUserMixin",
-    "ScreenEffectFilmMixin"
+    "ScreenEffectFilmMixin",
+    "SoundLogMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "ServerLockstepMixin"
+    "ServerLockstepMixin",
+    "SoundRangeMixin"
   ]
 }

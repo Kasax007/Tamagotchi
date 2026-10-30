@@ -219,6 +219,7 @@ public class FilmDirector implements FabricClientGameTest {
         int frames = (int) Math.round(seconds * fps);
         int start = tick;
         long t0 = System.currentTimeMillis();
+        FilmSound.begin(dir, clockBase + start * 50L, fps, frames);
         for (int i = 0; i < frames; i++) {
             double t = i * 20.0 / fps;
             int whole = (int) Math.floor(t);
@@ -233,6 +234,7 @@ public class FilmDirector implements FabricClientGameTest {
             if (i % 90 == 0) LOG.info("[Film] {} frame {}: {}", name, i, memory());
         }
         LOG.info("[Film] shot {}: {} frames in {} s", name, frames, (System.currentTimeMillis() - t0) / 1000);
+        FilmSound.end();
         pack(dir);
     }
 

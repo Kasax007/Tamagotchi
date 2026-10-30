@@ -16,6 +16,7 @@ import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModBlocks;
 import net.kasax.tamagotchi.registry.ModEntities;
 import net.kasax.tamagotchi.registry.ModItems;
+import net.kasax.tamagotchi.registry.ModSounds;
 import net.kasax.tamagotchi.world.PetSpawns;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,6 +35,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.JukeboxBlock;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -86,6 +88,25 @@ final class PetScenes {
             case "monument_wild" -> () -> s.natural("monument", PetSpecies.TIDE_DRAGON, "monument_wild");
             case "igloo_penguin" -> s::igloo;
             case "mimic_chamber" -> s::mimic;
+            // the furniture update (1.1) and the toys and tools the first videos left out
+            case "plush_shelf" -> s::plushShelf;
+            case "plush_squeeze" -> s::plushSqueeze;
+            case "plush_cuddle" -> s::plushCuddle;
+            case "plush_sleep" -> s::plushSleep;
+            case "portrait_paint" -> s::portrait;
+            case "egg_lamp" -> s::eggLamp;
+            case "dye_bed" -> s::dyeBed;
+            case "toy_box_open" -> s::toyBoxOpen;
+            case "toy_box_play" -> s::toyBoxPlay;
+            case "pet_flap" -> s::petFlap;
+            case "treat_dispenser" -> s::treatDispenser;
+            case "incubator_in" -> s::incubatorIn;
+            case "incubator_hatch" -> s::incubatorHatch;
+            case "brush" -> s::brush;
+            case "fetch_ball" -> s::fetchBall;
+            case "feather_wand" -> s::featherWand;
+            case "pager_sit" -> s::pagerSit;
+            case "scratch_post" -> s::scratchPost;
             default -> null;
         };
         if (shot == null) {
@@ -117,8 +138,19 @@ final class PetScenes {
         }
         d.cmd("time set 5000");
         d.cmd("gamemode creative @p");
+        // no stray animals or cave mobs near the stage: they only add noise to the sound log (cows stuck in the
+        // levelled ground were dying in every shot)
+        d.server(server -> {
+            for (Entity e : server.overworld().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new AABB(stage).inflate(120, 80, 120),
+                    m -> !(m instanceof TamaPet))) {
+                e.discard();
+            }
+        });
         d.hud(false);
         d.cam.reset();
+        // the player waits off stage: a free-camera shot must not find him standing in the picture (shots that need
+        // him place him themselves); sounds still reach him from anywhere while filming (SoundRangeMixin)
+        d.cam.playerLook(at(0, 0, -40), at(0, 0.5, 0), true);
         Cam.freeWalk = false;
         d.client(mc -> mc.options.guiScale().set(4));
     }
@@ -334,8 +366,8 @@ final class PetScenes {
         }
         d.run(5);
         Vec3 look = at(0, 0.45, 0.2);
-        d.shoot("lineup_dolly", 6, t -> {
-            double f = FilmDirector.ease(t, 0, 120);
+        d.shoot("lineup_dolly", 8.5, t -> {
+            double f = FilmDirector.ease(t, 0, 170);
             track(t, lerp(at(-0.8, 1.9, -6.0), at(0.5, 1.4, -4.0), f), look);
             if (t % 12 == 6) {
                 with("p" + (t / 12 % 10), p -> p.pet(null));
@@ -400,7 +432,7 @@ final class PetScenes {
         d.shoot("bowl_eat", 3.5, t -> {
             track(t, lerp(at(11.3, 1.0, -3.6), at(10.9, 0.9, -3.4), FilmDirector.ease(t, 0, 70)), look);
             if (t % 40 == 1) {
-                with("p", p -> p.playAction(PetAction.EAT));
+                with("p", p -> p.eat(new ItemStack(ModItems.PET_KIBBLE)));   // as at the bowl: animation, munch and crumbs
             }
         });
     }
@@ -416,10 +448,14 @@ final class PetScenes {
             if (t % 6 == 0) {
                 d.server(server -> server.overworld().sendParticles(ParticleTypes.SPLASH, look.x, look.y + 0.1, look.z, 6, 0.3, 0.1, 0.3, 0.1));
             }
+            if (t % 10 == 0 && t < 52) {
+                with("p", p -> p.playSound(ModSounds.PET_SPLASH, 0.6F, 1.0F + p.getRandom().nextFloat() * 0.3F));   // as in the bath goal
+            }
             if (t == 52) {
                 with("p", p -> {
                     p.setFlag(TamaPet.F_BATHING, false);
                     p.playAction(PetAction.SHAKE);
+                    p.playSound(ModSounds.PET_SHAKE, 0.7F, 1.0F);
                 });
             }
         });
@@ -449,7 +485,11 @@ final class PetScenes {
         Vec3 look = at(19, 0.65, -6);
         d.cam.cutTo(at(19.6, 1.1, -8.3), look);
         d.run(10);
-        d.shoot("wheel", 3.5, t -> track(t, lerp(at(19.6, 1.1, -8.3), at(18.9, 1.0, -8.0), FilmDirector.ease(t, 0, 70)), look));
+        d.shoot("wheel", 3.5, t -> {
+            track(t, lerp(at(19.6, 1.1, -8.3), at(18.9, 1.0, -8.0), FilmDirector.ease(t, 0, 70)), look);
+            // the running pet keeps the wheel turning (and rattling) every tick, as in the goal
+            d.server(server -> RunningWheelBlock.setRunning(server.overworld(), stage.offset(19, 0, -6), true));
+        });
         d.server(server -> RunningWheelBlock.setRunning(server.overworld(), stage.offset(19, 0, -6), false));
     }
 
@@ -463,6 +503,9 @@ final class PetScenes {
             track(t, lerp(at(23.2, 1.2, -4.4), at(22.9, 1.0, -4.7), FilmDirector.ease(t, 0, 70)), look);
             if (t % 24 == 0) {
                 d.server(server -> server.overworld().sendParticles(net.kasax.tamagotchi.registry.ModParticles.ZZZ, look.x, look.y + 0.5, look.z, 1, 0.1, 0.05, 0.1, 0));
+            }
+            if (t == 12 || t == 52) {
+                with("p", p -> p.playSound(ModSounds.PET_SNORE, 0.4F, 1.1F));   // a sleeping pet snores now and then
             }
         });
     }
@@ -646,12 +689,25 @@ final class PetScenes {
         d.cam.cutTo(at(5.2, 1.4, 6.8), look);
         d.run(5);
         d.shoot("dance", 3.5, t -> {
+            if (t == 0) {   // the record starts with the shot, so the sound log has it
+                d.server(server -> {
+                    if (server.overworld().getBlockEntity(stage.offset(4, 0, 10)) instanceof JukeboxBlockEntity box) {
+                        box.setTheItem(new ItemStack(Items.MUSIC_DISC_CAT));
+                    }
+                });
+            }
             track(t, lerp(at(5.2, 1.4, 6.8), at(3.6, 1.4, 6.9), FilmDirector.ease(t, 0, 70)), look);
             if (t % 10 == 0) {
                 d.server(server -> server.overworld().sendParticles(ParticleTypes.NOTE, stage.getX() + 4.5, stage.getY() + 1.2, stage.getZ() + 10.5,
                         1, 0.2, 0.1, 0.2, 1));
             }
         });
+        d.server(server -> {
+            if (server.overworld().getBlockEntity(stage.offset(4, 0, 10)) instanceof JukeboxBlockEntity box) {
+                box.popOutTheItem();
+            }
+        });
+        d.cmd("kill @e[type=minecraft:item]");
     }
 
     private void campfire() {
@@ -874,6 +930,480 @@ final class PetScenes {
             track(t, lerp(at(19.6, 1.5, 8.4), at(18.6, 1.3, 9.2), FilmDirector.ease(t, 0, 80)), look);
             if (t == 30) {
                 with("m", p -> p.playAction(PetAction.ATTACK));
+            }
+        });
+    }
+
+    // ------------------------------------------------------------------ the furniture update (1.1)
+
+    /** A block position on the stage. */
+    private BlockPos sp(int dx, int dy, int dz) {
+        return stage.offset(dx, dy, dz);
+    }
+
+    private String xyz(BlockPos p) {
+        return p.getX() + " " + p.getY() + " " + p.getZ();
+    }
+
+    private void set(BlockPos p, String block) {
+        d.cmd("setblock " + xyz(p) + " " + block);
+    }
+
+    /** Clears the stage's middle (where these shots build their sets) back to grass. */
+    private void wipeMiddle() {
+        box(stage.getX() - 6, stage.getY(), stage.getZ() - 4, stage.getX() + 6, stage.getY() + 4, stage.getZ() + 6, "air");
+        box(stage.getX() - 6, stage.getY() - 1, stage.getZ() - 4, stage.getX() + 6, stage.getY() - 1, stage.getZ() + 6, "grass_block");
+        d.cmd("kill @e[type=minecraft:item]");
+    }
+
+    /** The player right-clicks a block with what is in his hand, the way the game does it (the hand swings on screen). */
+    private void useBlock(BlockPos pos, Direction face) {
+        d.client(mc -> mc.player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false));
+        d.server(server -> {
+            ServerPlayer pl = d.player(server);
+            pl.gameMode.useItemOn(pl, server.overworld(), pl.getMainHandItem(), InteractionHand.MAIN_HAND,
+                    new BlockHitResult(Vec3.atCenterOf(pos), face, pos, false));
+        });
+    }
+
+    /** The player uses the item in his hand in the air (throws the ball, waves the wand). */
+    private void useItem() {
+        d.client(mc -> mc.player.swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false));
+        d.server(server -> {
+            ServerPlayer pl = d.player(server);
+            pl.gameMode.useItem(pl, server.overworld(), pl.getMainHandItem(), InteractionHand.MAIN_HAND);
+        });
+    }
+
+    private void named(String name, String label) {
+        with(name, p -> p.setCustomName(net.minecraft.network.chat.Component.literal(label)));
+    }
+
+    private void plushShelf() {
+        // two rows of plushies, the back row up on a shelf of slabs
+        PetSpecies[] all = PetSpecies.values();
+        for (int i = 0; i < all.length; i++) {
+            int x = i % 5 - 2, row = i / 5;
+            if (row == 1) {
+                set(sp(x, 0, 1), "minecraft:spruce_slab[type=top]");
+            }
+            set(sp(x, row, row), "tamagotchi:" + all[i].id() + "_plush[rotation=8]");
+        }
+        Vec3 look = at(0, 0.7, 0.6);
+        d.cam.cutTo(at(-2.6, 1.25, -2.2), look);
+        d.run(10);
+        d.shoot("plush_shelf", 5, t -> {
+            track(t, lerp(at(-2.6, 1.25, -2.2), at(2.4, 1.2, -2.0), FilmDirector.ease(t, 0, 100)), look);
+            if (t == 22 || t == 50 || t == 78) {
+                BlockPos plush = t == 22 ? sp(-1, 0, 0) : t == 50 ? sp(0, 1, 1) : sp(1, 0, 0);
+                d.server(server -> net.kasax.tamagotchi.block.PlushBlock.squeeze(server.overworld(), plush));
+            }
+        });
+        wipeMiddle();
+    }
+
+    private void plushSqueeze() {
+        set(sp(0, 0, 1), "tamagotchi:frost_penguin_plush[rotation=8]");
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -0.15), at(0, 0.35, 1), true);
+        d.run(8);
+        d.shoot("plush_squeeze", 4, t -> {
+            if (t == 16 || t == 44 || t == 64) {
+                useBlock(sp(0, 0, 1), Direction.NORTH);
+            }
+        });
+        d.hud(false);
+        wipeMiddle();
+    }
+
+    private void plushCuddle() {
+        // a lonely toad cuddles its plush: what the toy goal does every 27 ticks (a squeeze, hearts, fun)
+        set(sp(0, 0, 1), "tamagotchi:hex_toad_plush[rotation=5]");
+        pet("t", PetSpecies.HEX_TOAD, at(-0.62, 0, 0.9), 290, true, false);
+        with("t", p -> p.setInSittingPose(true));
+        Vec3 look = at(-0.25, 0.35, 0.9);
+        d.cam.cutTo(at(-0.9, 1.05, -1.2), look);
+        d.run(8);
+        d.shoot("plush_cuddle", 5, t -> {
+            track(t, lerp(at(-0.9, 1.05, -1.2), at(0.3, 0.95, -1.15), FilmDirector.ease(t, 0, 100)), look);
+            if (t % 27 == 4) {
+                d.server(server -> net.kasax.tamagotchi.block.PlushBlock.squeeze(server.overworld(), sp(0, 0, 1)));
+                with("t", p -> p.playAction(PetAction.PETTED));
+            }
+        });
+        wipeMiddle();
+    }
+
+    private void plushSleep() {
+        // a penguin asleep in its bed with its own plush next to it (it rests half again as fast)
+        set(sp(0, 0, 1), "tamagotchi:pet_bed[color=light_blue]");
+        set(sp(1, 0, 1), "tamagotchi:frost_penguin_plush[rotation=12]");
+        pet("p", PetSpecies.FROST_PENGUIN, at(0, 0, 1), 200, true, false);
+        with("p", p -> p.setSleeping(true));
+        Vec3 look = at(0.5, 0.3, 1);
+        d.cam.cutTo(at(-0.4, 1.3, -1.3), look);
+        d.run(8);
+        d.shoot("plush_sleep", 4.5, t -> {
+            track(t, lerp(at(-0.4, 1.3, -1.3), at(0.4, 1.2, -1.2), FilmDirector.ease(t, 0, 90)), look);
+            if (t % 24 == 0) {
+                Vec3 z = at(0, 0.9, 1);
+                d.server(server -> server.overworld().sendParticles(net.kasax.tamagotchi.registry.ModParticles.ZZZ, z.x, z.y, z.z, 1, 0.1, 0.05, 0.1, 0));
+            }
+            if (t == 20 || t == 66) {
+                with("p", p -> p.playSound(ModSounds.PET_SNORE, 0.4F, 1.1F));
+            }
+        });
+        wipeMiddle();
+    }
+
+    private void portrait() {
+        // a wall with an empty portrait; a click paints the nearest pet, the next click the next one, a dye recolours it
+        box(stage.getX() - 3, stage.getY(), stage.getZ() + 3, stage.getX() + 3, stage.getY() + 2, stage.getZ() + 3, "spruce_planks");
+        set(sp(0, 1, 2), "tamagotchi:pet_portrait[facing=north]");
+        pet("d", PetSpecies.DESERT_DRAGON, at(1.5, 0, 1.4), 200, true, false);
+        named("d", "Sandy");
+        with("d", p -> p.setInSittingPose(true));
+        pet("p", PetSpecies.FROST_PENGUIN, at(-1.6, 0, 1.0), 160, true, false);
+        named("p", "Waddles");
+        with("p", p -> p.equipBackpack());
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, 0.35), at(0, 1.45, 2.4), true);
+        d.run(8);
+        d.shoot("portrait_paint", 6, t -> {
+            if (t == 14 || t == 50) {
+                useBlock(sp(0, 1, 2), Direction.NORTH);
+            }
+            if (t == 78) {
+                hold(new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.LIGHT_BLUE)));
+            }
+            if (t == 90) {
+                useBlock(sp(0, 1, 2), Direction.NORTH);
+            }
+        });
+        d.hud(false);
+        wipeMiddle();
+    }
+
+    private void eggLamp() {
+        // dusk: three lamps; one switched off and on again, one dyed
+        d.cmd("time set 13200");
+        set(sp(-1, 0, 1), "tamagotchi:egg_lamp[facing=north,color=pink,lit=true]");
+        set(sp(0, 0, 1), "tamagotchi:egg_lamp[facing=north,color=light_blue,lit=true]");
+        set(sp(1, 0, 1), "tamagotchi:egg_lamp[facing=north,color=yellow,lit=true]");
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -1.2), at(0, 0.45, 1), true);
+        d.run(10);
+        d.shoot("egg_lamp", 5.5, t -> {
+            if (t == 14 || t == 40) {
+                useBlock(sp(0, 0, 1), Direction.NORTH);
+            }
+            if (t == 62) {
+                hold(new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.LIME)));
+            }
+            if (t == 74) {
+                useBlock(sp(1, 0, 1), Direction.NORTH);
+            }
+            if (t == 90) {
+                hold(new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.PURPLE)));
+            }
+            if (t == 100) {
+                useBlock(sp(-1, 0, 1), Direction.NORTH);
+            }
+        });
+        d.hud(false);
+        d.cmd("time set 5000");
+        wipeMiddle();
+    }
+
+    private void dyeBed() {
+        // a row of dyed beds and baskets; the red bed in front is dyed blue, then pink
+        String[] beds = {"orange", "yellow", "lime", "purple"};
+        for (int i = 0; i < beds.length; i++) {
+            set(sp(i - 2 + (i >= 2 ? 1 : 0), 0, 3), "tamagotchi:pet_bed[color=" + beds[i] + "]");
+        }
+        set(sp(-2, 0, 2), "tamagotchi:pet_basket[facing=north,color=white]");
+        set(sp(2, 0, 2), "tamagotchi:pet_basket[facing=north,color=magenta]");
+        set(sp(0, 0, 1), "tamagotchi:pet_bed[color=red]");
+        hold(new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.BLUE)));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -1.4), at(0, 0.2, 1.4), true);
+        d.run(8);
+        d.shoot("dye_bed", 4.5, t -> {
+            if (t == 20) {
+                useBlock(sp(0, 0, 1), Direction.UP);
+            }
+            if (t == 46) {
+                hold(new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.PINK)));
+            }
+            if (t == 58) {
+                useBlock(sp(0, 0, 1), Direction.UP);
+            }
+        });
+        d.hud(false);
+        wipeMiddle();
+    }
+
+    private void fillToyBox(BlockPos pos) {
+        d.server(server -> {
+            if (server.overworld().getBlockEntity(pos) instanceof net.kasax.tamagotchi.block.ToyBoxBlockEntity box) {
+                box.setItem(0, new ItemStack(ModItems.SQUEAKY_BALL, 2));
+                box.setItem(2, new ItemStack(ModItems.FEATHER_WAND));
+                box.setItem(4, new ItemStack(ModBlocks.PLUSHES.get(PetSpecies.VOID_KITTEN)));
+                box.setItem(6, new ItemStack(ModItems.LASER_POINTER));
+                box.setItem(8, new ItemStack(Items.BONE));
+            }
+        });
+    }
+
+    private void toyBoxOpen() {
+        set(sp(0, 0, 1), "tamagotchi:toy_box[facing=north]");
+        fillToyBox(sp(0, 0, 1));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -1.0), at(0, 0.4, 1), true);
+        d.run(8);
+        d.shoot("toy_box_open", 4.5, t -> {
+            if (t == 12) {
+                useBlock(sp(0, 0, 1), Direction.NORTH);   // opens the 3 x 3 box screen
+            }
+            if (t == 62) {
+                d.client(mc -> mc.player.closeContainer());
+            }
+        });
+        d.hud(false);
+        wipeMiddle();
+    }
+
+    private void toyBoxPlay() {
+        // what the toy goal does: the lid opens, the pet takes a toy out and plays (a hop and a squeak every 30 ticks)
+        BlockPos box = sp(0, 0, 1);
+        set(box, "tamagotchi:toy_box[facing=north]");
+        fillToyBox(box);
+        pet("k", PetSpecies.VOID_KITTEN, at(0.2, 0, -0.1), 200, true, false);
+        Vec3 look = at(0, 0.45, 0.6);
+        d.cam.cutTo(at(1.9, 1.2, -1.6), look);
+        d.run(8);
+        d.shoot("toy_box_play", 5, t -> {
+            track(t, lerp(at(1.9, 1.2, -1.6), at(1.2, 1.05, -1.9), FilmDirector.ease(t, 0, 100)), look);
+            if (t == 6) {
+                d.server(server -> {
+                    if (server.overworld().getBlockEntity(box) instanceof net.kasax.tamagotchi.block.ToyBoxBlockEntity b) {
+                        b.petPlay(110);
+                    }
+                });
+            }
+            if (t == 14) {
+                with("k", p -> p.setCarried(new ItemStack(ModItems.SQUEAKY_BALL)));
+            }
+            int ph = (t - 20) % 30;
+            if (t >= 20 && ph == 0) {
+                with("k", p -> {
+                    p.playAction(PetAction.PLAY);
+                    p.playSound(ModSounds.TOY_SQUEAK, 0.6F, 1.0F + p.getRandom().nextFloat() * 0.4F);
+                });
+            }
+            if (t >= 20) {
+                double h = ph < 10 ? Math.sin(ph / 10.0 * Math.PI) * 0.45 : 0;
+                with("k", p -> p.setPos(stage.getX() + 0.7, stage.getY() + h, stage.getZ() + 0.4));
+            }
+        });
+        wipeMiddle();
+    }
+
+    private void petFlap() {
+        // a wall with a pet flap: the pup runs through it to its owner, the flap swings and closes again
+        box(stage.getX() - 4, stage.getY(), stage.getZ() + 2, stage.getX() + 4, stage.getY() + 2, stage.getZ() + 2, "oak_planks");
+        set(sp(0, 0, 2), "tamagotchi:pet_flap[facing=north]");
+        pet("p", PetSpecies.EMBER_PUP, at(0.3, 0, 5.5), 0, true, true);
+        with("p", p -> p.setMode(TamaPet.Mode.WANDER));
+        Vec3 look = at(0, 0.45, 1.6);
+        d.cam.cutTo(at(-1.9, 1.25, -0.9), look);
+        d.run(8);
+        d.shoot("pet_flap", 6, t -> {
+            track(t, lerp(at(-1.9, 1.25, -0.9), at(-1.3, 1.15, -0.8), FilmDirector.ease(t, 0, 120)), look);
+            // out through the flap to the front, then back in again
+            if (t == 4 || t == 24) {
+                with("p", p -> p.getNavigation().moveTo(stage.getX() + 1.0, stage.getY(), stage.getZ() + 0.2, 1.0));
+            }
+            if (t == 62 || t == 80) {
+                with("p", p -> p.getNavigation().moveTo(stage.getX() + 0.5, stage.getY(), stage.getZ() + 5.0, 1.0));
+            }
+        });
+        wipeMiddle();
+    }
+
+    private void treatDispenser() {
+        // a button press: one treat flies in an arc to the hungry pup, which jumps and catches it (side view: the
+        // machine on the left, the pup two blocks to its right)
+        BlockPos disp = sp(0, 0, 1);
+        set(disp, "tamagotchi:treat_dispenser[facing=north]");
+        set(sp(1, 0, 1), "minecraft:stone_button[face=floor,facing=north]");
+        d.server(server -> {
+            if (server.overworld().getBlockEntity(disp) instanceof net.kasax.tamagotchi.block.TreatDispenserBlockEntity b) {
+                b.setItem(4, new ItemStack(ModItems.EMBER_JERKY, 3));
+            }
+        });
+        pet("p", PetSpecies.EMBER_PUP, at(-1.6, 0, 1.2), 90, true, true);
+        with("p", p -> {
+            p.setOrderedToSit(true);
+            p.needs().add(net.kasax.tamagotchi.pet.PetNeeds.Need.HUNGER, -60);
+            p.syncNeeds();
+        });
+        Vec3 look = at(-0.55, 0.75, 1.1);
+        d.cam.cutTo(at(-0.55, 1.45, -2.4), look);
+        d.run(10);
+        d.shoot("treat_dispenser", 6, t -> {
+            track(t, lerp(at(-0.55, 1.45, -2.4), at(-0.45, 1.4, -2.15), FilmDirector.ease(t, 0, 120)), look);
+            if (t == 10 || t == 70) {
+                d.server(server -> {
+                    ServerPlayer pl = d.player(server);
+                    BlockPos b = sp(1, 0, 1);
+                    pl.gameMode.useItemOn(pl, server.overworld(), ItemStack.EMPTY, InteractionHand.MAIN_HAND,
+                            new BlockHitResult(Vec3.atCenterOf(b), Direction.UP, b, false));
+                });
+            }
+        });
+        wipeMiddle();
+    }
+
+    private ItemStack eggOf(PetSpecies s, String label) {
+        pet("egg", s, at(0, 0, -8), 0, true, false);
+        named("egg", label);
+        ItemStack[] egg = {ItemStack.EMPTY};
+        with("egg", p -> {
+            egg[0] = TamaEggItem.fromPet(p);
+            p.discard();
+        });
+        return egg[0];
+    }
+
+    private void incubatorIn() {
+        set(sp(0, 0, 1), "tamagotchi:pet_incubator[facing=north]");
+        hold(eggOf(PetSpecies.EMBER_PUP, "Cinder"));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -0.8), at(0, 0.4, 1), true);
+        d.run(8);
+        d.shoot("incubator_in", 4.5, t -> {
+            if (t == 16) {
+                useBlock(sp(0, 0, 1), Direction.NORTH);
+            }
+        });
+        d.hud(false);
+        // the egg stays in for the next shot
+    }
+
+    private void incubatorHatch() {
+        BlockPos inc = sp(0, 0, 1);
+        if (!d.fromServer(server -> server.overworld().getBlockEntity(inc) instanceof net.kasax.tamagotchi.block.PetIncubatorBlockEntity b
+                && !b.getEgg().isEmpty())) {
+            set(inc, "tamagotchi:pet_incubator[facing=north]");
+            ItemStack egg = eggOf(PetSpecies.EMBER_PUP, "Cinder");
+            d.server(server -> {
+                if (server.overworld().getBlockEntity(inc) instanceof net.kasax.tamagotchi.block.PetIncubatorBlockEntity b) {
+                    b.insert(egg, null);
+                }
+            });
+        }
+        // the last five seconds before it hatches: wobbling harder, three cracks, out comes the pup
+        int left = d.fromServer(server -> server.overworld().getBlockEntity(inc) instanceof net.kasax.tamagotchi.block.PetIncubatorBlockEntity b
+                ? Math.round((1 - b.progress(0)) * net.kasax.tamagotchi.block.PetIncubatorBlockEntity.HATCH_TICKS) : 0);
+        d.run(Math.max(0, left - 110));
+        Vec3 look = at(0, 0.45, 0.6);
+        d.cam.cutTo(at(1.3, 1.0, -1.3), look);
+        d.shoot("incubator_hatch", 6, t -> track(t, lerp(at(1.3, 1.0, -1.3), at(0.9, 0.9, -1.5), FilmDirector.ease(t, 0, 120)), look));
+        wipeMiddle();
+    }
+
+    // ------------------------------------------------------------------ toys and tools the first videos left out
+
+    private void brush() {
+        pet("k", PetSpecies.VOID_KITTEN, at(0, 0, 1.4), 180, true, false);
+        hold(new ItemStack(ModItems.PET_BRUSH));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -1.3), at(0, 0.4, 1.4), true);
+        d.run(8);
+        d.shoot("brush", 4, t -> {
+            if (t == 12 || t == 44) {
+                use("k", false);
+            }
+        });
+        d.hud(false);
+    }
+
+    private void fetchBall() {
+        pet("d", PetSpecies.JUNGLE_DRAGON, at(0.6, 0, 0.4), 180, true, true);
+        with("d", p -> p.setMode(TamaPet.Mode.FOLLOW));
+        hold(new ItemStack(ModItems.SQUEAKY_BALL, 4));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -1.5), at(0, 0.6, 6), true);
+        d.run(10);
+        d.shoot("fetch_ball", 7, t -> {
+            if (t == 8) {
+                useItem();
+            }
+            if (t > 30) {
+                d.cam.playerLook(at(0, 0, -1.5), posOf("d").add(0, 0.6, 0), false);
+            }
+        });
+        d.hud(false);
+    }
+
+    private void featherWand() {
+        pet("p0", PetSpecies.VOID_KITTEN, at(-0.7, 0, 1.6), 180, true, true);
+        pet("p1", PetSpecies.FROST_PENGUIN, at(0.8, 0, 1.8), 200, true, true);
+        for (String n : new String[]{"p0", "p1"}) {
+            with(n, p -> p.setOrderedToSit(false));
+        }
+        hold(new ItemStack(ModItems.FEATHER_WAND));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -0.8), at(0, 0.5, 1.7), true);
+        d.run(8);
+        d.shoot("feather_wand", 4.5, t -> {
+            if (t == 10 || t == 40 || t == 70) {
+                useItem();
+            }
+        });
+        d.hud(false);
+    }
+
+    private void pagerSit() {
+        pet("d", PetSpecies.TIDE_DRAGON, at(0, 0, 1.6), 180, true, true);
+        with("d", p -> p.setMode(TamaPet.Mode.FOLLOW));
+        hold(new ItemStack(ModItems.TAMA_PAGER));
+        d.hud(true);
+        d.cam.player();
+        d.cam.playerLook(at(0, 0, -0.6), at(0, 0.5, 1.6), true);
+        d.run(8);
+        d.shoot("pager_sit", 4, t -> {
+            if (t == 14 || t == 56) {
+                use("d", false);
+            }
+        });
+        d.hud(false);
+    }
+
+    private void scratchPost() {
+        // what the scratch goal does: a swipe and a scratch every 40 ticks
+        pet("p", PetSpecies.PEBBLE_GOLEM, at(11.45, 0, -3), 90, true, false);
+        d.cam.playerLook(at(16, 0, 12), at(11, 0.5, -3), true);
+        Vec3 look = at(10.6, 0.6, -3);
+        d.cam.cutTo(at(11.6, 1.3, -0.9), look);
+        d.run(5);
+        d.shoot("scratch_post", 4, t -> {
+            track(t, lerp(at(11.6, 1.3, -0.9), at(11.0, 1.2, -1.0), FilmDirector.ease(t, 0, 80)), look);
+            if (t % 40 == 4) {
+                with("p", p -> {
+                    p.playAction(PetAction.SCRATCH);
+                    p.playSound(net.minecraft.sounds.SoundEvents.WOOL_HIT, 0.6F, 1.2F);
+                });
             }
         });
     }
