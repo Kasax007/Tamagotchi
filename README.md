@@ -77,6 +77,26 @@ Scratching Post · Pet House (shelter from rain). All craftable; see the recipe 
 
 JEI and REI show every recipe plus info pages on where to find each pet (optional plugins in `compat/`).
 
+## Releasing
+
+Releases are automatic: pushing a tag `v<mod_version>` makes `.github/workflows/release.yml` build the mod and upload
+it to **CurseForge**, **Modrinth** and a **GitHub release**, with that version's section of `CHANGELOG.md` as the
+changelog (mod-publish-plugin, `publishMods`). Every other push runs the same upload as a dry run in
+`.github/workflows/build.yml`.
+
+One-time setup:
+
+1. Create the project on CurseForge and on Modrinth (description and images: `docs/curseforge/`).
+2. Put their ids into `gradle.properties`: `curseforge_id` (the number under "Project ID" on the CurseForge project
+   page) and `modrinth_id` (the id from the Modrinth project page, "Copy ID").
+3. Create the tokens and add them as repository secrets (GitHub: Settings → Secrets and variables → Actions):
+   - `CURSEFORGE_TOKEN` from https://legacy.curseforge.com/account/api-tokens
+   - `MODRINTH_TOKEN` from https://modrinth.com/settings/pats with the scopes *Create versions*, *Read versions* and
+     *Write versions*
+
+Each release: raise `mod_version` in `gradle.properties`, add a `## <version>` section to `CHANGELOG.md`, push, then
+`git tag v<version> && git push origin v<version>`. A tag that does not match `mod_version` is refused.
+
 ## Building
 
 Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,
