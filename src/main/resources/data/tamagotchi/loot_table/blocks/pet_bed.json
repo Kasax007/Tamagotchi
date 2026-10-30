@@ -8,7 +8,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "tamagotchi:pet_bed"
+          "name": "tamagotchi:pet_bed",
+          "modifier": [
+            {
+              "type": "minecraft:copy_state",
+              "block": "tamagotchi:pet_bed",
+              "properties": [
+                "color"
+              ]
+            }
+          ]
         }
       ],
       "rolls": 1

@@ -54,8 +54,9 @@ bubbles over the pet's head. Happy pets use their talent; sad pets don't; misera
 **Bond** (the hearts on the screen) grows with every bit of care and makes talents recharge faster.
 
 * **Hunger** – Pet Kibble, its favourite treat, its usual food, or a Food Bowl it eats from by itself
-* **Fun** – petting, Laser Pointer, Squeaky Ball (fetch!), Feather Wand, Bouncy Mushroom, Running Wheel, Scratching Post, other pets
-* **Energy** – sleeping in a Pet Bed / Basket / Dragon Nest at night or when tired
+* **Fun** – petting, Laser Pointer, Squeaky Ball (fetch!), Feather Wand, Bouncy Mushroom, Running Wheel, Scratching Post,
+  Toy Box, plushies, other pets
+* **Energy** – sleeping in a Pet Bed / Basket / Dragon Nest at night or when tired (faster next to a plush of its own kind)
 * **Hygiene** – Pet Brush or a filled Pet Bath
 
 The three dragons fly when that is faster (or just for fun). In a fight a pet helps like a wolf. Below a third of its health it stops, runs to you and eats food from its
@@ -72,6 +73,19 @@ to your bed, and the penguin belly-slides on snow and ice.
 Pet Bed, Pet Basket, Dragon Nest (sleep) · Food Bowl (fill with food) · Pet Bath (fill with a water bucket) ·
 Bouncy Mushroom (everyone bounces) · Running Wheel (gives a redstone signal while a pet runs in it) ·
 Scratching Post · Pet House (shelter from rain). All craftable; see the recipe book.
+
+Gadgets and decoration (1.1):
+
+![The new furniture](docs/screenshots/furniture_update.jpg)
+![Plushies of all ten pets](docs/screenshots/plushies.jpg)
+
+* **Plushies** of all ten pets – squeeze them; lonely pets cuddle them; sleeping next to its own plush rests faster
+* **Pet Portrait** – click it and it paints your nearest pet with its name (again for the next pet); dye the backdrop
+* **Treat Dispenser** – fill it with treats and give it a redstone pulse: it shoots one to the hungriest pet, which catches it
+* **Pet Incubator** – a Tama Egg hatches in 30 s, fully healed and rested
+* **Toy Box** – bored pets open it and play with the toys inside
+* **Pet Flap** – pets walk through, everyone else is blocked (other mobs path around it)
+* **Egg Lamp** – a glowing night light; the Pet Bed, Pet Basket, Egg Lamp and portrait backdrop take any dye
 
 ## Compatibility
 

@@ -53,6 +53,10 @@ public class PetGallery implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
+        String only = System.getProperty("tama.tests", "all");
+        if (!only.equals("all") && !only.contains("pets")) {
+            return;
+        }
         this.ctx = context;
         ctx.getInput().resizeWindow(1280, 800);
         ctx.runOnClient(mc -> mc.options.fov().set(60));

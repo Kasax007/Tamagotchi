@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": "#minecraft:wool",
+    "X": "minecraft:snowball"
+  },
+  "pattern": [
+    " W ",
+    "WXW",
+    " W "
+  ],
+  "result": {
+    "id": "tamagotchi:frost_penguin_plush"
+  }
+}

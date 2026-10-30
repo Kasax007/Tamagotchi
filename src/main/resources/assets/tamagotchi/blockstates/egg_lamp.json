@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "tamagotchi:block/egg_lamp"
+    },
+    "facing=east,lit=false": {
+      "model": "tamagotchi:block/egg_lamp",
+      "y": 90
+    },
+    "facing=south,lit=false": {
+      "model": "tamagotchi:block/egg_lamp",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "tamagotchi:block/egg_lamp",
+      "y": 270
+    },
+    "facing=north,lit=true": {
+      "model": "tamagotchi:block/egg_lamp_lit"
+    },
+    "facing=east,lit=true": {
+      "model": "tamagotchi:block/egg_lamp_lit",
+      "y": 90
+    },
+    "facing=south,lit=true": {
+      "model": "tamagotchi:block/egg_lamp_lit",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "tamagotchi:block/egg_lamp_lit",
+      "y": 270
+    }
+  }
+}

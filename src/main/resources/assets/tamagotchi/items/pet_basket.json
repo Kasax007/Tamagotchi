@@ -1,6 +1,227 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "tamagotchi:block/pet_basket"
+    "type": "minecraft:select",
+    "property": "minecraft:block_state",
+    "block_state_property": "color",
+    "cases": [
+      {
+        "when": "white",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -393218
+            }
+          ]
+        }
+      },
+      {
+        "when": "orange",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -425955
+            }
+          ]
+        }
+      },
+      {
+        "when": "magenta",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -3715395
+            }
+          ]
+        }
+      },
+      {
+        "when": "light_blue",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12930086
+            }
+          ]
+        }
+      },
+      {
+        "when": "yellow",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -75715
+            }
+          ]
+        }
+      },
+      {
+        "when": "lime",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -8337633
+            }
+          ]
+        }
+      },
+      {
+        "when": "pink",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -816214
+            }
+          ]
+        }
+      },
+      {
+        "when": "gray",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12103854
+            }
+          ]
+        }
+      },
+      {
+        "when": "light_gray",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -6447721
+            }
+          ]
+        }
+      },
+      {
+        "when": "cyan",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -15295332
+            }
+          ]
+        }
+      },
+      {
+        "when": "purple",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -7785800
+            }
+          ]
+        }
+      },
+      {
+        "when": "blue",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -12827478
+            }
+          ]
+        }
+      },
+      {
+        "when": "brown",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -8170446
+            }
+          ]
+        }
+      },
+      {
+        "when": "green",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -10585066
+            }
+          ]
+        }
+      },
+      {
+        "when": "red",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -5231066
+            }
+          ]
+        }
+      },
+      {
+        "when": "black",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/pet_basket",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -14869215
+            }
+          ]
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "tamagotchi:block/pet_basket",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -12930086
+        }
+      ]
+    }
   }
 }

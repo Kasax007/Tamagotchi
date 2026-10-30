@@ -113,8 +113,12 @@ def _rot_axis(p, axis, ang, origin):
     return (x + origin[0], y + origin[1], z + origin[2])
 
 
-def render_model(model: dict, yaw=225.0, pitch=30.0, scale=8, size=None, frame=0, shade=True):
-    """Render ``model`` (resolved JSON) and return an RGBA PIL image (transparent background)."""
+def render_model(model: dict, yaw=225.0, pitch=30.0, scale=8, size=None, frame=0, shade=True, tints=None, ambient=1.0):
+    """Render ``model`` (resolved JSON) and return an RGBA PIL image (transparent background).
+
+    ``tints`` maps a tintindex to an (r, g, b) colour that multiplies the texture of every face carrying that
+    tintindex (what the game does with a block / item colour).  ``ambient`` < 1 darkens everything except faces of
+    elements with ``light_emission`` (those keep max(ambient, emission / 15)): a quick night preview of lit states."""
     textures = model.get("textures", {})
     size = size or int(16 * scale * 1.75)
     W = H = size
@@ -148,10 +152,14 @@ def render_model(model: dict, yaw=225.0, pitch=30.0, scale=8, size=None, frame=0
                 uv = default_uv(d, f, t)
             ref = resolve_tex(textures, fd["texture"])
             tex = load_texture(ref)
-            faces.append((d, P00, P10, P01, uv, tex, fd.get("rotation", 0), el.get("shade", True)))
+            tint = None
+            if tints and fd.get("tintindex") is not None and fd["tintindex"] in tints:
+                tint = np.array(tints[fd["tintindex"]], dtype=np.float64) / 255.0
+            faces.append((d, P00, P10, P01, uv, tex, fd.get("rotation", 0), el.get("shade", True), tint,
+                          el.get("light_emission", 0)))
 
     def raster(face, pass_):
-        d, P00, P10, P01, uv, tex, frot, shd = face
+        d, P00, P10, P01, uv, tex, frot, shd, tint, emit = face
         a, b, c = view(P00), view(P10), view(P01)
         ax, ay = b[0] - a[0], b[1] - a[1]
         bx, by = c[0] - a[0], c[1] - a[1]
@@ -187,6 +195,9 @@ def render_model(model: dict, yaw=225.0, pitch=30.0, scale=8, size=None, frame=0
         texel = tex[vi, ui].astype(np.float64)
         depth = a[2] + s * (b[2] - a[2]) + t * (c[2] - a[2])
         sh = SHADE[d] if (shade and shd) else 1.0
+        sh *= max(ambient, emit / 15.0) if emit else ambient
+        if tint is not None:
+            texel[:, :, :3] *= tint
         alpha = texel[:, :, 3]
         sub = (slice(y0, y1), slice(x0, x1))
         if pass_ == 0:

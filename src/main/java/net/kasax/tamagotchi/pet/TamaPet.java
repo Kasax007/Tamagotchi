@@ -39,7 +39,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -153,10 +152,7 @@ public class TamaPet extends TamableAnimal {
     @Override
     protected PathNavigation createNavigation(Level level) {
         PetSpecies s = ModEntities.speciesOf(this.getType());
-        if (s.gait() == PetSpecies.Gait.SWIM) {
-            return new AmphibiousPathNavigation(this, level);
-        }
-        return super.createNavigation(level);
+        return PetPathing.create(this, level, s.gait() == PetSpecies.Gait.SWIM);
     }
 
     @Override
@@ -213,6 +209,9 @@ public class TamaPet extends TamableAnimal {
         return this.entityData.get(DATA_SNACKS);
     }
 
+    /** Server: the carried item is a toy from a toy box, only shown off while playing (never fetched or dropped). */
+    public boolean showingToy;
+
     public ItemStack getCarried() {
         return this.entityData.get(DATA_CARRIED);
     }
@@ -221,7 +220,7 @@ public class TamaPet extends TamableAnimal {
         this.entityData.set(DATA_CARRIED, stack);
     }
 
-    private void syncNeeds() {
+    public void syncNeeds() {
         this.entityData.set(DATA_NEEDS, this.needs.pack());
         this.entityData.set(DATA_BOND, (byte) Math.round(this.needs.bond));
     }
@@ -851,11 +850,28 @@ public class TamaPet extends TamableAnimal {
         }
     }
 
+    private int plushCheck;
+    private boolean plushNearby;
+
     private void secondTick(ServerLevel level) {
         if (!isTame()) {
             return;
         }
         this.needs.tickSecond(isSleeping(), isInSittingPose());
+        if (isSleeping()) {
+            // a plush of its own kind next to the bed: sweet dreams, half again as restful
+            if (this.plushCheck-- <= 0) {
+                this.plushCheck = 10;
+                PetSpecies kind = species();
+                this.plushNearby = BlockSearch.nearest(this, 3, 1, st -> st.getBlock() instanceof net.kasax.tamagotchi.block.PlushBlock p
+                        && p.species() == kind) != null;
+            }
+            if (this.plushNearby) {
+                this.needs.add(Need.ENERGY, 50F / 240F);
+            }
+        } else {
+            this.plushCheck = 0;
+        }
         // slow regeneration while fed: one health point every ten seconds
         if (this.needs.hunger > 40 && getHealth() < getMaxHealth() && ++this.regenSeconds >= 10) {
             this.regenSeconds = 0;

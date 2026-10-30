@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "tamagotchi:egg_lamp",
+          "modifier": [
+            {
+              "type": "minecraft:copy_state",
+              "block": "tamagotchi:egg_lamp",
+              "properties": [
+                "color"
+              ]
+            }
+          ]
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "tamagotchi:blocks/egg_lamp"
+}

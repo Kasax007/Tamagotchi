@@ -31,13 +31,29 @@ def _clean(v):
     return int(v) if float(v).is_integer() else float(v)
 
 
+def rotate_point(p, rot):
+    """Apply a model-json element rotation ({"angle", "axis", "origin"}) to a point (right handed, like the game)."""
+    import math
+    ox, oy, oz = rot["origin"]
+    x, y, z = p[0] - ox, p[1] - oy, p[2] - oz
+    c, s = math.cos(math.radians(rot["angle"])), math.sin(math.radians(rot["angle"]))
+    if rot["axis"] == "x":
+        y, z = y * c - z * s, y * s + z * c
+    elif rot["axis"] == "y":
+        x, z = x * c + z * s, -x * s + z * c
+    else:
+        x, y = x * c - y * s, x * s + y * c
+    return (x + ox, y + oy, z + oz)
+
+
 class Box:
-    def __init__(self, frm, to, faces, rotation=None, shade=True):
+    def __init__(self, frm, to, faces, rotation=None, shade=True, light=0):
         self.frm = tuple(frm)
         self.to = tuple(to)
         self.faces = faces  # dir -> dict(texture=key, uv=[..], ...)
         self.rotation = rotation
         self.shade = shade
+        self.light = light  # per-element "light_emission" (0..15), 0 = not written
 
     def plane(self, d):
         f, t = self.frm, self.to
@@ -61,12 +77,14 @@ class Model:
             self.textures["particle"] = particle if particle.startswith("tamagotchi:") else self.textures[particle]
         self.parent = parent
         self.ao = ao
+        self.gui = None          # explicit display.gui transform; None = automatic (see gui_display)
         self.boxes: list[Box] = []
 
     # ------------------------------------------------------------------
     def box(self, frm, to, all=None, sides=None, up=None, down=None, north=None, south=None, east=None, west=None,
-            skip=(), uv=None, rotation=None, shade=True):
-        """Add a box.  Face values: texture key, (key, uv) or dict(texture=.., uv=.., rotation=..)."""
+            skip=(), uv=None, rotation=None, shade=True, light=0):
+        """Add a box.  Face values: texture key, (key, uv) or dict(texture=.., uv=.., rotation=.., tintindex=..).
+        ``light`` writes a per-element ``light_emission`` (0..15), ``shade=False`` turns directional shading off."""
         spec = {}
         for d in DIRS:
             spec[d] = None
@@ -95,13 +113,15 @@ class Model:
             if uv and d in uv:
                 v["uv"] = list(uv[d])
             faces[d] = v
-        b = Box(frm, to, faces, rotation, shade)
+        b = Box(frm, to, faces, rotation, shade, light)
         self.boxes.append(b)
         return b
 
     # ------------------------------------------------------------------
     def _covered(self, box, d):
         """True if face d of box is completely hidden by a touching box (integer geometry only)."""
+        if box.rotation:
+            return False
         vals = list(box.frm) + list(box.to)
         if any(not float(v).is_integer() for v in vals):
             return False
@@ -134,7 +154,7 @@ class Model:
                     continue
                 out = {"uv": [_clean(v) for v in spec["uv"]], "texture": "#" + spec["texture"]}
                 plane = b.plane(d)
-                if (d in ("down", "west", "north") and plane == 0) or (d in ("up", "east", "south") and plane == 16):
+                if not b.rotation and ((d in ("down", "west", "north") and plane == 0) or (d in ("up", "east", "south") and plane == 16)):
                     out["cullface"] = d
                 if spec.get("rotation"):
                     out["rotation"] = spec["rotation"]
@@ -148,6 +168,8 @@ class Model:
                 el["rotation"] = b.rotation
             if not b.shade:
                 el["shade"] = False
+            if b.light:
+                el["light_emission"] = int(b.light)
             el["faces"] = faces
             elements.append(el)
         obj = {}
@@ -165,6 +187,8 @@ class Model:
     def gui_display(self):
         """Inventory icon framing for furniture lower or narrower than a block: scale it up to fill the slot
         and lift it to the slot's centre (same view as block/block: rotation 30/225/0, scale 0.625)."""
+        if self.gui is not None:
+            return self.gui
         (x0, y0, z0), (x1, y1, z1) = self.bounds()
         span = (x1 - x0) + (z1 - z0)
         w = span * 0.7071                       # projected width at 225 degrees
@@ -182,6 +206,18 @@ class Model:
     def bounds(self):
         mn = [min(b.frm[i] for b in self.boxes) for i in range(3)]
         mx = [max(b.to[i] for b in self.boxes) for i in range(3)]
+        return mn, mx
+
+    def true_bounds(self):
+        """Like ``bounds`` but with every element rotation applied to the eight box corners."""
+        pts = []
+        for b in self.boxes:
+            for x in (b.frm[0], b.to[0]):
+                for y in (b.frm[1], b.to[1]):
+                    for z in (b.frm[2], b.to[2]):
+                        pts.append(rotate_point((x, y, z), b.rotation) if b.rotation else (x, y, z))
+        mn = [round(min(p[i] for p in pts), 3) for i in range(3)]
+        mx = [round(max(p[i] for p in pts), 3) for i in range(3)]
         return mn, mx
 
 

@@ -81,6 +81,18 @@ Furniture is more than decoration: **your pets use it on their own.**
 * **Running Wheel:** a pet runs inside it, and it gives off a **redstone signal** while it does
 * **Scratching Post:** scratch, scratch, scratch
 * **Pet House:** shelter from the rain
+![Plushies, portraits, toy box, treat dispenser, incubator](https://raw.githubusercontent.com/Kasax007/Tamagotchi/26.3/docs/screenshots/furniture_update.jpg)
+
+![Plushies of all ten pets](https://raw.githubusercontent.com/Kasax007/Tamagotchi/26.3/docs/screenshots/plushies.jpg)
+
+* **Toy Box:** bored pets open it by themselves and play with the toys inside
+* **Plushies:** one of every pet. Squeeze them! Lonely pets cuddle them, and a pet sleeps better next to a plush of its own kind
+* **Pet Portrait:** click it and it paints your pet, with its name on a little brass plate
+* **Treat Dispenser:** fill it with treats, give it a redstone pulse, and your hungriest pet jumps and catches a treat
+* **Pet Incubator:** a Tama Egg hatches in thirty seconds, fully healed
+* **Pet Flap:** your pets walk through, everyone else bumps into it
+* **Egg Lamp:** a glowing night light
+* **Colours:** dye the Pet Bed, Pet Basket, Egg Lamp and the portrait backdrop in all sixteen colours
 
 Everything is craftable.
 

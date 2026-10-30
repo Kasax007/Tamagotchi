@@ -3,6 +3,7 @@ package net.kasax.tamagotchi.item;
 import java.util.List;
 import java.util.function.Consumer;
 import net.kasax.tamagotchi.pet.PetAction;
+import net.kasax.tamagotchi.pet.PetNeeds;
 import net.kasax.tamagotchi.pet.PetSpecies;
 import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModEntities;
@@ -31,6 +32,8 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A fainted pet. Holds the whole pet (name, needs, bond, backpack, snacks); use it on a block and
@@ -80,33 +83,58 @@ public class TamaEggItem extends Item {
         builder.accept(Component.translatable("item.tamagotchi.tama_egg.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
+    /** The species inside an egg, or null for a blank one. */
+    public static @Nullable PetSpecies species(ItemStack egg) {
+        return PetSpecies.byId(root(egg).getStringOr("Species", ""));
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         if (!(ctx.getLevel() instanceof ServerLevel level)) {
             return InteractionResult.SUCCESS;
         }
         ItemStack stack = ctx.getItemInHand();
-        CompoundTag root = root(stack);
-        PetSpecies s = PetSpecies.byId(root.getStringOr("Species", ""));
-        if (s == null) {
+        BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace());
+        if (wake(level, stack, Vec3.atBottomCenterOf(pos), ctx.getRotation() + 180, false) == null) {
             return InteractionResult.FAIL;
         }
-        BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace());
+        stack.shrink(1);
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    /**
+     * Brings the pet in {@code egg} back at {@code at}: with half its health from a plain wake-up, fully healed and
+     * rested when it hatches in an incubator. Does not use up the egg.
+     */
+    public static @Nullable TamaPet wake(ServerLevel level, ItemStack egg, Vec3 at, float yRot, boolean incubated) {
+        CompoundTag root = root(egg);
+        PetSpecies s = PetSpecies.byId(root.getStringOr("Species", ""));
+        if (s == null) {
+            return null;
+        }
         CompoundTag petTag = root.getCompoundOrEmpty("Pet");
         EntityType<TamaPet> type = ModEntities.type(s);
         Entity e = EntityType.create(type, TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), petTag), level,
                 EntitySpawnReason.SPAWN_ITEM_USE).orElse(null);
         if (!(e instanceof TamaPet pet)) {
-            return InteractionResult.FAIL;
+            return null;
         }
-        pet.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, ctx.getRotation() + 180, 0);
-        pet.setHealth(Math.max(pet.getHealth(), pet.getMaxHealth() * 0.5F));
+        pet.snapTo(at.x, at.y, at.z, yRot, 0);
+        if (incubated) {
+            pet.setHealth(pet.getMaxHealth());
+            pet.needs().add(PetNeeds.Need.ENERGY, 100);
+            pet.needs().add(PetNeeds.Need.FUN, 30);
+            pet.needs().addBond(1.0F);
+        } else {
+            pet.setHealth(Math.max(pet.getHealth(), pet.getMaxHealth() * 0.5F));
+        }
         level.addFreshEntity(pet);
         pet.playAction(PetAction.TAMED);
+        BlockPos pos = pet.blockPosition();
         level.playSound(null, pos, ModSounds.PET_WAKE, SoundSource.NEUTRAL, 1.0F, 1.0F);
-        level.sendParticles(ModParticles.HEART, pet.getX(), pet.getY() + 0.6, pet.getZ(), 8, 0.3, 0.3, 0.3, 0.0);
+        level.sendParticles(ModParticles.HEART, pet.getX(), pet.getY() + 0.6, pet.getZ(), incubated ? 14 : 8, 0.3, 0.3, 0.3, 0.0);
         level.sendParticles(ParticleTypes.POOF, pet.getX(), pet.getY() + 0.3, pet.getZ(), 10, 0.3, 0.2, 0.3, 0.02);
-        stack.shrink(1);
-        return InteractionResult.SUCCESS_SERVER;
+        pet.syncNeeds();
+        return pet;
     }
 }

@@ -41,7 +41,11 @@ BLOCKS = {
     'pet_bed': 'Pet Bed', 'pet_basket': 'Pet Basket', 'dragon_nest': 'Dragon Nest', 'food_bowl': 'Food Bowl',
     'pet_bath': 'Pet Bath', 'bouncy_mushroom': 'Bouncy Mushroom', 'running_wheel': 'Running Wheel',
     'scratching_post': 'Scratching Post', 'pet_house': 'Pet House',
+    'egg_lamp': 'Egg Lamp', 'pet_portrait': 'Pet Portrait', 'toy_box': 'Toy Box', 'pet_flap': 'Pet Flap',
+    'treat_dispenser': 'Treat Dispenser', 'pet_incubator': 'Pet Incubator',
 }
+for _pid, (_name, _t, _d) in PETS.items():
+    BLOCKS[f'{_pid}_plush'] = f'{_name} Plush'
 
 lang = {'itemGroup.tamagotchi': 'Tamagotchi'}
 for pid, (name, talent, desc) in PETS.items():
@@ -82,6 +86,9 @@ lang.update({
     'message.tamagotchi.talent.ore': '%s sniffed out %s!',
     'message.tamagotchi.talent.brew': '%s brewed you %s!',
     'message.tamagotchi.talent.treasure': '%s coughed up a treasure!',
+    'message.tamagotchi.incubating': '%s is warming up in the incubator...',
+    'message.tamagotchi.portrait': 'You painted a portrait of %s!',
+    'message.tamagotchi.portrait_none': 'None of your pets is close enough to paint.',
     'gui.tamagotchi.sit': 'Sit',
     'gui.tamagotchi.tamacon.contents': 'Contents',
     'gui.tamagotchi.follow': 'Follow',
@@ -151,7 +158,7 @@ TAMACON = {
     'care': ('Taking care', 'Every pet has four needs from 0 to 100: Hunger, Fun, Energy and Hygiene. Together they make its mood: '
              'Ecstatic, Happy, Okay, Sad or Miserable.\n\n'
              'Hunger: food, its favorite treat or a Food Bowl.\n'
-             'Fun: petting, toys, other pets, the Bouncy Mushroom, the Running Wheel and the Scratching Post.\n'
+             'Fun: petting, toys, other pets, the Bouncy Mushroom, the Running Wheel, the Scratching Post, the Toy Box and plushies.\n'
              'Energy: sleeping in a Pet Bed, Basket or Dragon Nest, or sitting.\n'
              'Hygiene: the Pet Brush or a filled Pet Bath.\n\n'
              'Happy pets use their talent, sad ones do not, and miserable pets refuse to fight. '
@@ -190,6 +197,19 @@ TAMACON = {
                   'Running Wheel: a pet runs inside it, and it gives a redstone signal while it spins.\n'
                   'Scratching Post: fun for claws.\n'
                   'Pet House: a shelter from rain and thunder.'),
+    'gadgets': ('Pet gadgets', 'Treat Dispenser: fill it with treats or pet food and give it a redstone pulse (a button, a clock, '
+                'a daylight sensor). It shoots one treat in an arc to the hungriest pet nearby, and the pet jumps and catches it.\n\n'
+                'Pet Incubator: put a Tama Egg in. It glows warm for thirty seconds, the egg wobbles, and your pet hatches fully healed and rested. '
+                'Click it with an empty hand to take the egg out early.\n\n'
+                'Toy Box: a chest for toys. Bored pets open it by themselves and play with what is inside (real pet toys are the most fun).\n\n'
+                'Pet Flap: put it in a one-block hole in a wall. Your pets walk right through, everyone else bumps into it.'),
+    'decor': ('Decoration', 'Plushies: there is a plush of every pet. Click one to squeeze it. Lonely pets come and cuddle plushies, '
+              'and a pet that sleeps next to a plush of its own kind rests half again as fast.\n\n'
+              'Pet Portrait: hang it on a wall and click it with an empty hand: it paints your nearest pet with its name. Click again '
+              'to paint the next pet.\n\n'
+              'Egg Lamp: a glowing night light, click it to switch it on and off.\n\n'
+              'Dye: click the Pet Bed, Pet Basket, Egg Lamp or the portrait backdrop with any dye to change its colour. '
+              'Broken furniture keeps its colour.'),
     'reactions': ('Little moments', 'Pets react to the world around them: they dance to a playing jukebox, hop to note blocks, look up at bells, '
                   'warm up at a campfire at night, sniff flowers, beg for cake and for the food you eat, hide from thunder and explosions, '
                   'shake off water, cheer when you level up, curl up next to your bed when you sleep and play chase with other pets. '
@@ -201,6 +221,15 @@ for pid, (name, talent, desc) in PETS.items():
 lang['info.tamagotchi.tamagotchi_heart'] = 'Tames a wild pet. Pets live in structures: desert pyramids, jungle temples, ocean monuments, igloos, nether fortresses, ancient cities, end cities, trail ruins, mineshafts, swamp huts, trial chambers and woodland mansions. Not every structure has one!'
 lang['info.tamagotchi.tamacon'] = 'The in-game guide: everything about the pets, their care, controls, toys, food and furniture. Right-click to read.'
 lang['info.tamagotchi.tama_pager'] = 'You get one for free when you tame your first pet. Right-click your pet: stay / follow. Use it in the air: screen of your nearest pet. It beeps when a pet needs you.'
+lang['info.tamagotchi.treat_dispenser'] = 'Fill it with treats or pet food, then give it a redstone pulse: it shoots a treat to the hungriest pet nearby, and the pet catches it.'
+lang['info.tamagotchi.pet_incubator'] = 'Put a Tama Egg in: after thirty seconds your pet hatches fully healed and rested.'
+lang['info.tamagotchi.toy_box'] = 'Nine slots for toys. Bored pets open it and play with what is inside.'
+lang['info.tamagotchi.pet_flap'] = 'For a one-block hole in a wall: your pets walk through, everyone else is blocked.'
+lang['info.tamagotchi.pet_portrait'] = 'Click it with an empty hand to paint your nearest pet (click again for the next one). Click it with a dye to change the backdrop.'
+lang['info.tamagotchi.egg_lamp'] = 'A glowing night light. Click it to switch it on and off, click it with a dye to change its colour.'
+lang['info.tamagotchi.pet_bed'] = 'Pets sleep in it at night or when they are tired. Click it with a dye to change its colour.'
+lang['info.tamagotchi.pet_basket'] = 'Pets sleep in it at night or when they are tired. Click it with a dye to change the cushion.'
+lang['info.tamagotchi.plush'] = 'Click it to squeeze it. Lonely pets cuddle plushies, and a pet sleeping next to a plush of its own kind rests faster.'
 lang['info.tamagotchi.tama_egg'] = 'A tamed pet that fainted curls up into this egg. Use it on a block to wake the pet up again, with everything it had.'
 for pid, (name, talent, desc) in PETS.items():
     lang[f'info.tamagotchi.pet.{pid}'] = f'The {name} lives in {FOUND[pid]}. Tame it with a Tamagotchi Heart. Talent - {talent}: {desc} Favorite treat: {TREAT[pid]}.'
@@ -267,9 +296,110 @@ RECIPES = [
     shaped('running_wheel', ['SPS', 'PCP', 'SPS'], {'S': 'minecraft:stick', 'P': '#minecraft:planks', 'C': 'minecraft:copper_ingot'}, T + 'running_wheel'),
     shaped('scratching_post', [' C ', ' S ', 'CPC'], {'C': '#minecraft:wool_carpets', 'S': 'minecraft:string', 'P': '#minecraft:planks'}, T + 'scratching_post'),
     shaped('pet_house', [' B ', 'BPB', 'P P'], {'B': 'minecraft:bricks', 'P': '#minecraft:planks'}, T + 'pet_house'),
+    shapeless('egg_lamp', ['minecraft:egg', 'minecraft:torch', 'minecraft:glass_pane', 'minecraft:pink_dye'], T + 'egg_lamp'),
+    shaped('pet_portrait', ['SSS', 'SPS', 'SGS'], {'S': 'minecraft:stick', 'P': 'minecraft:painting', 'G': 'minecraft:gold_nugget'}, T + 'pet_portrait'),
+    shaped('toy_box', ['PYP', 'PCP'], {'P': '#minecraft:planks', 'Y': 'minecraft:yellow_dye', 'C': 'minecraft:chest'}, T + 'toy_box'),
+    shaped('pet_flap', ['P P', 'PLP', 'P P'], {'P': '#minecraft:planks', 'L': 'minecraft:leather'}, T + 'pet_flap'),
+    shapeless('treat_dispenser', ['minecraft:dispenser', 'minecraft:glass', 'minecraft:red_dye', T + 'pet_kibble'], T + 'treat_dispenser'),
+    shaped('pet_incubator', ['GGG', 'GTG', 'CRC'], {'G': 'minecraft:glass', 'T': 'minecraft:torch', 'C': 'minecraft:copper_ingot',
+                                                    'R': 'minecraft:redstone'}, T + 'pet_incubator'),
 ]
+PLUSH_CORE = {
+    'desert_dragon': 'minecraft:cactus', 'jungle_dragon': 'minecraft:vine', 'tide_dragon': 'minecraft:prismarine_shard',
+    'frost_penguin': 'minecraft:snowball', 'ember_pup': 'minecraft:blaze_powder', 'sculk_wisp': 'minecraft:sculk',
+    'void_kitten': 'minecraft:ender_pearl', 'pebble_golem': 'minecraft:flint', 'hex_toad': 'minecraft:lily_pad', 'mimic': 'minecraft:chest',
+}
+for _pid in PETS:
+    RECIPES.append(shaped(f'{_pid}_plush', [' W ', 'WXW', ' W '], {'W': '#minecraft:wool', 'X': PLUSH_CORE[_pid]}, T + f'{_pid}_plush'))
 os.makedirs(os.path.join(DATA, 'recipe'), exist_ok=True)
 for name, body in RECIPES:
     with open(os.path.join(DATA, 'recipe', name + '.json'), 'w') as f:
         json.dump(body, f, indent=2)
 print('lang keys:', len(lang), 'recipes:', len(RECIPES))
+
+
+# ------------------------------------------------------------------ loot tables, plush assets, dyed item models
+# Runs after tools/sprites/build.py (which draws the furniture): this part only adds what depends on colours and plushies.
+
+DYES = [('white', 0xF9FFFE), ('orange', 0xF9801D), ('magenta', 0xC74EBD), ('light_blue', 0x3AB3DA), ('yellow', 0xFED83D),
+        ('lime', 0x80C71F), ('pink', 0xF38BAA), ('gray', 0x474F52), ('light_gray', 0x9D9D97), ('cyan', 0x169C9C),
+        ('purple', 0x8932B8), ('blue', 0x3C44AA), ('brown', 0x835432), ('green', 0x5E7C16), ('red', 0xB02E26), ('black', 0x1D1D21)]
+WHITEN = {'fabric': 0.0, 'lamp': 0.3, 'pastel': 0.55}   # the same as Dyeing.FABRIC / LAMP / PASTEL
+
+
+def tint(rgb, whiten):
+    """Dyeing.tint: ARGB.srgbLerp(whiten, dye, white), opaque, as the signed int item models want."""
+    import numpy as np
+    out = 0xFF
+    for shift in (16, 8, 0):
+        c = (rgb >> shift) & 0xFF
+        out = (out << 8) | (c + int(np.floor(np.float32(whiten) * np.float32(255 - c))))
+    return out - (1 << 32)
+
+
+DYED = {'pet_bed': ('color', 'fabric', 'red'), 'pet_basket': ('color', 'fabric', 'light_blue'),
+        'egg_lamp': ('color', 'lamp', 'pink'), 'pet_portrait': ('backdrop', 'pastel', 'pink')}
+
+
+def write(path, body):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as f:
+        json.dump(body, f, indent=2)
+
+
+def loot(bid, copy=None):
+    entry = {'type': 'minecraft:item', 'name': T + bid}
+    if copy:
+        entry['modifier'] = [{'type': 'minecraft:copy_state', 'block': T + bid, 'properties': [copy]}]   # 26.x: was functions
+    write(os.path.join(DATA, 'loot_table/blocks', bid + '.json'),
+          {'type': 'minecraft:block', 'pools': [{'condition': {'type': 'minecraft:survives_explosion'}, 'entries': [entry], 'rolls': 1}],
+           'random_sequence': f'tamagotchi:blocks/{bid}'})
+
+
+for bid in ['egg_lamp', 'pet_portrait', 'toy_box', 'pet_flap', 'treat_dispenser', 'pet_incubator', 'pet_bed', 'pet_basket']:
+    loot(bid, DYED[bid][0] if bid in DYED else None)
+for pid in PETS:
+    loot(f'{pid}_plush')
+
+# dyed items: the inventory icon shows the colour the block had (copy_state above)
+for bid, (prop, kind, default) in DYED.items():
+    path = os.path.join(ASSETS, 'items', bid + '.json')
+    if not os.path.exists(path):
+        continue
+    base = json.load(open(path))['model']
+    while base.get('type') == 'minecraft:select':      # already generated: take the fallback
+        base = base['fallback']
+    model = base['model']
+
+    def case(rgb):
+        return {'type': 'minecraft:model', 'model': model, 'tints': [{'type': 'minecraft:constant', 'value': tint(rgb, WHITEN[kind])}]}
+
+    write(path, {'model': {'type': 'minecraft:select', 'property': 'minecraft:block_state', 'block_state_property': prop,
+                           'cases': [{'when': name, 'model': case(rgb)} for name, rgb in DYES],
+                           'fallback': case(dict(DYES)[default])}})
+
+# plushies: drawn by PlushRenderer / the tamagotchi:plush item model from the pet's own model
+PLUSH_WOOL = {'desert_dragon': 'yellow', 'jungle_dragon': 'lime', 'tide_dragon': 'cyan', 'frost_penguin': 'black',
+              'ember_pup': 'orange', 'sculk_wisp': 'cyan', 'void_kitten': 'magenta', 'pebble_golem': 'gray', 'hex_toad': 'green',
+              'mimic': 'yellow'}
+write(os.path.join(ASSETS, 'models/item/template_plush.json'), {
+    'textures': {'particle': 'minecraft:block/white_wool'},
+    'display': {   # as vanilla's template_copper_golem_statue, scaled for a smaller figure
+        'gui': {'rotation': [30, 45, 180], 'translation': [0, 2, 0], 'scale': [0.85, 0.85, 0.85]},
+        'ground': {'rotation': [0, 0, 180], 'translation': [0, 0, 0], 'scale': [0.5, 0.5, 0.5]},
+        'firstperson_righthand': {'rotation': [0, -45, 180], 'translation': [0, 2, 0], 'scale': [0.3, 0.3, 0.3]},
+        'firstperson_lefthand': {'rotation': [0, -45, 180], 'translation': [0, 2, 0], 'scale': [0.3, 0.3, 0.3]},
+        'thirdperson_righthand': {'rotation': [0, -45, 180], 'translation': [0, 4, 0], 'scale': [0.5, 0.5, 0.5]},
+        'thirdperson_lefthand': {'rotation': [0, -45, 180], 'translation': [0, 4, 0], 'scale': [0.5, 0.5, 0.5]},
+        'fixed': {'rotation': [0, 180, 180], 'translation': [0, 3, 0], 'scale': [0.75, 0.75, 0.75]},
+        'on_shelf': {'rotation': [0, 0, 180], 'translation': [0, 8, 0], 'scale': [1, 1, 1]},
+        'head': {'rotation': [0, 180, 180], 'translation': [0, 22.5, 0], 'scale': [1, 1, 1]},
+    }})
+for pid in PETS:
+    bid = f'{pid}_plush'
+    write(os.path.join(ASSETS, 'blockstates', bid + '.json'), {'variants': {'': {'model': f'tamagotchi:block/{bid}'}}})
+    write(os.path.join(ASSETS, 'models/block', bid + '.json'), {'textures': {'particle': f'minecraft:block/{PLUSH_WOOL[pid]}_wool'}})
+    write(os.path.join(ASSETS, 'items', bid + '.json'), {'model': {
+        'type': 'minecraft:special', 'base': 'tamagotchi:item/template_plush', 'model': {'type': 'tamagotchi:plush', 'species': pid},
+        'transformation': {'left_rotation': [0, 0, 0, 1], 'right_rotation': [0, 0, 0, 1], 'scale': [1, -1, -1], 'translation': [0.5, 1.5, 0.5]}}})
+print('loot tables, plush assets and dyed item models written')

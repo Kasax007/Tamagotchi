@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tamagotchi:block/treat_dispenser"
+    },
+    "facing=east": {
+      "model": "tamagotchi:block/treat_dispenser",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tamagotchi:block/treat_dispenser",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tamagotchi:block/treat_dispenser",
+      "y": 270
+    }
+  }
+}

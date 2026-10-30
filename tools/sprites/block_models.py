@@ -1,4 +1,5 @@
-"""Block models, blockstates, block items and loot tables for the nine Tamagotchi blocks.
+"""Block models, blockstates, block items and loot tables for the Tamagotchi blocks (nine furniture blocks + the second
+batch: egg lamp, pet portrait, toy box, pet flap, treat dispenser, pet incubator; bed and basket have dyeable fabric).
 
 Boxes are built on a 1px grid (see modelkit); footprints come from block_tex.GEO so textures, boxes and
 bounds agree.  Models stay inside the bounds given by the Java collision shapes (BOUNDS below, asserted).
@@ -6,7 +7,7 @@ bounds agree.  Models stay inside the bounds given by the Java collision shapes 
 from __future__ import annotations
 
 import pal  # noqa: F401
-from block_tex import GEO
+from block_tex import GEO, egg_plan
 from modelkit import Model, default_uv, merge_rects, rect_cells, round_rect
 
 NS = "tamagotchi"
@@ -22,9 +23,22 @@ BOUNDS = {
     "running_wheel_item": ((-3, 0, 0), (19, 24, 16)),
     "scratching_post": ((2, 0, 2), (14, 16, 14)),
     "pet_house": ((0, 0, 0), (16, 16, 16)),
+    "egg_lamp": ((4, 0, 4), (12, 13, 12)),
+    "pet_portrait": ((0, 0, 14), (16, 16, 16)),
+    "toy_box": ((1, 0, 2), (15, 11, 14)),
+    "pet_flap": ((0, 0, 7), (16, 16, 9)),
+    "treat_dispenser": ((3, 0, 3), (13, 15, 13)),
+    "pet_incubator": ((2, 0, 2), (14, 12, 14)),
+    # open states: the swung out flap / raised lid stick out of the closed shape (real extents of the model)
+    "pet_flap_open": ((0, 0, 2.1), (16, 16, 9)),
+    "toy_box_open": ((1, 0, 2), (15, 17, 15.5)),
 }
 
 MODELS: dict[str, Model] = {}
+# loot tables of these blocks are written by tools/data/gen_data.py (it runs after build.py: copy_state of the dye colour
+# for the dyeable ones); items/<dyeable>.json written here is the plain constant-tint version gen_data wraps into a select
+LOOT_BY_GEN_DATA = {"egg_lamp", "pet_portrait", "toy_box", "pet_flap", "treat_dispenser", "pet_incubator", "pet_bed", "pet_basket"}
+TRUE_BOUNDS = {"egg_lamp", "pet_portrait", "toy_box", "pet_flap", "treat_dispenser", "pet_incubator"}  # check with element rotations applied
 
 
 def T(name):
@@ -77,11 +91,14 @@ def layer(m, cells, y0, y1, **faces):
 # 1. pet_bed
 # ======================================================================================
 def pet_bed():
-    m = new("pet_bed", dict(side="pet_bed_side", top="pet_bed_top"), "side")
+    m = new("pet_bed", dict(side="pet_bed_side", top="pet_bed_top", cushion="pet_bed_cushion"), "side")
     A, B, H = GEO["bed_outerA"], GEO["bed_outerB"], GEO["bed_hollow"]
-    ring(m, A - H, H, 0, 4, "side", "side", "top", "side")
-    ring(m, B - H, H, 4, 6, "side", "side", "top", "side")
-    layer(m, H, 0, 3, up="top")           # cream cushion: only its top is visible (y = 3)
+    S, T = tinted("side"), tinted("top")       # the fabric is gray and tinted with the bed's dye colour (tintindex 0)
+    ring(m, A - H, H, 0, 4, S, S, T, S)
+    ring(m, B - H, H, 4, 6, S, S, T, S)
+    paw = GEO["bed_paw"]
+    layer(m, H - paw, 0, 3, up="cushion")      # cream cushion: only its top is visible (y = 3), not dyed
+    layer(m, paw, 0, 3, up=T)                  # the stitched paw print is dyed like the rim
 
 
 # ======================================================================================
@@ -95,9 +112,18 @@ def pet_basket():
     for (z0, z1, h) in ((3, 6, 5), (6, 9, 6), (9, 13, 7)):         # stepped side walls
         m.box((1, 1, z0), (3, h, z1), all="weave", up="rim")
         m.box((13, 1, z0), (15, h, z1), all="weave", up="rim")
-    m.box((3, 1, 3), (13, 4, 13), up="blanket")                    # blanket, flush with the front rim
-    m.box((3, 4, 8), (13, 6, 13), up="blanket", north=("blanket", (3, 10, 13, 12)))   # folded back edge
-    m.box((3, 4, 3), (8, 5, 8), up="blanket", north=("blanket", (8, 10, 13, 11)), east=("blanket", (3, 10, 8, 11)))  # corner fold
+    # blanket: 4x4 checks, the "blue" ones gray + tinted with the basket's dye colour (tintindex 0), the white ones untinted
+    T = tinted("blanket")
+    blue = lambda c: ((c[0] // 4) + (c[1] // 4)) % 2 == 0          # check at top view cell (x, z)
+    f1, f2 = rect_cells(3, 3, 8, 8), rect_cells(3, 8, 13, 13)
+    main = rect_cells(3, 3, 13, 13) - f1 - f2                       # what stays visible at the front rim height (y = 4)
+    for cells, (y0, y1) in ((main, (1, 4)), (f1, (4, 5)), (f2, (4, 6))):
+        layer(m, {c for c in cells if blue(c)}, y0, y1, up=T)
+        layer(m, {c for c in cells if not blue(c)}, y0, y1, up="blanket")
+    hem = tinted("blanket", uv=[1, 1, 2, 2])                        # the folded edges: plain dyed hem
+    m.box((3, 4, 8), (13, 6, 9), north=hem)                         # folded back edge
+    m.box((3, 4, 3), (8, 5, 4), north=hem)                          # corner fold, front
+    m.box((7, 4, 3), (8, 5, 8), east=hem)                           # corner fold, side
 
 
 # ======================================================================================
@@ -304,6 +330,226 @@ def pet_house():
 
 
 # ======================================================================================
+# 10. egg lamp  (lit = false / true).  The shell is tinted (tintindex 0) with a grayscale texture; base, screen
+#     window and buttons are untinted.  Drawn for facing = north (screen on the north face).
+# ======================================================================================
+def tinted(key, **kw):
+    return dict(texture=key, tintindex=0, **kw)
+
+
+def egg_lamp(lit):
+    name = "egg_lamp_lit" if lit else "egg_lamp"
+    suf = "_lit" if lit else ""
+    m = new(name, dict(shell=f"egg_lamp_shell{suf}", side=f"egg_lamp_side{suf}", top=f"egg_lamp_top{suf}",
+                       face=f"egg_lamp_face{suf}", base="egg_lamp_base"), "shell")
+    em = dict(light=15, shade=False) if lit else {}   # glows (full bright, no directional shading: the textures carry the form)
+    # round-ish base: plate + collar
+    layer(m, round_rect(4, 4, 12, 12, 1), 0, 1, all="base")
+    layer(m, round_rect(5, 5, 11, 11, 1), 1, 2, all="base")
+    mx0, my0, mx1, my1 = GEO["egg_mod"]
+    buttons = {}
+    for (x0, y0, x1, y1, _k, z0) in GEO["egg_btn"]:
+        for x in range(x0, x1):
+            for y in range(y0, y1):
+                buttons[(x, y)] = z0
+    for r, w in enumerate(GEO["egg_w"]):
+        y = GEO["egg_y0"] + r
+        cells = egg_plan(w)
+        z0 = min(z for _, z in cells)
+        groups = {}
+        for (x, z) in cells:
+            cls = "shell"
+            if my0 <= y < my1 and w == 8:
+                if z == z0:
+                    cls = "gone"                                    # the front strip is cut away behind the screen module
+                elif z == z0 + 1 and mx0 <= x < mx1:
+                    cls = "face"
+            elif (x, y) in buttons and z == buttons[(x, y)]:
+                cls = "face"
+            if cls != "gone":
+                groups.setdefault(cls, set()).add((x, z))
+        for cls, cs in groups.items():
+            f = dict(north=tinted("shell"), south=tinted("side"), west=tinted("side"), east=tinted("side"),
+                     up=tinted("top"), down=tinted("top"))
+            if cls == "face":
+                f["north"] = "face"
+            layer(m, cs, y, y + 1, **f, **em)
+
+
+# ======================================================================================
+# 11. pet portrait  (facing = north: the frame hangs on the wall behind, z 14..16, and the picture faces north)
+# ======================================================================================
+def pet_portrait():
+    m = new("pet_portrait", dict(frame="pet_portrait_frame", wood="pet_portrait_wood", back="pet_portrait_back",
+                                 plaque="pet_portrait_plaque"), "wood")
+    for (x0, y0, x1, y1) in merge_rects(GEO["portrait_ring"]):          # rects are (x, y) here
+        m.box((x0, y0, 14), (x1, y1, 16), north="frame", south="wood", up="wood", down="wood", east="wood", west="wood")
+    bx0, by0, bx1, by1 = GEO["portrait_back"]
+    m.box((bx0, by0, 14.5), (bx1, by1, 16), north=tinted("back"))          # recessed canvas: tinted backdrop (tintindex 0)
+    px0, py0, px1, py1 = GEO["portrait_plaque"]
+    edge = dict(texture="plaque", uv=[0, 0, 1, 1])
+    m.box((px0, py0, 14), (px1, py1, 15), north="plaque", up=edge, down=edge, east=edge, west=edge)
+    # inventory icon: the picture seen almost straight on (the slab sits at the back of the cell, so shift it into the slot)
+    m.gui = {"rotation": [8, 180, 0], "translation": [0, 0, 0], "scale": [0.9, 0.9, 0.9]}
+
+
+# ======================================================================================
+# 12. pet flap  (facing = north; slab z 7..9; closed / open = flap swung out 45 degrees about its top hinge)
+# ======================================================================================
+def pet_flap(open_):
+    name = "pet_flap_open" if open_ else "pet_flap"
+    m = new(name, dict(planks="pet_flap_planks", frame="pet_flap_frame", flap="pet_flap_flap"), "planks")
+    hx0, hy0, hx1, hy1 = GEO["flap_hole"]
+    fx0, fy0, fx1, fy1 = GEO["flap_frame"]
+    outer = rect_cells(fx0, fy0, fx1, fy1)
+    for (x0, y0, x1, y1) in merge_rects(rect_cells(0, 0, 16, 16) - outer):          # planks around the frame
+        m.box((x0, y0, 7), (x1, y1, 9), all="planks")
+    swatch = dict(texture="frame", uv=[0, 0, 1, 1])
+    for (x0, y0, x1, y1) in merge_rects(outer - rect_cells(hx0, hy0, hx1, hy1)):    # frame ring around the opening
+        m.box((x0, y0, 7), (x1, y1, 9), north="frame", south="frame", up=swatch, down=swatch, east=swatch, west=swatch)
+    # the flap: 1 px thick plate hanging from the top of the opening, flush with the front of the slab
+    x0, y0, x1, y1 = GEO["flap_flap"]
+    rot = {"angle": 45, "axis": "x", "origin": [8, y1, 7.5]} if open_ else None
+    edge_up, edge = dict(texture="flap", uv=[1, 0, 2, 1]), dict(texture="flap", uv=[0, 0, 1, 1])
+    m.box((x0, y0, 7), (x1, y1, 8), north="flap", south="flap", up=edge_up, down=edge, east=edge, west=edge, rotation=rot)
+    # inventory icon: the front seen almost straight on
+    m.gui = {"rotation": [8, 180, 0], "translation": [0, 0, 0], "scale": [0.9, 0.9, 0.9]}
+
+
+# ======================================================================================
+# 13. treat dispenser  (facing = north: chute, coin slot and button on the north face)
+# ======================================================================================
+def classes(m, cells, y0, y1, classify, faces_for, **kw):
+    """Boxes for a footprint split into classes: ``classify(x, z)`` -> key, ``faces_for(key)`` -> face kwargs
+    (key None = leave the cell out)."""
+    groups = {}
+    for (x, z) in cells:
+        k = classify(x, z)
+        if k is not None:
+            groups.setdefault(k, set()).add((x, z))
+    for k, cs in groups.items():
+        layer(m, cs, y0, y1, **faces_for(k), **kw)
+
+
+def treat_dispenser():
+    m = new("treat_dispenser", dict(front="treat_dispenser_front", body="treat_dispenser_body", trim="treat_dispenser_trim",
+                                    glass="treat_dispenser_glass", treats="treat_dispenser_treats"), "body")
+    B = GEO["disp_body"]
+    hx0, hy0, hx1, hy1, hz0, hz1 = GEO["disp_hole"]
+    dark = dict(texture="front", uv=[0, 0, 1, 1])
+    floor = dict(texture="front", uv=[1, 0, 2, 1])
+    allf = dict(north="front", south="body", west="body", east="body", up="body", down="body")
+    # body, three slices: the middle one has the chute cut out of its front
+    classes(m, B, 0, 1, lambda x, z: "tray" if (hx0 <= x < hx1 and z < hz1) else "plain",
+            lambda k: dict(allf, up=floor) if k == "tray" else allf)
+
+    def mid(x, z):
+        if hx0 <= x < hx1 and z < hz1:
+            return None
+        if z < hz1 and x == hx0 - 1:
+            return "jamb_l"
+        if z < hz1 and x == hx1:
+            return "jamb_r"
+        if hx0 <= x < hx1 and z == hz1:
+            return "back"
+        return "plain"
+    classes(m, B, hy0, hy1, mid, lambda k: {"plain": allf, "jamb_l": dict(allf, east=dark), "jamb_r": dict(allf, west=dark),
+                                            "back": dict(allf, north=dark)}[k])
+    classes(m, B, hy1, 6, lambda x, z: "lintel" if (hx0 <= x < hx1 and z < hz1) else "plain",
+            lambda k: dict(allf, down=dark) if k == "lintel" else allf)
+    layer(m, GEO["disp_collar"], 6, 7, all="trim")
+    # glass jar: only the outward faces, cutout; the treats stand inside it
+    layer(m, GEO["disp_jar"], 7, 13, north="glass", south="glass", west="glass", east="glass")
+    layer(m, GEO["disp_heap"], 7, 12, all="treats")
+    layer(m, GEO["disp_heap_top"], 12, 13, all="treats")
+    # lid and knob
+    layer(m, GEO["disp_collar"], 13, 14, all="body")
+    m.box((6, 14, 6), (10, 15, 10), all="trim")
+
+
+# ======================================================================================
+# 14. pet incubator  (lit = false / true; facing = north: dial and LED on the north face).  The egg (drawn by Java) stands
+#     on the nest pad at y = 3, 6 px wide and 8 px tall: the dome is empty above y = 3 inside x/z 5..11.
+# ======================================================================================
+def pet_incubator(lit):
+    name = "pet_incubator_on" if lit else "pet_incubator"
+    suf = "_on" if lit else ""
+    m = new(name, dict(base="pet_incubator_base", front=f"pet_incubator_front{suf}", coil=f"pet_incubator_coil{suf}",
+                       glass=f"pet_incubator_glass{suf}", cap="pet_incubator_cap"), "base")
+    em = dict(light=12, shade=False) if lit else {}
+    B, D10, D8, D6 = GEO["inc_base"], GEO["inc_d10"], GEO["inc_d8"], GEO["inc_d6"]
+    led = GEO["inc_led"]
+    z0 = min(z for _, z in B)
+    ledf = dict(texture="front", uv=[0, 0, 1, 1])
+
+    # base: three rows; the LED is its own cell on the middle row (emissive in the lit state)
+    allb = dict(north="front", south="base", west="base", east="base", up="base", down="base")
+    layer(m, B, 0, 1, **allb)
+    for k, cs in {"plain": {c for c in B if not (c[1] == z0 and c[0] == led[0])}, "led": {(led[0], z0)}}.items():
+        layer(m, cs, 1, 2, **(allb if k == "plain" else dict(allb, north=ledf)), **(dict(light=12, shade=False) if (lit and k == "led") else {}))
+    layer(m, B, 2, 3, **allb)
+    # gasket ring (cream top, pink band) and heating ring (the coil) at y 3..4, side by side
+    for (x0, zz0, x1, zz1) in merge_rects(D10 - D8):
+        fr, to = (x0, 3, zz0), (x1, 4, zz1)
+        band = {d: ("base", side_uv(d, fr, to, 14, 15)) for d in ("north", "south", "west", "east")}
+        m.box(fr, to, up="base", **band)
+    layer(m, D8 - D6, 3, 4, all="coil", **em)
+    # glass dome: only the outward faces (cutout); opaque ledge colour on the steps; solid cap on top
+    ledge = dict(texture="glass", uv=[0, 0, 1, 1])
+    layer(m, D10, 4, 9, north="glass", south="glass", west="glass", east="glass")
+    layer(m, D8, 9, 11, north="glass", south="glass", west="glass", east="glass", up=None)
+    layer(m, D10 - D8, 8, 9, up=ledge)
+    layer(m, D8 - D6, 10, 11, up=ledge)
+    layer(m, D6, 11, 12, all="cap")
+
+
+# ======================================================================================
+# 15. toy box  (facing = north: paw print and clasp on the north face, hinges at the back; open = lid raised 45 degrees
+#     about the back hinge, toys inside)
+# ======================================================================================
+def toy_box(open_):
+    name = "toy_box_open" if open_ else "toy_box"
+    m = new(name, dict(front="toy_box_front", side="toy_box_side", back="toy_box_back", top="toy_box_top",
+                       inner="toy_box_inner", toys="toy_box_toys"), "front")
+    if not open_:
+        m.box((1, 0, 2), (15, 7, 14), north="front", south="back", west="side", east="side", up="inner", down="inner")
+    else:
+        m.box((1, 0, 2), (15, 1, 14), north="front", south="back", west="side", east="side", up="inner", down="inner")
+        m.box((1, 1, 2), (15, 7, 4), north="front", south="inner", west="side", east="side", up="inner")
+        m.box((1, 1, 12), (15, 7, 14), north="inner", south="back", west="side", east="side", up="inner")
+        m.box((1, 1, 4), (3, 7, 12), west="side", east="inner", up="inner")
+        m.box((13, 1, 4), (15, 7, 12), west="inner", east="side", up="inner")
+
+        def sw(k):
+            return dict(texture="toys", uv=[k, 0, k + 1, 1])
+
+        def solid(frm, to, side, top, **kw):
+            m.box(frm, to, north=sw(side), south=sw(side), west=sw(side), east=sw(side), up=sw(top), down=sw(side), **kw)
+        # a heap of toys (mosaic seen from above) filling the chest up to y 4
+        m.box((3, 1, 4), (13, 4, 12), up="toys")
+        # red / white ball (stepped sphere, diameter 4)
+        layer(m, rect_cells(10, 6, 12, 8), 4, 5, all=sw(0), up=sw(1))
+        layer(m, round_rect(9, 5, 13, 9, 1), 5, 6, all=sw(0), up=sw(1))
+        layer(m, round_rect(9, 5, 13, 9, 1), 6, 7, all=sw(2), up=sw(2))
+        layer(m, rect_cells(10, 6, 12, 8), 7, 8, all=sw(2), up=sw(2))
+        # lilac teddy: body, head with a face, two ears
+        solid((4, 4, 8), (7, 7, 11), 3, 4)
+        m.box((4, 7, 8), (7, 9, 11), north=dict(texture="toys", uv=[0, 1, 3, 3]), south=sw(3), west=sw(3), east=sw(3), up=sw(4), down=sw(3))
+        solid((4, 9, 8), (5, 10, 9), 3, 4)
+        solid((6, 9, 8), (7, 10, 9), 3, 4)
+        # a feather sticking up at the back
+        solid((11, 4, 10), (12, 7, 11), 8, 9)
+        solid((11, 7, 10), (13, 9, 11), 9, 9)
+        solid((12, 9, 10), (13, 11, 11), 10, 10)
+    # lid: lower slab + inset upper slab (stepped dome); the open lid turns about the back hinge
+    rot = {"angle": 45, "axis": "x", "origin": [8, 7, 14]} if open_ else None
+    lid = dict(north="front", south="back", west="side", east="side", up="top", down="inner")
+    m.box((1, 7, 2), (15, 9, 14), rotation=rot, **lid)
+    m.box((2, 9, 4), (14, 11, 12), rotation=rot, **lid)
+    # inventory icon: the usual corner view is fine (closed model only is used for the item)
+
+
+# ======================================================================================
 # blockstates / items / loot
 # ======================================================================================
 FACING_Y = {"north": 0, "east": 90, "south": 180, "west": 270}
@@ -311,6 +557,19 @@ FACING_Y = {"north": 0, "east": 90, "south": 180, "west": 270}
 
 def model_ref(n):
     return f"{NS}:block/{n}"
+
+
+def facing_states(models):
+    """Blockstate with the four facings (y rotation 0/90/180/270) x the given extra property states
+    ({"open=true": model name, "": model name, ...}); extra property names sort after 'facing'."""
+    v = {}
+    for key, mname in models.items():
+        for f, y in FACING_Y.items():
+            e = {"model": model_ref(mname)}
+            if y:
+                e["y"] = y
+            v[f"facing={f}" + (f",{key}" if key else "")] = e
+    return {"variants": v}
 
 
 def blockstates():
@@ -331,6 +590,12 @@ def blockstates():
                                    "filled=true": {"model": model_ref("pet_bath_filled")}}}
     bs["bouncy_mushroom"] = {"variants": {"squished=false": {"model": model_ref("bouncy_mushroom")},
                                           "squished=true": {"model": model_ref("bouncy_mushroom_squished")}}}
+    bs["egg_lamp"] = facing_states({"lit=false": "egg_lamp", "lit=true": "egg_lamp_lit"})   # the screen faces the placer
+    bs["pet_portrait"] = facing_states({"": "pet_portrait"})
+    bs["pet_flap"] = facing_states({"open=false": "pet_flap", "open=true": "pet_flap_open"})
+    bs["treat_dispenser"] = facing_states({"": "treat_dispenser"})
+    bs["pet_incubator"] = facing_states({"lit=false": "pet_incubator", "lit=true": "pet_incubator_on"})
+    bs["toy_box"] = facing_states({"open=false": "toy_box", "open=true": "toy_box_open"})
     return bs
 
 
@@ -348,8 +613,56 @@ def loot_table(block):
     }
 
 
+# dye colours (DyeColor diffuse colours), the default dye of the tinted blocks and how far Java whitens it
+# (Dyeing.tint = ARGB.srgbLerp(whiten, dye, white); tools/data/gen_data.py applies the same formula to the 16 item models)
+DYE = dict(WHITE=0xF9FFFE, ORANGE=0xF9801D, MAGENTA=0xC74EBD, LIGHT_BLUE=0x3AB3DA, YELLOW=0xFED83D, LIME=0x80C71F,
+           PINK=0xF38BAA, GRAY=0x474F52, LIGHT_GRAY=0x9D9D97, CYAN=0x169C9C, PURPLE=0x8932B8, BLUE=0x3C44AA,
+           BROWN=0x835432, GREEN=0x5E7C16, RED=0xB02E26, BLACK=0x1D1D21)
+DEFAULT_DYE = {"pet_bed": "RED", "pet_basket": "LIGHT_BLUE", "egg_lamp": "PINK", "pet_portrait": "PINK"}
+WHITEN = {"pet_bed": 0.0, "pet_basket": 0.0, "egg_lamp": 0.3, "pet_portrait": 0.55}
+
+
+def dye_tint(rgb, whiten):
+    """0xRRGGBB of the tint Java computes for a dye: each channel c -> c + floor(whiten * (255 - c)) (float32 like Java)."""
+    import numpy as np
+    out = 0
+    for shift in (16, 8, 0):
+        c = (rgb >> shift) & 0xFF
+        out = (out << 8) | (c + int(np.floor(np.float32(whiten) * np.float32(255 - c))))
+    return out
+
+
+ITEM_TINT = {blk: dye_tint(DYE[DEFAULT_DYE[blk]], WHITEN[blk]) for blk in DEFAULT_DYE}
+
+
+def argb(rgb):
+    """0xRRGGBB -> opaque ARGB as the signed 32 bit int the item definition json wants."""
+    v = 0xFF000000 | rgb
+    return v - (1 << 32) if v >= 1 << 31 else v
+
+
+def base_block(name):
+    """'egg_lamp_lit' -> 'egg_lamp': the block a model belongs to (only for tinted blocks)."""
+    for blk in sorted(ITEM_TINT, key=len, reverse=True):
+        if name == blk or name.startswith(blk + "_"):
+            return blk
+    return None
+
+
+def tint_of_model(name, dye=None):
+    """(r, g, b) a model is previewed with: its block's default dye (or the dye colour name given); None if untinted."""
+    blk = base_block(name)
+    if blk is None:
+        return None
+    c = ITEM_TINT[blk] if dye is None else dye_tint(DYE[dye] if isinstance(dye, str) else dye, WHITEN[blk])
+    return ((c >> 16) & 255, (c >> 8) & 255, c & 255)
+
+
 def block_item(block):
-    return {"model": {"type": "minecraft:model", "model": model_ref(block + "_item" if block == "running_wheel" else block)}}
+    model = {"type": "minecraft:model", "model": model_ref(block + "_item" if block == "running_wheel" else block)}
+    if block in ITEM_TINT:
+        model["tints"] = [{"type": "minecraft:constant", "value": argb(ITEM_TINT[block])}]
+    return {"model": model}
 
 
 def build_models():
@@ -366,11 +679,24 @@ def build_models():
     running_wheel("running_wheel_item", rim=True)
     scratching_post()
     pet_house()
+    egg_lamp(False)
+    egg_lamp(True)
+    pet_portrait()
+    pet_flap(False)
+    pet_flap(True)
+    treat_dispenser()
+    pet_incubator(False)
+    pet_incubator(True)
+    toy_box(False)
+    toy_box(True)
     # bounds check (models must stay inside the collision bounds)
     for name, m in MODELS.items():
         base = name.replace("_fill1", "").replace("_fill2", "").replace("_fill3", "").replace("_filled", "").replace("_squished", "")
-        lo, hi = BOUNDS[base]
-        mn, mx = m.bounds()
+        for suffix in ("_lit", "_open", "_on"):
+            if base.endswith(suffix) and base[:-len(suffix)] in BOUNDS:
+                base = base[:-len(suffix)]
+        lo, hi = BOUNDS.get(name, BOUNDS.get(base))
+        mn, mx = m.true_bounds() if base in TRUE_BOUNDS else m.bounds()
         assert all(mn[i] >= lo[i] for i in range(3)) and all(mx[i] <= hi[i] for i in range(3)), (name, mn, mx, lo, hi)
     return MODELS
 

@@ -82,6 +82,10 @@ loom {
 		}
 	}
 }
+// ./gradlew runClientGameTest -Ptests=blocks (or pets) runs only that part of the client tests
+tasks.matching { it.name == 'runClientGameTest' }.configureEach {
+	if (project.hasProperty('tests')) jvmArgs "-Dtama.tests=${project.property('tests')}"
+}
 tasks.matching { it.name == 'runFilm' }.configureEach {
 	onlyIf { project.hasProperty('film') }
 }

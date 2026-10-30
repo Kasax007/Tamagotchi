@@ -1,5 +1,6 @@
 package net.kasax.tamagotchi.pet;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
@@ -8,14 +9,18 @@ import net.kasax.tamagotchi.block.FoodBowlBlock;
 import net.kasax.tamagotchi.block.PetBathBlock;
 import net.kasax.tamagotchi.block.PetBedBlock;
 import net.kasax.tamagotchi.block.PetHouseBlock;
+import net.kasax.tamagotchi.block.PlushBlock;
 import net.kasax.tamagotchi.block.RunningWheelBlock;
 import net.kasax.tamagotchi.block.ScratchingPostBlock;
+import net.kasax.tamagotchi.block.ToyBoxBlock;
+import net.kasax.tamagotchi.block.ToyBoxBlockEntity;
 import net.kasax.tamagotchi.item.LaserPointerItem;
 import net.kasax.tamagotchi.pet.PetNeeds.Mood;
 import net.kasax.tamagotchi.pet.PetNeeds.Need;
 import net.kasax.tamagotchi.registry.ModItems;
 import net.kasax.tamagotchi.registry.ModParticles;
 import net.kasax.tamagotchi.registry.ModSounds;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -624,7 +629,7 @@ public final class PetGoals {
 
         @Override
         public boolean canUse() {
-            if (busy(this.pet) || !this.pet.getCarried().isEmpty() && this.pet.getOwner() == null) {
+            if (busy(this.pet) || this.pet.showingToy || !this.pet.getCarried().isEmpty() && this.pet.getOwner() == null) {
                 return false;
             }
             if (!this.pet.getCarried().isEmpty()) {
@@ -707,7 +712,7 @@ public final class PetGoals {
     // playground / bowl / bath / house
 
     static final class UseBlockGoal extends Goal {
-        enum Use { EAT, BATH, BOUNCE, WHEEL, SCRATCH, SHELTER }
+        enum Use { EAT, BATH, BOUNCE, WHEEL, SCRATCH, SHELTER, TOYS, PLUSH }
 
         private final TamaPet pet;
         private @Nullable Use use;
@@ -715,6 +720,7 @@ public final class PetGoals {
         private int timer;
         private int arrivedTicks;
         private int nextCheck = 60;
+        private boolean toyInMouth;
 
         UseBlockGoal(TamaPet pet) {
             this.pet = pet;
@@ -735,23 +741,29 @@ public final class PetGoals {
             if (n.hunger < 55 && pick(Use.EAT, st -> st.getBlock() instanceof FoodBowlBlock && st.getValue(FoodBowlBlock.FILL) > 0, owner)) return true;
             if (n.hygiene < 50 && pick(Use.BATH, st -> st.getBlock() instanceof PetBathBlock && st.getValue(PetBathBlock.FILLED), owner)) return true;
             if (n.fun < 65 && n.energy > 20) {
-                int r = this.pet.getRandom().nextInt(3);
-                Use[] order = r == 0 ? new Use[]{Use.WHEEL, Use.BOUNCE, Use.SCRATCH}
-                        : r == 1 ? new Use[]{Use.BOUNCE, Use.SCRATCH, Use.WHEEL} : new Use[]{Use.SCRATCH, Use.WHEEL, Use.BOUNCE};
+                List<Use> order = new ArrayList<>(List.of(Use.WHEEL, Use.BOUNCE, Use.SCRATCH, Use.TOYS, Use.PLUSH));
+                Util.shuffle(order, this.pet.getRandom());
                 for (Use u : order) {
-                    Predicate<BlockState> p = switch (u) {
-                        case WHEEL -> st -> st.getBlock() instanceof RunningWheelBlock;
-                        case BOUNCE -> st -> st.getBlock() instanceof BouncyMushroomBlock;
-                        default -> st -> st.getBlock() instanceof ScratchingPostBlock;
+                    boolean found = switch (u) {
+                        case WHEEL -> pick(u, st -> st.getBlock() instanceof RunningWheelBlock, owner);
+                        case BOUNCE -> pick(u, st -> st.getBlock() instanceof BouncyMushroomBlock, owner);
+                        case TOYS -> pick(u, st -> st.getBlock() instanceof ToyBoxBlock,
+                                p -> level.getBlockEntity(p) instanceof ToyBoxBlockEntity box && !box.isEmpty(), owner);
+                        case PLUSH -> pick(u, st -> st.getBlock() instanceof PlushBlock, owner);
+                        default -> pick(u, st -> st.getBlock() instanceof ScratchingPostBlock, owner);
                     };
-                    if (pick(u, p, owner)) return true;
+                    if (found) return true;
                 }
             }
             return false;
         }
 
         private boolean pick(Use use, Predicate<BlockState> test, @Nullable LivingEntity owner) {
-            BlockPos found = BlockSearch.nearest(this.pet, 12, 3, test);
+            return pick(use, test, p -> true, owner);
+        }
+
+        private boolean pick(Use use, Predicate<BlockState> test, Predicate<BlockPos> posTest, @Nullable LivingEntity owner) {
+            BlockPos found = BlockSearch.nearest(this.pet, 12, 3, test, posTest);
             if (found == null) {
                 return false;
             }
@@ -797,6 +809,8 @@ public final class PetGoals {
                 case WHEEL -> 170;
                 case SCRATCH -> 90;
                 case SHELTER -> 2000;
+                case TOYS -> 130;
+                case PLUSH -> 110;
             };
         }
 
@@ -899,6 +913,45 @@ public final class PetGoals {
                         this.pet.setSleeping(true);
                     }
                 }
+                case TOYS -> {
+                    if (!(level.getBlockEntity(this.pos) instanceof ToyBoxBlockEntity box)) {
+                        this.arrivedTicks = 1000;
+                        return;
+                    }
+                    if (this.arrivedTicks == 1) {
+                        ItemStack toy = box.pickToy(this.pet.getRandom());
+                        if (toy.isEmpty()) {
+                            this.arrivedTicks = 1000;
+                            return;
+                        }
+                        box.petPlay(duration());
+                        if (this.pet.getCarried().isEmpty()) {
+                            this.pet.showingToy = true;
+                            this.pet.setCarried(toy.copyWithCount(1));
+                            this.toyInMouth = true;
+                        }
+                    }
+                    if (this.arrivedTicks % 30 == 10) {
+                        this.pet.playAction(PetAction.PLAY);
+                        if (this.pet.onGround()) {
+                            this.pet.getJumpControl().jump();
+                        }
+                        level.playSound(null, this.pet.blockPosition(), ToyBoxBlockEntity.isPetToy(this.pet.getCarried())
+                                ? ModSounds.TOY_SQUEAK : net.minecraft.sounds.SoundEvents.BUNDLE_DROP_CONTENTS, SoundSource.NEUTRAL, 0.6F,
+                                1.0F + this.pet.getRandom().nextFloat() * 0.4F);
+                        this.pet.needs().add(Need.FUN, ToyBoxBlockEntity.isPetToy(this.pet.getCarried()) ? 6 : 4);
+                    }
+                }
+                case PLUSH -> {
+                    this.pet.setInSittingPose(true);
+                    if (this.arrivedTicks % 27 == 1 && st.getBlock() instanceof PlushBlock plush) {
+                        PlushBlock.squeeze(level, this.pos);
+                        this.pet.playAction(PetAction.PETTED);
+                        boolean own = plush.species() == this.pet.species();
+                        this.pet.needs().add(Need.FUN, own ? 6 : 4);
+                        this.pet.needs().addBond(own ? 0.25F : 0.1F);
+                    }
+                }
             }
         }
 
@@ -918,8 +971,16 @@ public final class PetGoals {
                 this.pet.setInSittingPose(this.pet.isOrderedToSit());
                 this.pet.wakeUp();
             }
-            if (this.use == Use.BOUNCE || this.use == Use.SCRATCH || this.use == Use.WHEEL) {
+            if (this.use == Use.BOUNCE || this.use == Use.SCRATCH || this.use == Use.WHEEL || this.use == Use.TOYS) {
                 this.pet.needs().addBond(0.3F);
+            }
+            if (this.use == Use.PLUSH) {
+                this.pet.setInSittingPose(this.pet.isOrderedToSit());
+            }
+            if (this.toyInMouth) {
+                this.pet.setCarried(ItemStack.EMPTY);
+                this.pet.showingToy = false;
+                this.toyInMouth = false;
             }
             this.pet.setFlag(TamaPet.F_RUNNING, false);
             this.use = null;

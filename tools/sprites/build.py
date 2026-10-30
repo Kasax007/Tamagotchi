@@ -3,6 +3,11 @@
 
     python3 tools/sprites/build.py            # everything
     python3 tools/sprites/build.py items eggs # only some groups (items, eggs, particles, blocks, sheets)
+    python3 tools/sprites/build.py blocks newsheet   # blocks + only the review sheet of the second furniture batch
+                                              # (out/contact_new_blocks.png, out/contact_new_tints.png)
+
+tools/data/gen_data.py runs after this script: it writes the loot tables of the dyeable / new blocks and wraps the item
+definitions of the dyeable blocks (bed, basket, egg lamp, portrait) into a select on the colour property.
 
 Writes into src/main/resources/{assets,data}/tamagotchi/ (see docs/ART.md) and tools/sprites/out/.
 """
@@ -74,7 +79,8 @@ def build_blocks():
     for blk, bs in block_models.blockstates().items():
         write_json(ASSETS / "blockstates" / f"{blk}.json", bs)
         write_json(ASSETS / "items" / f"{blk}.json", block_models.block_item(blk))
-        write_json(DATA / "loot_table/blocks" / f"{blk}.json", block_models.loot_table(blk))
+        if blk not in block_models.LOOT_BY_GEN_DATA:
+            write_json(DATA / "loot_table/blocks" / f"{blk}.json", block_models.loot_table(blk))
 
 
 # --------------------------------------------------------------------------------------------------
@@ -88,6 +94,7 @@ def build_sheets():
     pe = [(n, [im]) for n, im in particles.PARTICLES.items()]
     sprite_sheet(pe, OUT / "contact_particles.png", k=8, cols=8, title="particles  (8x8 and 16x16, x8)")
     blocks_sheet()
+    new_blocks_sheet()
 
 
 def blocks_sheet():
@@ -108,7 +115,8 @@ def blocks_sheet():
         model = load_model(f"{NS}:block/{name}")
         d.text((6, y + 4), name.replace("_", "\n", 1), fill=(240, 240, 245), font=f)
         for i, (yaw, pitch) in enumerate(views):
-            tile = render_model(model, yaw=yaw, pitch=pitch, scale=sc, size=vs)
+            tint = block_models.tint_of_model(name)
+            tile = render_model(model, yaw=yaw, pitch=pitch, scale=sc, size=vs, tints={0: tint} if tint else None)
             bg = Image.new("RGBA", (vs, vs - 6), (122, 128, 140, 255) if i % 2 == 0 else (96, 102, 116, 255))
             bg.alpha_composite(tile.crop((0, 0, vs, vs - 6)))
             sheet.alpha_composite(bg, (90 + i * vs, y))
@@ -129,9 +137,77 @@ def blocks_sheet():
     for name in names:
         model = load_model(f"{NS}:block/{name}")
         big = Image.new("RGBA", (4 * 300, 300), (122, 128, 140, 255))
+        tint = block_models.tint_of_model(name)
         for i, (yaw, pitch) in enumerate(views):
-            big.alpha_composite(render_model(model, yaw=yaw, pitch=pitch, scale=10, size=300), (i * 300, 0))
+            big.alpha_composite(render_model(model, yaw=yaw, pitch=pitch, scale=10, size=300, tints={0: tint} if tint else None), (i * 300, 0))
         big.convert("RGB").save(OUT / "blocks" / f"{name}.png")
+
+
+NEW_BLOCKS = ["egg_lamp", "egg_lamp_lit", "pet_portrait", "toy_box", "toy_box_open", "pet_flap", "pet_flap_open",
+              "treat_dispenser", "pet_incubator", "pet_incubator_on", "pet_bed", "pet_basket"]
+
+
+def new_blocks_sheet(names=None, path=None, scale=8, panels=2):
+    """Review sheet of the second furniture batch (+ the dyeable bed and basket): two 3/4 front views, the front
+    straight on, the top and the back, with the default dye tints applied; lit states get an extra night row (emissive
+    elements stay bright).  Then a strip of every tinted block in all 16 dye colours (contact_new_tints.png)."""
+    f = font(13)
+    if not block_models.MODELS:
+        block_models.build_models()
+    names = [n for n in (names or NEW_BLOCKS) if n in block_models.MODELS]
+    views = [(135, 30), (225, 30), (180, 8), (225, 64), (45, 30)]
+    vs = int(21 * scale)                         # tile edge: a 16 high block seen from above fits
+    big = int(vs * 1.3)                          # rendered a bit larger, then cropped, so off-centre slabs are not cut
+    label_w = 150
+    rows = []
+    for n in names:
+        rows.append((n, 1.0))
+        if n.endswith("_lit") or n.endswith("_on"):
+            rows.append((n + "  (night)", 0.3))
+    per = (len(rows) + panels - 1) // panels
+    row_h = vs
+    pw = label_w + len(views) * vs
+    sheet = Image.new("RGBA", (pw * panels, per * row_h + 8), (84, 86, 96, 255))
+    d = ImageDraw.Draw(sheet)
+    for r, (label, amb) in enumerate(rows):
+        n = label.split()[0]
+        px0, y = (r // per) * pw, (r % per) * row_h + 4
+        model = load_model(f"{NS}:block/{n}")
+        tint = block_models.tint_of_model(n)
+        tints = {0: tint} if tint else None
+        d.text((px0 + 6, y + 4), label.replace("_", "\n", 1) if "(" not in label else label.replace("  ", "\n"), fill=(240, 240, 245), font=f)
+        for i, (yaw, pitch) in enumerate(views):
+            tile = render_model(model, yaw=yaw, pitch=pitch, scale=scale, size=big, tints=tints, ambient=amb)
+            tile = tile.crop(((big - vs) // 2, (big - row_h) // 2 - 3, (big - vs) // 2 + vs, (big - row_h) // 2 - 3 + row_h))
+            dark = amb < 1.0
+            bg = Image.new("RGBA", (vs, row_h), ((36, 38, 52, 255) if dark else (122, 128, 140, 255) if i % 2 == 0 else (104, 110, 124, 255)))
+            bg.alpha_composite(tile)
+            sheet.alpha_composite(bg, (px0 + label_w + i * vs, y))
+    path = Path(path) if path else OUT / "contact_new_blocks.png"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.convert("RGB").save(path)
+    # tint strip: the tinted models in every dye colour (Java whitens the dye: lamp 0.3, portrait backdrop 0.55)
+    tinted = [n for n in names if block_models.tint_of_model(n) and n not in ("egg_lamp_lit",)]
+    if tinted:
+        ps = 6
+        cell = int(21 * ps)
+        ch = cell - 12
+        cols = list(block_models.DYE)
+        strip = Image.new("RGBA", (8 * cell, len(tinted) * 2 * ch + 8), (84, 86, 96, 255))
+        sd = ImageDraw.Draw(strip)
+        y = 4
+        for n in tinted:
+            model = load_model(f"{NS}:block/{n}")
+            for k, cname in enumerate(cols):
+                x, yy = (k % 8) * cell, y + (k // 8) * ch
+                tile = render_model(model, yaw=150, pitch=26, scale=ps, size=cell, tints={0: block_models.tint_of_model(n, cname)})
+                bg = Image.new("RGBA", (cell, ch), (122, 128, 140, 255) if k % 2 == 0 else (104, 110, 124, 255))
+                bg.alpha_composite(tile.crop((0, 6, cell, 6 + ch)))
+                strip.alpha_composite(bg, (x, yy))
+                sd.text((x + 3, yy + 1), f"{n} {cname.lower()}", fill=(250, 250, 250), font=font(10))
+            y += 2 * ch
+        strip.convert("RGB").save(OUT / "contact_new_tints.png")
+    return path
 
 
 def main(argv):
@@ -146,6 +222,8 @@ def main(argv):
         build_blocks()
     if "sheets" in groups:
         build_sheets()
+    elif "newsheet" in groups:
+        new_blocks_sheet()           # review sheet of the second furniture batch only (build_sheets includes it)
     print("done:", ", ".join(groups))
 
 

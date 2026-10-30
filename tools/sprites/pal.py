@@ -64,6 +64,20 @@ define("gummy", ["#F6FFB0", "#D6F85E", "#A8E83A", "#72C42E", "#44962C"])
 define("biscuit", ["#FFF0A6", "#FFD95A", "#F2B238", "#C98424", "#8F5A22"])
 define("ink", ["#5B4F74", "#46405F", "#34304D", "#262540", "#1B1B33"])              # dark outlines for bubbles etc.
 
+# ---- furniture, second batch (egg lamp, portrait, toy box, pet flap, treat dispenser, incubator) --------------
+define("eggbase", ["#FFFEF8", "#F9F2E4", "#E9DECF", "#CDC0BD", "#A89CA9"])        # white / cream lamp + incubator base
+define("bezel", ["#BBA7C6", "#9B83A8", "#7B6590", "#5F4B73", "#43345A"])           # lavender screen bezel (like the pager)
+define("lcd_off", ["#C2CDB0", "#A9B894", "#8FA07E", "#76876C", "#5B6A58"])          # unpowered LCD
+define("lcd_warm", ["#FFFBE0", "#FFEFA8", "#FFD870", "#F29A3A", "#D8582E"])         # lamp screen glow (+ orange icon)
+define("glass", ["#FFFFFF", "#E9FAFF", "#C5EEFB", "#92D2EE", "#5FA6D2"])            # cutout glass edges / glints
+define("glass_warm", ["#FFFDEA", "#FFF0C8", "#FFDDA6", "#F5BC82", "#D98F5C"])       # glass glints next to a glowing coil
+define("coil_off", ["#B6A9B0", "#8C7E88", "#6A5C6C", "#4E4256", "#352C3F"])         # cold heating coil
+define("toyblue", ["#B4EAFF", "#62CCFA", "#2FA6EE", "#2B7CD0", "#27559E"])          # toy box paint, cheerful azure
+define("plush", ["#EAD9FF", "#C9A8F5", "#A47CE6", "#7F58C6", "#5A3C9C"])             # lilac plush toy
+define("candy_mint", ["#E6FFF4", "#9CF0CC", "#4CD2A4", "#2FA284", "#1F7468"])        # treat colours
+define("fabric", ["#F8F8F8", "#F0F0F0", "#E5E5E5", "#D8D8D8", "#C8C8C8"])             # grayscale dyeable fabric (tintindex 0)
+define("flapblue", ["#F2FCFF", "#C6EEFB", "#93D8F2", "#5FB0DF", "#3F82BE"])          # pet flap plastic
+
 if __name__ == "__main__":
     for k, v in RAMPS.items():
         print(f"{k:16s}", " ".join(rgb2hex(c) for c in v))

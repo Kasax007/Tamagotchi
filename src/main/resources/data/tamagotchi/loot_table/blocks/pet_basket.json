@@ -8,7 +8,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "tamagotchi:pet_basket"
+          "name": "tamagotchi:pet_basket",
+          "modifier": [
+            {
+              "type": "minecraft:copy_state",
+              "block": "tamagotchi:pet_basket",
+              "properties": [
+                "color"
+              ]
+            }
+          ]
         }
       ],
       "rolls": 1

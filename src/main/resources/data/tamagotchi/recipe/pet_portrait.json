@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": "minecraft:stick",
+    "P": "minecraft:painting",
+    "G": "minecraft:gold_nugget"
+  },
+  "pattern": [
+    "SSS",
+    "SPS",
+    "SGS"
+  ],
+  "result": {
+    "id": "tamagotchi:pet_portrait"
+  }
+}

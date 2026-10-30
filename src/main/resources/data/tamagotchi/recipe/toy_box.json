@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "Y": "minecraft:yellow_dye",
+    "C": "minecraft:chest"
+  },
+  "pattern": [
+    "PYP",
+    "PCP"
+  ],
+  "result": {
+    "id": "tamagotchi:toy_box"
+  }
+}

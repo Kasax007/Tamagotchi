@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:glass",
+    "T": "minecraft:torch",
+    "C": "minecraft:copper_ingot",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "GGG",
+    "GTG",
+    "CRC"
+  ],
+  "result": {
+    "id": "tamagotchi:pet_incubator"
+  }
+}

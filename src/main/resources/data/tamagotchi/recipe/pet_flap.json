@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "L": "minecraft:leather"
+  },
+  "pattern": [
+    "P P",
+    "PLP",
+    "P P"
+  ],
+  "result": {
+    "id": "tamagotchi:pet_flap"
+  }
+}

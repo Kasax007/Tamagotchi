@@ -83,6 +83,10 @@ public class TamaconScreen extends Screen {
         add("furniture", List.of(new ItemStack(ModBlocks.PET_BED), new ItemStack(ModBlocks.PET_BASKET), new ItemStack(ModBlocks.DRAGON_NEST),
                 new ItemStack(ModBlocks.FOOD_BOWL), new ItemStack(ModBlocks.PET_BATH), new ItemStack(ModBlocks.BOUNCY_MUSHROOM),
                 new ItemStack(ModBlocks.RUNNING_WHEEL), new ItemStack(ModBlocks.SCRATCHING_POST), new ItemStack(ModBlocks.PET_HOUSE)));
+        add("gadgets", List.of(new ItemStack(ModBlocks.TREAT_DISPENSER), new ItemStack(ModBlocks.PET_INCUBATOR),
+                new ItemStack(ModBlocks.TOY_BOX), new ItemStack(ModBlocks.PET_FLAP)));
+        add("decor", List.of(new ItemStack(ModBlocks.PLUSHES.get(PetSpecies.FROST_PENGUIN)), new ItemStack(ModBlocks.PET_PORTRAIT),
+                new ItemStack(ModBlocks.EGG_LAMP), new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.PINK))));
         add("reactions", List.of(new ItemStack(Items.JUKEBOX), new ItemStack(Items.NOTE_BLOCK), new ItemStack(Items.CAMPFIRE),
                 new ItemStack(Items.CAKE), new ItemStack(Items.POPPY), new ItemStack(Items.BELL)));
     }

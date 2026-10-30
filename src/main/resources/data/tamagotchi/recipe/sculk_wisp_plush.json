@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": "#minecraft:wool",
+    "X": "minecraft:sculk"
+  },
+  "pattern": [
+    " W ",
+    "WXW",
+    " W "
+  ],
+  "result": {
+    "id": "tamagotchi:sculk_wisp_plush"
+  }
+}

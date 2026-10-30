@@ -1,0 +1,227 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:block_state",
+    "block_state_property": "color",
+    "cases": [
+      {
+        "when": "white",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -327682
+            }
+          ]
+        }
+      },
+      {
+        "when": "orange",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -350624
+            }
+          ]
+        }
+      },
+      {
+        "when": "magenta",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -2653232
+            }
+          ]
+        }
+      },
+      {
+        "when": "light_blue",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -9057819
+            }
+          ]
+        }
+      },
+      {
+        "when": "yellow",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -72841
+            }
+          ]
+        }
+      },
+      {
+        "when": "lime",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -5843102
+            }
+          ]
+        }
+      },
+      {
+        "when": "pink",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -610877
+            }
+          ]
+        }
+      },
+      {
+        "when": "gray",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -8486011
+            }
+          ]
+        }
+      },
+      {
+        "when": "light_gray",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -4539722
+            }
+          ]
+        }
+      },
+      {
+        "when": "cyan",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -10765895
+            }
+          ]
+        }
+      },
+      {
+        "when": "purple",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -5476403
+            }
+          ]
+        }
+      },
+      {
+        "when": "blue",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -9012029
+            }
+          ]
+        }
+      },
+      {
+        "when": "brown",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -5732497
+            }
+          ]
+        }
+      },
+      {
+        "when": "green",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -7429285
+            }
+          ]
+        }
+      },
+      {
+        "when": "red",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -3707801
+            }
+          ]
+        }
+      },
+      {
+        "when": "black",
+        "model": {
+          "type": "minecraft:model",
+          "model": "tamagotchi:block/egg_lamp",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -10461085
+            }
+          ]
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "tamagotchi:block/egg_lamp",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -610877
+        }
+      ]
+    }
+  }
+}
