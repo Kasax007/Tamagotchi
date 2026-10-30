@@ -17,6 +17,7 @@ The furniture update: plushies, gadgets and colours.
 - Egg Lamp: a glowing night light
 - Dye the Pet Bed, Pet Basket, Egg Lamp and the portrait backdrop in all sixteen colours; broken furniture keeps its colour
 - Tamacon: new chapters "Pet gadgets" and "Decoration"; JEI/REI info pages for the new blocks
+- Fix: dragons without AI (NoAI tag, e.g. display pets) no longer take off by themselves
 
 ## 1.0.0
 
