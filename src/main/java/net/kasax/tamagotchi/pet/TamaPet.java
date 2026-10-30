@@ -688,7 +688,8 @@ public class TamaPet extends TamableAnimal {
     }
 
     private boolean mayFly() {
-        return species().winged() && !isOrderedToSit() && !isSleeping() && !isLeashed() && !isPassenger() && !isInWater()
+        // a pet without AI (NoAI tag, display pets) never takes off by itself
+        return species().winged() && !isNoAi() && !isOrderedToSit() && !isSleeping() && !isLeashed() && !isPassenger() && !isInWater()
                 && !isInLava() && (getTarget() == null || !getTarget().isAlive()) && !hasFlag(F_RUNNING) && !hasFlag(F_BATHING);
     }
 
