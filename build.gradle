@@ -1,6 +1,7 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
+	id 'me.modmuss50.mod-publish-plugin' version '2.2.1'
 }
 
 version = project.mod_version
@@ -109,5 +110,46 @@ jar {
 
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
+	}
+}
+
+// Releases (see README "Releasing"): pushing the tag v<mod_version> runs .github/workflows/release.yml, which uploads
+// the jar to CurseForge, Modrinth and a GitHub release, with that version's section of CHANGELOG.md as changelog.
+// Without tokens or project ids (local runs, the build workflow) it is a dry run that only writes build/publishMods.
+def changelogFor = { String v ->
+	def text = file("CHANGELOG.md").text
+	def m = (text =~ /(?ms)^## \[?${java.util.regex.Pattern.quote(v)}\]?[^\n]*\n(.*?)(?=^## |\z)/)
+	m.find() ? m.group(1).trim() : "Tamagotchi ${v}"
+}
+def curseforgeId = providers.gradleProperty("curseforge_id").getOrElse("")
+def modrinthId = providers.gradleProperty("modrinth_id").getOrElse("")
+publishMods {
+	file = jar.archiveFile
+	changelog = changelogFor(project.version.toString())
+	type = STABLE
+	displayName = "Tamagotchi ${project.version}"
+	modLoaders.add("fabric")
+	dryRun = providers.environmentVariable("PUBLISH_DRY_RUN").getOrElse("false") == "true" || curseforgeId.isEmpty() || modrinthId.isEmpty() ||
+			providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
+
+	curseforge {
+		projectId = curseforgeId.isEmpty() ? "0" : curseforgeId
+		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+		minecraftVersions.add(project.minecraft_version)
+		client = true
+		server = true
+		requires("fabric-api")
+	}
+	modrinth {
+		projectId = modrinthId.isEmpty() ? "AAAAAAAA" : modrinthId
+		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+		minecraftVersions.add(project.minecraft_version)
+		requires("fabric-api")
+	}
+	github {
+		repository = "Kasax007/Tamagotchi"
+		accessToken = providers.environmentVariable("GITHUB_TOKEN")
+		commitish = providers.environmentVariable("GITHUB_SHA").orElse("26.3")
+		tagName = "v${project.version}"
 	}
 }
