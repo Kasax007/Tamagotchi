@@ -127,33 +127,45 @@ def changelogFor = { String v ->
 }
 def curseforgeId = providers.gradleProperty("curseforge_id").getOrElse("")
 def modrinthId = providers.gradleProperty("modrinth_id").getOrElse("")
+// A platform is published to when its project id and token are there (a missing GitHub secret is an empty string);
+// a dry run (PUBLISH_DRY_RUN=true, every push in CI) checks all three with stand-in ids.
+def secret = { String name -> providers.environmentVariable(name).getOrElse("").trim() }
+def isDryRun = providers.environmentVariable("PUBLISH_DRY_RUN").getOrElse("false") == "true"
+def toCurseforge = isDryRun || !curseforgeId.isEmpty() && !secret("CURSEFORGE_TOKEN").isEmpty()
+def toModrinth = isDryRun || !modrinthId.isEmpty() && !secret("MODRINTH_TOKEN").isEmpty()
+def toGithub = isDryRun || !secret("GITHUB_TOKEN").isEmpty()
 publishMods {
 	file = jar.archiveFile
 	changelog = changelogFor(project.version.toString())
 	type = STABLE
 	displayName = "Tamagotchi ${project.version}"
 	modLoaders.add("fabric")
-	dryRun = providers.environmentVariable("PUBLISH_DRY_RUN").getOrElse("false") == "true" || curseforgeId.isEmpty() || modrinthId.isEmpty() ||
-			providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null
+	dryRun = isDryRun
 
-	curseforge {
-		projectId = curseforgeId.isEmpty() ? "0" : curseforgeId
-		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-		minecraftVersions.add(project.minecraft_version)
-		client = true
-		server = true
-		requires("fabric-api")
+	if (toCurseforge) {
+		curseforge {
+			projectId = curseforgeId.isEmpty() ? "0" : curseforgeId
+			accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+			minecraftVersions.add(project.minecraft_version)
+			client = true
+			server = true
+			requires("fabric-api")
+		}
 	}
-	modrinth {
-		projectId = modrinthId.isEmpty() ? "AAAAAAAA" : modrinthId
-		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-		minecraftVersions.add(project.minecraft_version)
-		requires("fabric-api")
+	if (toModrinth) {
+		modrinth {
+			projectId = modrinthId.isEmpty() ? "AAAAAAAA" : modrinthId
+			accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+			minecraftVersions.add(project.minecraft_version)
+			requires("fabric-api")
+		}
 	}
-	github {
-		repository = "Kasax007/Tamagotchi"
-		accessToken = providers.environmentVariable("GITHUB_TOKEN")
-		commitish = providers.environmentVariable("GITHUB_SHA").orElse("26.3")
-		tagName = "v${project.version}"
+	if (toGithub) {
+		github {
+			repository = "Kasax007/Tamagotchi"
+			accessToken = providers.environmentVariable("GITHUB_TOKEN")
+			commitish = providers.environmentVariable("GITHUB_SHA").orElse("26.3")
+			tagName = "v${project.version}"
+		}
 	}
 }
