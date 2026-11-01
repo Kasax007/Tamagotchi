@@ -1,11 +1,13 @@
-# Pushing the tag v<mod_version> (for example v1.0.0) builds the mod and uploads it to CurseForge, Modrinth and a
-# GitHub release. Needs the repository secrets CURSEFORGE_TOKEN and MODRINTH_TOKEN and the project ids in
-# gradle.properties (curseforge_id, modrinth_id); see README "Releasing".
+# Pushing the tag v<mod_version> (for example v1.0.0), or starting this workflow by hand on the branch ("Run workflow"
+# in the Actions tab), builds the mod and publishes mod_version: a GitHub release (the tag is made if it is missing),
+# CurseForge when the secret CURSEFORGE_TOKEN is set, Modrinth when MODRINTH_TOKEN and modrinth_id are set.
+# See README "Releasing".
 name: Release
 
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,6 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: The tag must match mod_version
+        if: github.event_name == 'push'
         run: |
           v=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')
           if [ "${GITHUB_REF_NAME}" != "v$v" ]; then

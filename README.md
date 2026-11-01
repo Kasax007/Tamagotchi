@@ -93,23 +93,25 @@ JEI and REI show every recipe plus info pages on where to find each pet (optiona
 
 ## Releasing
 
-Releases are automatic: pushing a tag `v<mod_version>` makes `.github/workflows/release.yml` build the mod and upload
-it to **CurseForge**, **Modrinth** and a **GitHub release**, with that version's section of `CHANGELOG.md` as the
-changelog (mod-publish-plugin, `publishMods`). Every other push runs the same upload as a dry run in
-`.github/workflows/build.yml`.
+Releases are automatic: pushing a tag `v<mod_version>`, or starting `.github/workflows/release.yml` by hand ("Run
+workflow" in the Actions tab, on the branch), builds the mod and publishes that version with its section of
+`CHANGELOG.md` as the changelog (mod-publish-plugin, `publishMods`):
 
-One-time setup:
+* **GitHub release**: always (the tag is made if it is missing)
+* **CurseForge** (project `1758309`, `curseforge_id` in `gradle.properties`): when the secret `CURSEFORGE_TOKEN` is set
+* **Modrinth**: when the secret `MODRINTH_TOKEN` is set and `modrinth_id` is filled in
 
-1. Create the project on CurseForge and on Modrinth (description and images: `docs/curseforge/`).
-2. Put their ids into `gradle.properties`: `curseforge_id` (the number under "Project ID" on the CurseForge project
-   page) and `modrinth_id` (the id from the Modrinth project page, "Copy ID").
-3. Create the tokens and add them as repository secrets (GitHub: Settings → Secrets and variables → Actions):
-   - `CURSEFORGE_TOKEN` from https://legacy.curseforge.com/account/api-tokens
-   - `MODRINTH_TOKEN` from https://modrinth.com/settings/pats with the scopes *Create versions*, *Read versions* and
-     *Write versions*
+Every other push runs the same upload as a dry run in `.github/workflows/build.yml`. Locally:
+`CURSEFORGE_TOKEN=... ./gradlew publishCurseforge`.
+
+Tokens, as repository secrets (GitHub: Settings → Secrets and variables → Actions):
+
+* `CURSEFORGE_TOKEN` from https://legacy.curseforge.com/account/api-tokens
+* `MODRINTH_TOKEN` from https://modrinth.com/settings/pats with the scopes *Create versions*, *Read versions* and
+  *Write versions*; then put the project id ("Copy ID" on the Modrinth project page) into `modrinth_id`
 
 Each release: raise `mod_version` in `gradle.properties`, add a `## <version>` section to `CHANGELOG.md`, push, then
-`git tag v<version> && git push origin v<version>`. A tag that does not match `mod_version` is refused.
+push the tag `v<version>` (a tag that does not match `mod_version` is refused) or start the workflow by hand.
 
 ## Building
 
