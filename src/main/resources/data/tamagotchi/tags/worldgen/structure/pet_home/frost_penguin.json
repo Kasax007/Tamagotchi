@@ -1,0 +1,17 @@
+{
+  "values": [
+    "minecraft:igloo",
+    {
+      "id": "repurposed_structures:igloo_stone",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_snowy",
+      "required": false
+    }
+  ]
+}

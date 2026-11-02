@@ -1,10 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "C": "minecraft:clay_ball"
+    "C": "minecraft:clay_ball",
+    "B": "minecraft:bone"
   },
   "pattern": [
-    "C C",
+    "CBC",
     " C "
   ],
   "result": {

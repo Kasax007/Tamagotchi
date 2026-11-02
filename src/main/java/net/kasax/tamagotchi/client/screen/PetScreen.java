@@ -69,7 +69,7 @@ public class PetScreen extends AbstractContainerScreen<PetMenu> {
         TamaPet pet = this.menu.pet();
         if (pet != null && this.sit != null) {
             TamaPet.Mode mode = pet.hasFlag(TamaPet.F_WANDER) ? TamaPet.Mode.WANDER
-                    : pet.isInSittingPose() ? TamaPet.Mode.SIT : TamaPet.Mode.FOLLOW;
+                    : pet.hasFlag(TamaPet.F_STAY) ? TamaPet.Mode.SIT : TamaPet.Mode.FOLLOW;
             this.sit.active = mode != TamaPet.Mode.SIT;
             this.follow.active = mode != TamaPet.Mode.FOLLOW;
             this.wander.active = mode != TamaPet.Mode.WANDER;

@@ -1,7 +1,7 @@
 package net.kasax.tamagotchi.test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
@@ -78,6 +78,7 @@ public class PetGallery implements FabricClientGameTest {
             live();
             extras();
             checks();
+            fixes();
         }
         naturalSpawns();
         LOG.info("[TamaTest] ===== results =====");
@@ -442,7 +443,7 @@ public class PetGallery implements FabricClientGameTest {
 
     /** A real (not flat) world: pets must turn up in naturally generated jungle temples and ocean monuments. */
     private void naturalSpawns() {
-        Map<Identifier, PetSpawns.Rule> saved = new HashMap<>(PetSpawns.RULES);
+        Map<Identifier, PetSpawns.Rule> saved = new LinkedHashMap<>(PetSpawns.RULES);
         PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F));
         String[][] targets = {{"jungle_pyramid", "jungle_dragon"}, {"monument", "tide_dragon"}, {"desert_pyramid", "desert_dragon"}};
         try (TestSingleplayerContext sp = ctx.worldBuilder().setUseConsistentSettings(false)
@@ -476,6 +477,224 @@ public class PetGallery implements FabricClientGameTest {
             PetSpawns.RULES.clear();
             PetSpawns.RULES.putAll(saved);
         }
+    }
+
+    // ------------------------------------------------------------------ regression checks (1.1.1)
+
+    /** Counts how often the pet falls asleep or wakes up during {@code ticks}. */
+    private int sleepFlips(int ticks) {
+        int[] flips = {0};
+        boolean[] last = {false};
+        server.runOnServer(s -> last[0] = s.overworld().getEntitiesOfClass(TamaPet.class, player(s).getBoundingBox().inflate(20)).get(0).isSleeping());
+        for (int i = 0; i < ticks; i++) {
+            ctx.waitTicks(1);
+            server.runOnServer(s -> {
+                boolean now = s.overworld().getEntitiesOfClass(TamaPet.class, player(s).getBoundingBox().inflate(20)).get(0).isSleeping();
+                if (now != last[0]) {
+                    flips[0]++;
+                }
+                last[0] = now;
+            });
+        }
+        return flips[0];
+    }
+
+    private static TamaPet onlyPet(MinecraftServer s) {
+        return s.overworld().getEntitiesOfClass(TamaPet.class, player(s).getBoundingBox().inflate(40)).get(0);
+    }
+
+    private void fixes() {
+        clear();
+        cmd("tp @p 0.5 " + Y + " 0.5 0 0");
+        server.runOnServer(s -> {
+            player(s).getAbilities().flying = false;
+            player(s).onUpdateAbilities();
+        });
+
+        // a tired, following pet that cannot reach its owner must not fall asleep and wake up again every tick
+        cmd("fill 9 " + Y + " -1 13 " + (Y + 2) + " 1 glass hollow");
+        server.runOnServer(s -> {
+            TamaPet pet = spawn(s.overworld(), player(s), PetSpecies.PEBBLE_GOLEM, 11.0, 0.5, 0, true);
+            pet.setMode(TamaPet.Mode.FOLLOW);
+            pet.needs().energy = 10;
+        });
+        ctx.waitTicks(10);
+        int far = sleepFlips(80);
+        check("a tired pet far from its owner does not keep waking up (" + far + " flips)", far <= 1);
+        clear();
+
+        // ... and a rested one curled up next to its sleeping owner stays asleep
+        cmd("time set midnight");
+        cmd("setblock 0 " + Y + " -2 minecraft:red_bed[facing=north,part=foot]");
+        cmd("setblock 0 " + Y + " -3 minecraft:red_bed[facing=north,part=head]");
+        server.runOnServer(s -> {
+            TamaPet pet = spawn(s.overworld(), player(s), PetSpecies.HEX_TOAD, 2.5, -2.5, 0, true);
+            pet.setMode(TamaPet.Mode.FOLLOW);
+            pet.needs().energy = 100;
+            player(s).startSleeping(new BlockPos(0, Y, -3));
+        });
+        ctx.waitTicks(10);
+        int bed = sleepFlips(80);
+        boolean[] ownerSlept = {false};
+        server.runOnServer(s -> {
+            ownerSlept[0] = player(s).isSleeping();
+            player(s).stopSleeping();
+        });
+        check("a rested pet next to its sleeping owner stays asleep (" + bed + " flips, owner asleep " + ownerSlept[0] + ")",
+                bed <= 1 && ownerSlept[0]);
+        cmd("time set noon");
+        clear();
+        cmd("tp @p 0.5 " + Y + " 0.5 0 0");
+
+        // the golden apple a pet holds up is only for show: interrupted, it must not turn into a free apple
+        server.runOnServer(s -> {
+            ServerPlayer p = player(s);
+            p.getInventory().clearContent();
+            TamaPet pet = spawn(s.overworld(), p, PetSpecies.HEX_TOAD, 1.5, 1.5, 0, true);
+            pet.equipBackpack();
+            pet.store(new ItemStack(Items.GOLDEN_APPLE));
+            p.setHealth(4F);
+        });
+        boolean[] showing = {false};
+        for (int i = 0; i < 80 && !showing[0]; i++) {
+            ctx.waitTicks(1);
+            server.runOnServer(s -> showing[0] = onlyPet(s).getCarried().is(Items.GOLDEN_APPLE));
+        }
+        server.runOnServer(s -> player(s).setHealth(player(s).getMaxHealth()));   // healed before the pet hands it over
+        ctx.waitTicks(80);
+        int[] apples = {0};
+        server.runOnServer(s -> {
+            TamaPet pet = onlyPet(s);
+            apples[0] = pet.snacks() + player(s).getInventory().countItem(Items.GOLDEN_APPLE) + (pet.getCarried().isEmpty() ? 0 : 10);
+        });
+        check("an interrupted golden-apple feeding makes no extra apple (saw it held: " + showing[0] + ", apples " + apples[0] + ")",
+                showing[0] && apples[0] == 1);
+        clear();
+
+        // a hurt pet eats its own lunch from the backpack, never the golden apples meant for its owner
+        server.runOnServer(s -> {
+            TamaPet pet = spawn(s.overworld(), player(s), PetSpecies.PEBBLE_GOLEM, 1.5, 1.5, 0, true);
+            pet.equipBackpack();
+            pet.inventory().setItem(0, new ItemStack(Items.GOLDEN_APPLE));
+            pet.inventory().setItem(1, new ItemStack(Items.BREAD, 3));
+            pet.setHealth(pet.getMaxHealth() * 0.2F);
+        });
+        ctx.waitTicks(80);
+        int[] lunch = {0, 0};
+        server.runOnServer(s -> {
+            TamaPet pet = onlyPet(s);
+            lunch[0] = pet.snacks();
+            lunch[1] = pet.inventory().getItem(1).getCount();
+        });
+        check("a hurt pet eats bread, not the golden apple (apples " + lunch[0] + ", bread " + lunch[1] + ")", lunch[0] == 1 && lunch[1] < 3);
+        clear();
+
+        // fainting in the void: the egg goes to the owner instead of falling forever
+        boolean[] voidEgg = {false};
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            ServerPlayer p = player(s);
+            p.getInventory().clearContent();
+            TamaPet pet = spawn(level, p, PetSpecies.FROST_PENGUIN, 0.5, 0.5, 0, true);
+            pet.setPos(0.5, level.getMinY() - 70, 0.5);
+            pet.hurtServer(level, level.damageSources().fellOutOfWorld(), 1000F);
+            voidEgg[0] = !pet.isAlive() && p.getInventory().countItem(ModItems.TAMA_EGG) == 1;
+        });
+        check("a pet that faints in the void lands in its owner's inventory as an egg", voidEgg[0]);
+
+        // the egg on the ground survives explosions (and fire, lava, cactus)
+        boolean[] eggSurvives = {false};
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            TamaPet pet = spawn(level, player(s), PetSpecies.EMBER_PUP, 3.5, 3.5, 0, true);
+            pet.hurtServer(level, level.damageSources().generic(), 1000F);
+            level.explode(null, 3.5, Y + 0.5, 3.5, 3F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+        });
+        ctx.waitTicks(3);
+        server.runOnServer(s -> eggSurvives[0] = s.overworld().getEntitiesOfClass(ItemEntity.class, new AABB(3.5, Y, 3.5, 3.5, Y, 3.5).inflate(4),
+                e -> e.getItem().is(ModItems.TAMA_EGG)).size() == 1);
+        check("a Tama Egg on the ground survives an explosion", eggSurvives[0]);
+        clear();
+
+        // a dragon saved in mid-air comes back with gravity (it used to hover forever)
+        boolean[] lands = {false};
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            TamaPet dragon = spawn(level, player(s), PetSpecies.DESERT_DRAGON, 2.5, 2.5, 0, true);
+            dragon.startFlying(dragon.position().add(0, 4, 0), 100);
+            boolean flying = dragon.isFlying() && dragon.isNoGravity();
+            ItemStack egg = net.kasax.tamagotchi.item.TamaEggItem.fromPet(dragon);
+            dragon.discard();
+            TamaPet back = net.kasax.tamagotchi.item.TamaEggItem.wake(level, egg, new net.minecraft.world.phys.Vec3(2.5, Y, 2.5), 0, false);
+            lands[0] = flying && back != null && !back.isNoGravity();
+        });
+        check("a dragon saved while flying lands again after loading", lands[0]);
+        clear();
+
+        // the Void Kitten only pulls items while its owner is near (a kitten left at home must not send them away)
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            TamaPet kitten = spawn(level, player(s), PetSpecies.VOID_KITTEN, 30.5, 0.5, 0, true);
+            kitten.setMode(TamaPet.Mode.SIT);
+            ItemEntity stone = new ItemEntity(level, 31.5, Y, 0.5, new ItemStack(Items.COBBLESTONE));
+            stone.setNoPickUpDelay();
+            level.addFreshEntity(stone);
+        });
+        ctx.waitTicks(60);
+        int[] stayed = {0};
+        server.runOnServer(s -> stayed[0] = s.overworld().getEntitiesOfClass(ItemEntity.class, new AABB(31.5, Y, 0.5, 31.5, Y, 0.5).inflate(3),
+                e -> e.getItem().is(Items.COBBLESTONE)).size());
+        check("a Void Kitten far from its owner leaves dropped items alone (" + stayed[0] + ")", stayed[0] == 1);
+        clear();
+
+        // modpack compatibility: modded food (c:foods tags), modded ores (c:ores), look-alike structures (tags)
+        boolean[] food = {false};
+        boolean[] ores = {false};
+        boolean[] homes = {false};
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            TamaPet jungle = ModEntities.type(PetSpecies.JUNGLE_DRAGON).create(level, EntitySpawnReason.COMMAND);
+            TamaPet penguin = ModEntities.type(PetSpecies.FROST_PENGUIN).create(level, EntitySpawnReason.COMMAND);
+            TamaPet mimic = ModEntities.type(PetSpecies.MIMIC).create(level, EntitySpawnReason.COMMAND);
+            food[0] = jungle.isPetFood(new ItemStack(Items.POTATO)) && penguin.isPetFood(new ItemStack(Items.COOKED_COD))
+                    && !jungle.isPetFood(new ItemStack(Items.GOLDEN_APPLE)) && !mimic.isPetFood(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE))
+                    && mimic.isPetFood(new ItemStack(Items.BREAD));
+            jungle.discard();
+            penguin.discard();
+            mimic.discard();
+            int quartz = net.kasax.tamagotchi.pet.Talents.oreRank(Blocks.NETHER_QUARTZ_ORE.defaultBlockState());
+            ores[0] = quartz >= 0 && net.kasax.tamagotchi.pet.Talents.oreRank(Blocks.DIAMOND_ORE.defaultBlockState()) < quartz
+                    && net.kasax.tamagotchi.pet.Talents.oreRank(Blocks.ANCIENT_DEBRIS.defaultBlockState())
+                    < net.kasax.tamagotchi.pet.Talents.oreRank(Blocks.GOLD_ORE.defaultBlockState())
+                    && net.kasax.tamagotchi.pet.Talents.oreRank(Blocks.STONE.defaultBlockState()) == -1;
+            var structures = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
+            PetSpawns.Rule mineshaft = PetSpawns.ruleFor(structures.getOrThrow(net.minecraft.world.level.levelgen.structure.BuiltinStructures.MINESHAFT));
+            PetSpawns.Rule mansion = PetSpawns.ruleFor(structures.getOrThrow(net.minecraft.world.level.levelgen.structure.BuiltinStructures.WOODLAND_MANSION));
+            PetSpawns.Rule village = PetSpawns.ruleFor(structures.getOrThrow(net.minecraft.world.level.levelgen.structure.BuiltinStructures.VILLAGE_PLAINS));
+            homes[0] = mineshaft != null && mineshaft.species() == PetSpecies.PEBBLE_GOLEM && mineshaft.chance() < 0.1F
+                    && mansion != null && mansion.species() == PetSpecies.MIMIC && mansion.chance() > 0.5F && village == null;
+        });
+        check("diets use food tags (modded food counts, golden apples never)", food[0]);
+        check("the Ore Sniffer knows c:ores and ranks them", ores[0]);
+        check("pet homes come from the pet_home structure tags", homes[0]);
+
+        // furniture tooltips and recipe-book unlocks
+        boolean[] tips = {true};
+        ctx.runOnClient(mc -> {
+            for (Item item : ModBlocks.BLOCK_ITEMS) {
+                tips[0] &= net.minecraft.locale.Language.getInstance().has(item.getDescriptionId() + ".tooltip");
+            }
+        });
+        check("every furniture item has a tooltip", tips[0]);
+        cmd("advancement revoke @p only tamagotchi:recipes/misc/food_bowl");
+        cmd("recipe take @p tamagotchi:food_bowl");
+        cmd("give @p minecraft:bone");
+        ctx.waitTicks(10);
+        boolean[] unlocked = {false};
+        server.runOnServer(s -> unlocked[0] = player(s).getRecipeBook().contains(net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE, net.kasax.tamagotchi.Tamagotchi.id("food_bowl"))));
+        check("picking up an ingredient unlocks the recipe in the recipe book", unlocked[0]);
+        server.runOnServer(s -> player(s).getInventory().clearContent());
     }
 
     // ------------------------------------------------------------------ functional checks
@@ -576,7 +795,7 @@ public class PetGallery implements FabricClientGameTest {
         // structure spawns: force the chance roll, place real structures, look for the wild pet
         String[][] structures = {{"igloo", "frost_penguin", "40", "40"}, {"swamp_hut", "hex_toad", "-40", "40"},
                 {"desert_pyramid", "desert_dragon", "40", "-40"}, {"jungle_pyramid", "jungle_dragon", "-40", "-40"}};
-        Map<Identifier, PetSpawns.Rule> saved = new HashMap<>(PetSpawns.RULES);
+        Map<Identifier, PetSpawns.Rule> saved = new LinkedHashMap<>(PetSpawns.RULES);
         server.runOnServer(s -> PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F)));
         for (String[] st : structures) {
             cmd("place structure minecraft:" + st[0] + " " + st[2] + " " + Y + " " + st[3]);

@@ -157,7 +157,7 @@ public final class PetGoals {
 
         @Override
         public boolean canUse() {
-            LivingEntity o = this.pet.getOwner();
+            LivingEntity o = this.pet.ownerHere();
             if (o == null || this.pet.mode() != TamaPet.Mode.FOLLOW || this.pet.isSleeping() || this.pet.unableToMoveToOwner()) {
                 return false;
             }
@@ -170,7 +170,8 @@ public final class PetGoals {
 
         @Override
         public boolean canContinueToUse() {
-            return this.owner != null && (this.pet.isFlying() || !this.pet.getNavigation().isDone()) && !this.pet.unableToMoveToOwner()
+            return this.owner != null && this.owner.level() == this.pet.level()
+                    && (this.pet.isFlying() || !this.pet.getNavigation().isDone()) && !this.pet.unableToMoveToOwner()
                     && this.pet.mode() == TamaPet.Mode.FOLLOW && !this.pet.isSleeping() && this.pet.distanceToSqr(this.owner) > 2.5 * 2.5;
         }
 
@@ -247,10 +248,13 @@ public final class PetGoals {
                 return false;
             }
             PetNeeds n = this.pet.needs();
-            LivingEntity owner = this.pet.getOwner();
+            LivingEntity owner = this.pet.ownerHere();
             boolean night = this.pet.level().isDarkOutside();
             if (owner != null && owner.isSleeping() && this.pet.distanceToSqr(owner) < 400) {
                 return true;
+            }
+            if (owner != null && this.pet.mode() == TamaPet.Mode.FOLLOW && this.pet.distanceToSqr(owner) > 100) {
+                return false;   // a following pet only naps near its owner (it would wake up again right away)
             }
             if (n.energy < 18) {
                 return true;
@@ -273,7 +277,7 @@ public final class PetGoals {
         }
 
         private @Nullable BlockPos findBed() {
-            LivingEntity owner = this.pet.getOwner();
+            LivingEntity owner = this.pet.ownerHere();
             if (owner != null && owner.isSleeping()) {
                 return owner.getSleepingPos().map(p -> {
                     for (Direction d : Direction.Plane.HORIZONTAL) {
@@ -312,10 +316,12 @@ public final class PetGoals {
                 return false;
             }
             PetNeeds n = this.pet.needs();
-            LivingEntity owner = this.pet.getOwner();
+            LivingEntity owner = this.pet.ownerHere();
             boolean night = this.pet.level().isDarkOutside();
-            if (owner != null && this.pet.mode() == TamaPet.Mode.FOLLOW && !owner.isSleeping()
-                    && (this.pet.distanceToSqr(owner) > 100 || n.energy > 40)) {
+            if (owner != null && owner.isSleeping() && this.pet.distanceToSqr(owner) < 400) {
+                return true;   // stays curled up next to the bed until its owner gets up, even when fully rested
+            }
+            if (owner != null && this.pet.mode() == TamaPet.Mode.FOLLOW && (this.pet.distanceToSqr(owner) > 100 || n.energy > 40)) {
                 return false;
             }
             return n.energy < 100 || night && this.pet.mode() != TamaPet.Mode.FOLLOW;
@@ -365,7 +371,9 @@ public final class PetGoals {
                 return;
             }
             this.pet.setTarget(null);
-            if (this.pet.distanceToSqr(owner) > 6) {
+            if (owner.level() != this.pet.level()) {
+                this.pet.getNavigation().stop();   // the owner is in another dimension: just eat
+            } else if (this.pet.distanceToSqr(owner) > 6) {
                 Vec3 behind = owner.position().subtract(owner.getLookAngle().scale(1.5));
                 this.pet.getNavigation().moveTo(behind.x, behind.y, behind.z, 1.35);
             } else {
@@ -377,7 +385,8 @@ public final class PetGoals {
                 int slots = this.pet.storageSlots();
                 for (int i = 0; i < slots; i++) {
                     ItemStack st = this.pet.inventory().getItem(i);
-                    if (!st.isEmpty() && (st.has(DataComponents.FOOD) || this.pet.isPetFood(st))) {
+                    // golden apples are for the owner, never the pet's own lunch
+                    if (!st.isEmpty() && !TamaPet.isSnack(st) && (st.has(DataComponents.FOOD) || this.pet.isPetFood(st))) {
                         ItemStack one = st.split(1);
                         this.pet.inventory().setChanged();
                         this.pet.eat(one);
@@ -402,6 +411,8 @@ public final class PetGoals {
         private int cooldown;
         private int timer;
         private boolean fed;
+        /** The golden apple it holds up is only for show; the real one comes out of storage when it feeds you. */
+        private boolean showing;
 
         FeedOwnerGoal(TamaPet pet) {
             this.pet = pet;
@@ -438,6 +449,16 @@ public final class PetGoals {
         }
 
         @Override
+        public void stop() {
+            if (this.showing) {
+                // interrupted (owner healed, ran off, sit order...) before feeding: the shown apple must not stay in its
+                // mouth, or the fetch goal would hand it to the owner as a free extra golden apple
+                this.pet.setCarried(ItemStack.EMPTY);
+                this.showing = false;
+            }
+        }
+
+        @Override
         public void tick() {
             LivingEntity owner = this.pet.getOwner();
             if (owner == null) {
@@ -453,15 +474,17 @@ public final class PetGoals {
             if (this.pet.currentAction() != PetAction.FEED_OWNER) {
                 this.pet.playAction(PetAction.FEED_OWNER);
                 this.pet.setCarried(new ItemStack(Items.GOLDEN_APPLE));   // holds it up to you
+                this.showing = true;
                 return;
             }
             if (!this.fed && this.pet.level() instanceof ServerLevel level) {
                 ItemStack apple = this.pet.takeSnack();
+                this.pet.setCarried(ItemStack.EMPTY);
+                this.showing = false;
                 if (apple.isEmpty()) {
                     this.fed = true;
                     return;
                 }
-                this.pet.setCarried(ItemStack.EMPTY);
                 apple.finishUsingItem(level, owner);
                 this.pet.playSound(ModSounds.PET_FEED_OWNER, 1.0F, 1.0F);
                 level.sendParticles(ModParticles.HEART, owner.getX(), owner.getY() + 1.7, owner.getZ(), 5, 0.3, 0.2, 0.3, 0.0);
@@ -621,6 +644,7 @@ public final class PetGoals {
         private final TamaPet pet;
         private @Nullable ItemEntity ball;
         private int timer;
+        private int nextScan;
 
         FetchGoal(TamaPet pet) {
             this.pet = pet;
@@ -629,12 +653,16 @@ public final class PetGoals {
 
         @Override
         public boolean canUse() {
-            if (busy(this.pet) || this.pet.showingToy || !this.pet.getCarried().isEmpty() && this.pet.getOwner() == null) {
+            if (!this.pet.isTame() || busy(this.pet) || this.pet.showingToy || !this.pet.getCarried().isEmpty() && this.pet.getOwner() == null) {
                 return false;
             }
             if (!this.pet.getCarried().isEmpty()) {
                 return true;      // bring back what we hold
             }
+            if (--this.nextScan > 0) {
+                return false;
+            }
+            this.nextScan = 5;    // canUse runs every other tick: look for a ball twice a second
             List<ItemEntity> balls = this.pet.level().getEntitiesOfClass(ItemEntity.class, this.pet.getBoundingBox().inflate(16, 6, 16),
                     e -> e.getItem().is(ModItems.SQUEAKY_BALL) && e.onGround());
             if (balls.isEmpty()) {

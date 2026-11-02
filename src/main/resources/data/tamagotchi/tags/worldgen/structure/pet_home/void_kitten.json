@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:end_city",
+    {
+      "id": "repurposed_structures:pyramid_end",
+      "required": false
+    },
+    {
+      "id": "nova_structures:end_castle",
+      "required": false
+    }
+  ]
+}

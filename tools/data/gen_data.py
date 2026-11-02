@@ -13,8 +13,8 @@ PETS = {
     'frost_penguin': ('Frost Penguin', 'Frost Steps', 'While it follows you, water freezes under your feet. Belly-slides on snow and ice.'),
     'ember_pup': ('Ember Pup', 'Warm Heart', 'When you catch fire it gives you Fire Resistance. Swims through lava.'),
     'sculk_wisp': ('Sculk Wisp', 'Echo Sense', 'Sends out a sonar ping that makes hostile mobs nearby glow through walls.'),
-    'void_kitten': ('Void Kitten', 'Item Magnet', 'Pulls dropped items nearby into its backpack, or teleports them to you.'),
-    'pebble_golem': ('Pebble Golem', 'Ore Sniffer', 'Sniffs out the best ore nearby, points a sparkle trail at it and makes it glow through the walls.'),
+    'void_kitten': ('Void Kitten', 'Item Magnet', 'While you are near, it pulls dropped items around it into its backpack, or teleports them to you.'),
+    'pebble_golem': ('Pebble Golem', 'Ore Sniffer', 'Sniffs out the best ore nearby (ores from other mods too), points a sparkle trail at it and makes it glow through the walls.'),
     'hex_toad': ('Hex Toad', 'Brew Buddy', 'When it is happy it brews you a random helpful potion effect now and then.'),
     'mimic': ('Mimic', 'Treasure Belly', 'Has 27 slots of belly storage (54 with a backpack) and coughs up little treasures.'),
 }
@@ -60,6 +60,25 @@ for iid, (name, tip) in ITEMS.items():
 lang['item.tamagotchi.tama_egg.named'] = "%s's Egg"
 for bid, name in BLOCKS.items():
     lang[f'block.tamagotchi.{bid}'] = name
+BLOCK_TIPS = {
+    'pet_bed': 'Pets sleep in it at night or when they are tired. Takes any dye.',
+    'pet_basket': 'Pets sleep in it at night or when they are tired. The cushion takes any dye.',
+    'dragon_nest': 'Pets (dragons most of all) sleep in it at night or when they are tired.',
+    'food_bowl': 'Right-click it with pet food: hungry pets eat from it by themselves.',
+    'pet_bath': 'Fill it with a water bucket: dirty pets hop in and come out clean.',
+    'bouncy_mushroom': 'Bored pets bounce on it. So can you!',
+    'running_wheel': 'Bored pets run in it. Gives a redstone signal while it spins.',
+    'scratching_post': 'Bored pets scratch it for fun.',
+    'pet_house': 'Pets shelter in it from rain and thunder.',
+    'egg_lamp': 'A glowing night light. Click: on / off. Takes any dye.',
+    'pet_portrait': 'Hang it up and click it: it paints your nearest pet. Takes any dye.',
+    'toy_box': 'Put toys in: bored pets open it and play with them.',
+    'pet_flap': 'For a hole in a wall: your pets walk through, everyone else is blocked.',
+    'treat_dispenser': 'Fill it with treats, give it a redstone pulse: it shoots one to the hungriest pet.',
+    'pet_incubator': 'Put a Tama Egg in: the pet hatches in thirty seconds, fully healed.',
+}
+for bid in BLOCKS:
+    lang[f'block.tamagotchi.{bid}.tooltip'] = BLOCK_TIPS.get(bid, 'Click it to squeeze it. A pet sleeping next to a plush of its own kind rests faster.')
 
 lang.update({
     'tooltip.tamagotchi.favorite_of': 'Favorite treat of: %s',
@@ -79,6 +98,7 @@ lang.update({
     'message.tamagotchi.need.hygiene': '%s needs a bath!',
     'message.tamagotchi.need.hurt': '%s is hurt!',
     'message.tamagotchi.fainted': '%s fainted and curled up into its egg at %s %s %s. Use the egg to wake it up!',
+    'message.tamagotchi.fainted_void': '%s fell out of the world and fainted. Its egg is in your inventory: use it to wake it up!',
     'message.tamagotchi.no_pet': 'No pet of yours nearby.',
     'message.tamagotchi.fed_you': '%s gave you a golden apple! (%s left)',
     'message.tamagotchi.too_sad': '%s is too sad to help right now...',
@@ -145,6 +165,8 @@ TAMACON = {
                 'Desert pyramid: Desert Dragon. Jungle temple: Jungle Dragon. Ocean monument: Tide Dragon. Igloo: Frost Penguin. '
                 'Nether fortress: Ember Pup. Ancient city: Sculk Wisp. End city: Void Kitten. Trail ruins and mineshafts: Pebble Golem. '
                 'Swamp hut: Hex Toad. Trial chambers and woodland mansions: Mimic.\n\n'
+                'In modpacks, pets also live in look-alike structures from other mods, like the pyramids, witch huts, '
+                'mineshafts and mansions of Repurposed Structures.\n\n'
                 'Wild pets stay near their home and never despawn. Look inside and around the building. The cute ones run away when hit, '
                 'the Ember Pup, Sculk Wisp and Mimic bite back.\n\n'
                 'Hold a Tamagotchi Heart and wild pets come closer. Right-click one with the heart to tame it.'),
@@ -290,7 +312,8 @@ RECIPES = [
     shaped('pet_bed', ['   ', 'WCW', 'PPP'], {'W': '#minecraft:wool', 'C': '#minecraft:wool_carpets', 'P': '#minecraft:planks'}, T + 'pet_bed'),
     shaped('pet_basket', ['B B', 'BWB', 'BBB'], {'B': 'minecraft:bamboo', 'W': '#minecraft:wool'}, T + 'pet_basket'),
     shaped('dragon_nest', ['H H', 'FEF', 'HHH'], {'H': 'minecraft:hay_block', 'F': 'minecraft:feather', 'E': 'minecraft:egg'}, T + 'dragon_nest'),
-    shaped('food_bowl', ['C C', ' C '], {'C': 'minecraft:clay_ball'}, T + 'food_bowl'),
+    # a bone in the bowl: plain clay balls in a V are another mod's cup (Dawn of Time)
+    shaped('food_bowl', ['CBC', ' C '], {'C': 'minecraft:clay_ball', 'B': 'minecraft:bone'}, T + 'food_bowl'),
     shaped('pet_bath', ['P P', 'IWI', 'PPP'], {'P': '#minecraft:planks', 'I': 'minecraft:iron_ingot', 'W': 'minecraft:water_bucket'}, T + 'pet_bath'),
     shaped('bouncy_mushroom', ['RRR', 'SMS', ' M '], {'R': 'minecraft:red_mushroom_block', 'S': 'minecraft:slime_ball', 'M': 'minecraft:mushroom_stem'}, T + 'bouncy_mushroom'),
     shaped('running_wheel', ['SPS', 'PCP', 'SPS'], {'S': 'minecraft:stick', 'P': '#minecraft:planks', 'C': 'minecraft:copper_ingot'}, T + 'running_wheel'),
@@ -315,7 +338,87 @@ os.makedirs(os.path.join(DATA, 'recipe'), exist_ok=True)
 for name, body in RECIPES:
     with open(os.path.join(DATA, 'recipe', name + '.json'), 'w') as f:
         json.dump(body, f, indent=2)
+
+
+def ingredients(body):
+    if body['type'] == 'minecraft:crafting_shaped':
+        return list(body['key'].values())
+    return body['ingredients']
+
+
+# recipe-book unlocks (vanilla style): a recipe shows up once you hold one of its ingredients
+for name, body in RECIPES:
+    criteria = {'has_the_recipe': {'trigger': 'minecraft:recipe_unlocked', 'conditions': {'recipes': T + name}}}
+    for ing in dict.fromkeys(ingredients(body)):
+        key = 'has_' + ing.replace('#', '').split(':')[1].replace('/', '_')
+        criteria[key] = {'trigger': 'minecraft:inventory_changed', 'conditions': {'items': [{'items': ing}]}}
+    adv = {'parent': 'minecraft:recipes/root', 'criteria': criteria, 'requirements': [list(criteria)],
+           'rewards': {'recipes': [T + name]}}
+    os.makedirs(os.path.join(DATA, 'advancement/recipes/misc'), exist_ok=True)
+    with open(os.path.join(DATA, 'advancement/recipes/misc', name + '.json'), 'w') as f:
+        json.dump(adv, f, indent=2)
 print('lang keys:', len(lang), 'recipes:', len(RECIPES))
+
+
+# ------------------------------------------------------------------ tags
+
+def tag(path, values):
+    full = os.path.join(DATA, 'tags', path + '.json') if ':' not in path else None
+    if full is None:
+        ns, rest = path.split(':')
+        full = os.path.join(REPO, 'src/main/resources/data', ns, 'tags', rest + '.json')
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    with open(full, 'w') as f:
+        json.dump({'values': values}, f, indent=2)
+
+
+def opt(i):
+    return {'id': i, 'required': False}
+
+
+# what each diet eats besides kibble and treats: vanilla plus the c:foods conventions, so modded food counts too
+DIETS = {
+    'meat': ['#minecraft:meat', opt('#c:foods/raw_meat'), opt('#c:foods/cooked_meat')],
+    'fish': ['#minecraft:fishes', opt('#c:foods/raw_fish'), opt('#c:foods/cooked_fish')],
+    'plant': ['minecraft:sweet_berries', 'minecraft:apple', 'minecraft:melon_slice', 'minecraft:carrot', 'minecraft:beetroot',
+              'minecraft:glow_berries', opt('#c:foods/fruit'), opt('#c:foods/vegetable'), opt('#c:foods/berry')],
+    'sweet': ['minecraft:cookie', 'minecraft:honey_bottle', 'minecraft:sweet_berries', 'minecraft:glow_berries', 'minecraft:pumpkin_pie',
+              opt('#c:foods/candy'), opt('#c:foods/cookie'), opt('#c:foods/pie'), opt('#c:foods/berry')],
+    'mineral': ['minecraft:flint', 'minecraft:amethyst_shard', 'minecraft:clay_ball', 'minecraft:quartz'],
+}
+for diet, values in DIETS.items():
+    tag(f'item/diet/{diet}', values)
+
+# where the pets live (PetSpawns: one rule per tag); look-alikes from structure mods are optional entries
+RS = 'repurposed_structures:'
+HOMES = {
+    'desert_dragon': ['minecraft:desert_pyramid', opt(RS + 'pyramid_badlands')],
+    'jungle_dragon': ['minecraft:jungle_pyramid', opt(RS + 'pyramid_jungle'), opt('explorations:jungle_temple')],
+    'tide_dragon': ['minecraft:monument'],
+    'frost_penguin': ['minecraft:igloo', opt(RS + 'igloo_stone'), opt(RS + 'pyramid_icy'), opt(RS + 'pyramid_snowy')],
+    'ember_pup': ['minecraft:fortress', opt(RS + 'temple_nether_basalt')],
+    'sculk_wisp': ['minecraft:ancient_city', opt(RS + 'ancient_city_nether'), opt(RS + 'ancient_city_end')],
+    'void_kitten': ['minecraft:end_city', opt(RS + 'pyramid_end'), opt('nova_structures:end_castle')],
+    'pebble_golem': ['minecraft:trail_ruins'],
+    'pebble_golem_mineshaft': ['minecraft:mineshaft', 'minecraft:mineshaft_mesa'] + [opt(RS + 'mineshaft_' + k) for k in
+                               ['birch', 'dark_forest', 'desert', 'icy', 'jungle', 'ocean', 'savanna', 'stone', 'swamp', 'taiga',
+                                'dappled', 'pale_garden']],
+    'hex_toad': ['minecraft:swamp_hut'] + [opt(RS + 'witch_hut_' + k) for k in
+                 ['oak', 'taiga', 'birch', 'dark_forest', 'giant_tree_taiga', 'mangrove', 'dappled']]
+                + [opt('nova_structures:mangrove_witch_hut'), opt('nova_structures:dappled_witch_hut')],
+    'mimic': ['minecraft:trial_chambers'],
+    'mimic_mansion': ['minecraft:mansion'] + [opt(RS + 'mansion_' + k) for k in
+                      ['birch', 'dappled', 'desert', 'jungle', 'mangrove', 'oak', 'savanna', 'snowy', 'taiga']],
+}
+for rule, values in HOMES.items():
+    tag(f'worldgen/structure/pet_home/{rule}', values)
+
+# the right tool mines furniture faster (none is needed: everything drops by hand)
+tag('minecraft:block/mineable/axe', [T + b for b in ['pet_basket', 'pet_bath', 'bouncy_mushroom', 'running_wheel', 'scratching_post',
+                                                    'pet_house', 'pet_portrait', 'toy_box', 'pet_flap']])
+tag('minecraft:block/mineable/pickaxe', [T + b for b in ['food_bowl', 'treat_dispenser', 'pet_incubator']])
+tag('minecraft:block/mineable/hoe', [T + 'dragon_nest'])
+print('tags written')
 
 
 # ------------------------------------------------------------------ loot tables, plush assets, dyed item models

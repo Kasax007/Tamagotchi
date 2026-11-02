@@ -2,17 +2,18 @@ package net.kasax.tamagotchi.pet;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import net.kasax.tamagotchi.Tamagotchi;
 import net.kasax.tamagotchi.registry.ModItems;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Everything that makes one pet different from another. One {@code EntityType} per species, all
@@ -65,24 +66,24 @@ public enum PetSpecies {
         }
     }
 
+    /**
+     * What a pet eats besides kibble and its treat: an item tag {@code tamagotchi:diet/<diet>} each (vanilla tags plus the
+     * {@code c:foods/...} conventions, so food from other mods counts too). Golden apples never count: they are for the owner.
+     */
     public enum Diet {
-        MEAT(s -> s.is(ItemTags.MEAT)),
-        FISH(s -> s.is(ItemTags.FISHES)),
-        PLANT(s -> s.is(Items.SWEET_BERRIES) || s.is(Items.APPLE) || s.is(Items.MELON_SLICE) || s.is(Items.CARROT)
-                || s.is(Items.BEETROOT) || s.is(Items.GLOW_BERRIES)),
-        SWEET(s -> s.is(Items.COOKIE) || s.is(Items.HONEY_BOTTLE) || s.is(Items.SWEET_BERRIES) || s.is(Items.GLOW_BERRIES)
-                || s.is(Items.PUMPKIN_PIE)),
-        MINERAL(s -> s.is(Items.FLINT) || s.is(Items.AMETHYST_SHARD) || s.is(Items.CLAY_BALL) || s.is(Items.QUARTZ)),
-        ANY(s -> s.has(DataComponents.FOOD));
+        MEAT("meat"), FISH("fish"), PLANT("plant"), SWEET("sweet"), MINERAL("mineral"), ANY(null);
 
-        private final Predicate<ItemStack> test;
+        private final @Nullable TagKey<Item> tag;
 
-        Diet(Predicate<ItemStack> test) {
-            this.test = test;
+        Diet(@Nullable String tag) {
+            this.tag = tag == null ? null : TagKey.create(Registries.ITEM, Tamagotchi.id("diet/" + tag));
         }
 
         public boolean accepts(ItemStack stack) {
-            return this.test.test(stack);
+            if (stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+                return false;
+            }
+            return this.tag == null ? stack.has(DataComponents.FOOD) : stack.is(this.tag);
         }
     }
 

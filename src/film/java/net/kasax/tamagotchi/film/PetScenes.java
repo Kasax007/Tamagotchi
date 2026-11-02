@@ -772,7 +772,7 @@ final class PetScenes {
 
     /** Places a structure far from the garden with its pet forced in, and films the wild pet in it. */
     private void structure(String id, PetSpecies species, BlockPos at, String shot, Vec3 offset) {
-        var saved = new HashMap<>(PetSpawns.RULES);
+        var saved = new java.util.LinkedHashMap<>(PetSpawns.RULES);
         PetSpawns.RULES.replaceAll((k, r) -> new PetSpawns.Rule(r.species(), 1F));
         d.cam.player();
         d.cam.playerLook(new Vec3(at.getX(), 140, at.getZ()), new Vec3(at.getX(), 60, at.getZ() + 5), true);

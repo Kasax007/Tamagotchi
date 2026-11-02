@@ -2,6 +2,7 @@ package net.kasax.tamagotchi.pet;
 
 import java.util.List;
 import java.util.Optional;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.kasax.tamagotchi.pet.PetNeeds.Mood;
 import net.kasax.tamagotchi.pet.PetNeeds.Need;
 import net.kasax.tamagotchi.registry.ModParticles;
@@ -59,7 +60,16 @@ public final class Talents {
             return;
         }
         LivingEntity owner = pet.getOwner();
-        boolean near12 = owner.level() == level && pet.distanceToSqr(owner) < 12 * 12;
+        if (owner.level() != level) {
+            // the owner is in another dimension: only the garden keeps growing, nothing reaches across
+            if (pet.species() == PetSpecies.JUNGLE_DRAGON) {
+                greenThumb(pet, level);
+            } else if (pet.species() == PetSpecies.FROST_PENGUIN) {
+                pet.setFlag(TamaPet.F_SLIDING, false);
+            }
+            return;
+        }
+        boolean near12 = pet.distanceToSqr(owner) < 12 * 12;
         switch (pet.species()) {
             case JUNGLE_DRAGON -> greenThumb(pet, level);
             case TIDE_DRAGON -> {
@@ -175,11 +185,13 @@ public final class Talents {
     }
 
     private static void itemMagnet(TamaPet pet, ServerLevel level, LivingEntity owner) {
-        if (pet.tickCount % 10 != 0 || !pet.moodAllowsTalent()) {
+        // only with its owner around: a kitten left at home must not empty farms or send items to faraway coordinates
+        if (pet.tickCount % 10 != 0 || !pet.moodAllowsTalent() || pet.distanceToSqr(owner) > 24 * 24) {
             return;
         }
+        // items a player threw (its owner or anyone else, e.g. while trading) stay where they are
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, pet.getBoundingBox().inflate(6, 3, 6),
-                e -> e.isAlive() && !e.hasPickUpDelay() && e.getAge() > 30 && e.getOwner() != owner);
+                e -> e.isAlive() && !e.hasPickUpDelay() && e.getAge() > 30 && !(e.getOwner() instanceof Player));
         int moved = 0;
         for (ItemEntity it : items) {
             if (moved >= 3) {
@@ -210,9 +222,21 @@ public final class Talents {
         }
     }
 
+    /** Best first. {@code c:ores} catches every other ore, including the ones other mods add (tin, silver, ruby...). */
     private static final List<TagKey<Block>> ORES = List.of(BlockItemTags.DIAMOND_ORES.block(), BlockItemTags.EMERALD_ORES.block(),
-            BlockTags.GOLD_ORES, BlockItemTags.LAPIS_ORES.block(), BlockItemTags.REDSTONE_ORES.block(), BlockTags.IRON_ORES,
-            BlockTags.COPPER_ORES, BlockItemTags.COAL_ORES.block());
+            ConventionalBlockTags.NETHERITE_SCRAP_ORES, BlockTags.GOLD_ORES, BlockItemTags.LAPIS_ORES.block(),
+            BlockItemTags.REDSTONE_ORES.block(), BlockTags.IRON_ORES, ConventionalBlockTags.ORES, BlockTags.COPPER_ORES,
+            BlockItemTags.COAL_ORES.block());
+
+    /** How good an ore the Pebble Golem thinks this is: 0 is the best, -1 is no ore at all. */
+    public static int oreRank(BlockState st) {
+        for (int rank = 0; rank < ORES.size(); rank++) {
+            if (st.is(ORES.get(rank))) {
+                return rank;
+            }
+        }
+        return -1;
+    }
 
     private static void oreSniffer(TamaPet pet, ServerLevel level, LivingEntity owner) {
         if (pet.tickCount % 20 != 0 || !pet.talentReady() || !pet.moodAllowsTalent() || pet.distanceToSqr(owner) > 12 * 12) {
@@ -232,15 +256,13 @@ public final class Talents {
                     if (st.isAir() || st.is(Blocks.STONE) || st.is(Blocks.DEEPSLATE)) {
                         continue;
                     }
-                    for (int rank = 0; rank < ORES.size(); rank++) {
-                        if (st.is(ORES.get(rank))) {
-                            double d = dx * dx + dy * dy + dz * dz;
-                            if (rank < bestRank || rank == bestRank && d < bestD) {
-                                best = m.immutable();
-                                bestRank = rank;
-                                bestD = d;
-                            }
-                            break;
+                    int rank = oreRank(st);
+                    if (rank >= 0) {
+                        double d = dx * dx + dy * dy + dz * dz;
+                        if (rank < bestRank || rank == bestRank && d < bestD) {
+                            best = m.immutable();
+                            bestRank = rank;
+                            bestD = d;
                         }
                     }
                 }

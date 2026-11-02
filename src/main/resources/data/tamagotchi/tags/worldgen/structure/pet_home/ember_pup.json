@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:fortress",
+    {
+      "id": "repurposed_structures:temple_nether_basalt",
+      "required": false
+    }
+  ]
+}

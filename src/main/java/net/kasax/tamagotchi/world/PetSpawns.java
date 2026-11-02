@@ -1,7 +1,7 @@
 package net.kasax.tamagotchi.world;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.kasax.tamagotchi.Tamagotchi;
@@ -10,9 +10,11 @@ import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
@@ -22,52 +24,58 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.material.Fluids;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Pets live in structures: when a structure is generated, one roll decides whether its pet is
  * there. The roll happens in the chunk holding the centre of the first piece, so each structure
  * gets exactly one chance.
+ *
+ * <p>Which structures a pet lives in is a structure tag per rule, {@code tamagotchi:pet_home/<rule>}: the vanilla
+ * structure plus look-alikes from other mods (Repurposed Structures, Explorations, Dungeons and Taverns), and a
+ * modpack or data pack can add its own.
  */
 public final class PetSpawns {
     public record Rule(PetSpecies species, float chance) {
     }
 
-    public static final Map<Identifier, Rule> RULES = new HashMap<>();
+    /** Rule id (= the structure tag under {@code tamagotchi:pet_home/}) to the pet and its chance, in check order. */
+    public static final Map<Identifier, Rule> RULES = new LinkedHashMap<>();
 
     static {
-        rule("desert_pyramid", PetSpecies.DESERT_DRAGON, 0.40F);
-        rule("jungle_pyramid", PetSpecies.JUNGLE_DRAGON, 0.40F);
-        rule("monument", PetSpecies.TIDE_DRAGON, 0.50F);
-        rule("igloo", PetSpecies.FROST_PENGUIN, 0.45F);
-        rule("fortress", PetSpecies.EMBER_PUP, 0.30F);
-        rule("ancient_city", PetSpecies.SCULK_WISP, 0.50F);
-        rule("end_city", PetSpecies.VOID_KITTEN, 0.30F);
-        rule("trail_ruins", PetSpecies.PEBBLE_GOLEM, 0.35F);
-        rule("mineshaft", PetSpecies.PEBBLE_GOLEM, 0.08F);
-        rule("mineshaft_mesa", PetSpecies.PEBBLE_GOLEM, 0.08F);
-        rule("swamp_hut", PetSpecies.HEX_TOAD, 0.45F);
-        rule("trial_chambers", PetSpecies.MIMIC, 0.30F);
-        rule("mansion", PetSpecies.MIMIC, 0.60F);
+        rule("desert_dragon", PetSpecies.DESERT_DRAGON, 0.40F);
+        rule("jungle_dragon", PetSpecies.JUNGLE_DRAGON, 0.40F);
+        rule("tide_dragon", PetSpecies.TIDE_DRAGON, 0.50F);
+        rule("frost_penguin", PetSpecies.FROST_PENGUIN, 0.45F);
+        rule("ember_pup", PetSpecies.EMBER_PUP, 0.30F);
+        rule("sculk_wisp", PetSpecies.SCULK_WISP, 0.50F);
+        rule("void_kitten", PetSpecies.VOID_KITTEN, 0.30F);
+        rule("pebble_golem", PetSpecies.PEBBLE_GOLEM, 0.35F);              // trail ruins
+        rule("pebble_golem_mineshaft", PetSpecies.PEBBLE_GOLEM, 0.08F);
+        rule("hex_toad", PetSpecies.HEX_TOAD, 0.45F);
+        rule("mimic", PetSpecies.MIMIC, 0.30F);                            // trial chambers
+        rule("mimic_mansion", PetSpecies.MIMIC, 0.60F);
     }
 
     private PetSpawns() {
     }
 
-    private static void rule(String structure, PetSpecies species, float chance) {
-        RULES.put(Identifier.withDefaultNamespace(structure), new Rule(species, chance));
+    private static void rule(String id, PetSpecies species, float chance) {
+        RULES.put(Tamagotchi.id("pet_home/" + id), new Rule(species, chance));
     }
 
     public static void afterPlace(WorldGenLevel level, Structure structure, List<StructurePiece> pieces, BoundingBox chunkBB, ChunkPos chunkPos) {
         if (pieces.isEmpty()) {
             return;
         }
-        ResourceKey<Structure> key = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).getResourceKey(structure).orElse(null);
-        Rule rule = key == null ? null : RULES.get(key.identifier());
-        if (rule == null) {
-            return;
-        }
         BlockPos center = pieces.get(0).getBoundingBox().getCenter();
         if ((center.getX() >> 4) != chunkPos.x() || (center.getZ() >> 4) != chunkPos.z()) {
+            return;
+        }
+        Holder<Structure> holder = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).wrapAsHolder(structure);
+        ResourceKey<Structure> key = holder.unwrapKey().orElse(null);
+        Rule rule = key == null ? null : ruleFor(holder);
+        if (rule == null) {
             return;
         }
         RandomSource rng = RandomSource.create(net.minecraft.world.level.levelgen.RandomSupport.mixStafford13(
@@ -89,6 +97,16 @@ public final class PetSpawns {
         pet.finalizeSpawn(level, level.getCurrentDifficultyAt(spot), EntitySpawnReason.STRUCTURE, null);
         level.addFreshEntityWithPassengers(pet);
         Tamagotchi.LOGGER.debug("Spawned a wild {} at {}", rule.species().id(), spot);
+    }
+
+    /** The first rule whose structure tag holds this structure, or null. */
+    public static @Nullable Rule ruleFor(Holder<Structure> structure) {
+        for (Map.Entry<Identifier, Rule> e : RULES.entrySet()) {
+            if (structure.is(TagKey.create(Registries.STRUCTURE, e.getKey()))) {
+                return e.getValue();
+            }
+        }
+        return null;
     }
 
     private static BlockPos findSpot(WorldGenLevel level, List<StructurePiece> pieces, BoundingBox chunkBB, RandomSource rng, boolean water) {

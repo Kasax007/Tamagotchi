@@ -4,6 +4,7 @@ import com.mojang.math.Transformation;
 import java.util.HashSet;
 import java.util.Set;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -32,6 +33,8 @@ public final class OreMarkers {
                 LIVE.add(d);
             }
         });
+        // the next world in this game must not keep the last one's markers (and with them its level) alive
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> LIVE.clear());
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (LIVE.isEmpty() || server.getTickCount() % 20 != 0) {
                 return;

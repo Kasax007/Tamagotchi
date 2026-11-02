@@ -76,6 +76,8 @@ public class TamaPet extends TamableAnimal {
     public static final int F_SLIDING = 1 << 10;
     public static final int F_CHASING = 1 << 11;
     public static final int F_FLYING = 1 << 12;
+    /** Ordered to sit / stay (the pet may sit for other reasons too, e.g. in its house); shown on the pet screen. */
+    public static final int F_STAY = 1 << 13;
 
     private static final EntityDataAccessor<Integer> DATA_NEEDS = SynchedEntityData.defineId(TamaPet.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_STATE = SynchedEntityData.defineId(TamaPet.class, EntityDataSerializers.INT);
@@ -233,6 +235,7 @@ public class TamaPet extends TamableAnimal {
         this.needs.save(output);
         output.putBoolean("Backpack", hasBackpack());
         output.putBoolean("Wander", hasFlag(F_WANDER));
+        output.putBoolean("Flying", isFlying());
         if (this.legacySnacks > 0) {
             output.putInt("Snacks", this.legacySnacks);
         }
@@ -254,6 +257,11 @@ public class TamaPet extends TamableAnimal {
         setFlag(F_WANDER, input.getBooleanOr("Wander", false));
         this.legacySnacks = input.getIntOr("Snacks", 0);   // old snack pouch: moved into storage on the first tick
         this.home = input.read("Home", BlockPos.CODEC).orElse(null);
+        // a dragon saved (or fainted) in mid-air lands again instead of hovering with no gravity forever;
+        // 1.1.0 saved no "Flying", so there a winged pet with AI and no gravity was in the air
+        if (species().winged() && isNoGravity() && input.getBooleanOr("Flying", !isNoAi())) {
+            setNoGravity(false);
+        }
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(input.childOrEmpty("Inventory"), items);
         for (int i = 0; i < items.size(); i++) {
@@ -405,6 +413,24 @@ public class TamaPet extends TamableAnimal {
 
     public @Nullable BlockPos home() {
         return this.home;
+    }
+
+    /** The owner if it is in this pet's dimension ({@link #getOwner} finds it in any dimension). */
+    public @Nullable LivingEntity ownerHere() {
+        LivingEntity owner = getOwner();
+        return owner != null && owner.level() == level() ? owner : null;
+    }
+
+    @Override
+    public boolean shouldTryTeleportToOwner() {
+        // never "follow" an owner in another dimension to the same coordinates in this one
+        return ownerHere() != null && super.shouldTryTeleportToOwner();
+    }
+
+    @Override
+    public void setOrderedToSit(boolean orderedToSit) {
+        super.setOrderedToSit(orderedToSit);
+        setFlag(F_STAY, orderedToSit);
     }
 
     public void setHome(@Nullable BlockPos home) {
@@ -1066,19 +1092,42 @@ public class TamaPet extends TamableAnimal {
         setFlag(F_DANCING | F_SCARED | F_BEGGING | F_WARMING | F_BATHING | F_RUNNING, false);
         setTarget(null);
         clearFire();
+        if (isFlying()) {
+            land();
+        }
         ItemStack egg = TamaEggItem.fromPet(this);
-        ItemEntity item = new ItemEntity(level, getX(), getY() + 0.3, getZ(), egg);
-        item.setUnlimitedLifetime();
-        item.setDefaultPickUpDelay();
-        level.addFreshEntity(item);
+        ServerPlayer owner = getOwner() instanceof ServerPlayer p ? p : null;
+        if (getY() < level.getMinY()) {
+            // fell out of the world: an egg dropped here would fall forever, so it goes to the owner (or the world spawn)
+            if (owner != null) {
+                owner.getInventory().placeItemBackInInventory(egg, net.minecraft.util.Prediction.SERVER_ONLY);
+                owner.sendSystemMessage(Component.translatable("message.tamagotchi.fainted_void", getName()).withStyle(ChatFormatting.GOLD));
+            } else {
+                var spawn = level.getRespawnData().globalPos();
+                ServerLevel at = level.getServer().getLevel(spawn.dimension());
+                dropEgg(at != null ? at : level, Vec3.atBottomCenterOf(spawn.pos()), egg);
+            }
+            discard();
+            return;
+        }
+        dropEgg(level, position(), egg);
         level.sendParticles(ParticleTypes.POOF, getX(), getY() + 0.4, getZ(), 12, 0.3, 0.3, 0.3, 0.02);
         level.playSound(null, blockPosition(), ModSounds.PET_FAINT, SoundSource.NEUTRAL, 1.0F, 1.0F);
-        if (getOwner() instanceof ServerPlayer owner) {
+        if (owner != null) {
             BlockPos p = blockPosition();
             owner.sendSystemMessage(Component.translatable("message.tamagotchi.fainted", getName(), p.getX(), p.getY(), p.getZ())
                     .withStyle(ChatFormatting.GOLD));
         }
         discard();
+    }
+
+    /** The egg on the ground: it never despawns, and fire, lava, cactus or the next explosion cannot destroy it. */
+    private static void dropEgg(ServerLevel level, Vec3 at, ItemStack egg) {
+        ItemEntity item = new ItemEntity(level, at.x, at.y + 0.3, at.z, egg);
+        item.setUnlimitedLifetime();
+        item.setInvulnerable(true);
+        item.setDefaultPickUpDelay();
+        level.addFreshEntity(item);
     }
 
     @Override
