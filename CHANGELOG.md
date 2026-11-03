@@ -23,7 +23,7 @@ Modpack-ready: modded food, ores and structures, plus a round of fixes.
 - Fix: Tama Eggs on the ground survive fire, lava, cacti and explosions
 - Fix: a dragon saved in mid-air no longer hovers forever after loading the world
 - Fix: the Void Kitten only pulls items while you are near, and leaves items that players throw alone
-- Fix: pets no longer try to follow an owner who is in another dimension
+- Fix: pets no longer try to follow, beg from or bring a ball to an owner who is in another dimension
 - Fix: the pet screen shows "Sit" correctly, also after loading the world; the Tamacon contents react to the left
   mouse button only
 

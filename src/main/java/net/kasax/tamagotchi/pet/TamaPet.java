@@ -916,7 +916,7 @@ public class TamaPet extends TamableAnimal {
         if (owner instanceof ServerPlayer player) {
             pagerChecks(player);
             int lvl = player.experienceLevel;
-            if (this.lastOwnerLevel >= 0 && lvl > this.lastOwnerLevel && distanceToSqr(player) < 256) {
+            if (this.lastOwnerLevel >= 0 && lvl > this.lastOwnerLevel && player.level() == level() && distanceToSqr(player) < 256) {
                 playAction(PetAction.CELEBRATE);
                 playSound(ModSounds.PET_CELEBRATE, 0.8F, getVoicePitch());
                 emote(level, ModParticles.EMOTE_LOVE);

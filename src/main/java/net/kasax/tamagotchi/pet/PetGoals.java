@@ -653,7 +653,7 @@ public final class PetGoals {
 
         @Override
         public boolean canUse() {
-            if (!this.pet.isTame() || busy(this.pet) || this.pet.showingToy || !this.pet.getCarried().isEmpty() && this.pet.getOwner() == null) {
+            if (!this.pet.isTame() || busy(this.pet) || this.pet.showingToy || !this.pet.getCarried().isEmpty() && this.pet.ownerHere() == null) {
                 return false;
             }
             if (!this.pet.getCarried().isEmpty()) {
@@ -714,7 +714,7 @@ public final class PetGoals {
                 }
                 return;
             }
-            LivingEntity owner = this.pet.getOwner();
+            LivingEntity owner = this.pet.ownerHere();
             if (owner == null) {
                 return;
             }
@@ -762,7 +762,7 @@ public final class PetGoals {
             }
             this.nextCheck = 60 + this.pet.getRandom().nextInt(60);
             PetNeeds n = this.pet.needs();
-            LivingEntity owner = this.pet.getOwner();
+            LivingEntity owner = this.pet.ownerHere();
             ServerLevel level = (ServerLevel) this.pet.level();
             boolean wet = level.isRaining() && level.canSeeSky(this.pet.blockPosition());
             if ((level.isThundering() || wet) && pick(Use.SHELTER, st -> st.getBlock() instanceof PetHouseBlock, owner)) return true;
@@ -1043,7 +1043,7 @@ public final class PetGoals {
             }
             this.nextScan = 40 + this.pet.getRandom().nextInt(30);
             ServerLevel level = (ServerLevel) this.pet.level();
-            LivingEntity owner = this.pet.getOwner();
+            LivingEntity owner = this.pet.ownerHere();
 
             if (level.isThundering() && level.canSeeSky(this.pet.blockPosition()) && this.pet.isTame()
                     && this.pet.species() != PetSpecies.EMBER_PUP) {
@@ -1140,7 +1140,7 @@ public final class PetGoals {
                 case DANCE -> this.spot != null && level.getBlockEntity(this.spot) instanceof JukeboxBlockEntity j
                         && j.getSongPlayer().isPlaying() && this.pet.blockPosition().closerThan(this.spot, 10);
                 case SCARED -> level.isThundering() && this.timer < 400;
-                case BEG_OWNER -> this.pet.getOwner() != null && this.pet.getOwner().isUsingItem() && this.timer < 200;
+                case BEG_OWNER -> this.pet.ownerHere() != null && this.pet.ownerHere().isUsingItem() && this.timer < 200;
                 case WARM -> this.timer < 400 && !level.isRaining() && !this.pet.isOrderedToSit();
                 case BEG_CAKE -> this.timer < 120;
                 case SNIFF -> this.timer < 80;
@@ -1162,7 +1162,7 @@ public final class PetGoals {
                     }
                 }
                 case SCARED -> {
-                    LivingEntity owner = this.pet.getOwner();
+                    LivingEntity owner = this.pet.ownerHere();
                     if (owner != null && this.pet.distanceToSqr(owner) > 5) {
                         this.pet.getNavigation().moveTo(owner, 1.3);
                     }
@@ -1171,7 +1171,7 @@ public final class PetGoals {
                     }
                 }
                 case BEG_OWNER -> {
-                    LivingEntity owner = this.pet.getOwner();
+                    LivingEntity owner = this.pet.ownerHere();
                     if (owner != null) {
                         this.pet.getLookControl().setLookAt(owner);
                         if (this.pet.distanceToSqr(owner) > 4) {

@@ -93,11 +93,13 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
   animation layer (`PetAnimator`), expression planes for eyes (open / blink / happy / sleep / sad),
   emissive layer, held-item layer, `PetRenderer`.
 * Structure spawning: mixin at the end of `StructureStart.placeInChunk`, one roll per structure in the
-  chunk that holds the first piece's centre; spot search inside the pieces.
+  chunk that holds the first piece's centre; spot search inside the pieces. Which structures count is a structure
+  tag per rule, `tamagotchi:pet_home/<rule>` (vanilla plus optional look-alikes from structure mods).
 * Art pipeline (`tools/`): Python model + texture generator (pets as data → Java model code + painted
   64×64 textures + preview contact sheets); pixel-map sprites for items; synthesized + pitched vanilla sounds.
-* Tests: server game tests (tame, backpack spill, feed, faint → egg) and a client game test that
-  screenshots every pet, block and the pet screen for art review.
+* Tests: client game tests (`src/gametest`: `PetGallery`, `BlockGallery`) that screenshot every pet, block and
+  the pet screen for art review and log functional checks as `[TamaTest] PASS/FAIL`; `-Ptests=checks` runs only the
+  functional pet checks and the real-click tests of the screens.
 
 ## 7. Progress
 
@@ -134,3 +136,14 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
 - [x] JEI + REI plugins (info pages), checked in-game with `-PwithJei` / `-PwithRei`
 - [x] 3D models in hand for the Tama Pager and Laser Pointer
 - [x] Natural world generation check: jungle temple, ocean monument and desert pyramid all get their pet
+
+### Round 3 (1.2.0: bug check, modpack-ready)
+
+- [x] Diets as item tags `tamagotchi:diet/*` with the `c:foods/...` tags; Ore Sniffer uses `c:ores`
+- [x] Pet homes as structure tags (Repurposed Structures, Dungeons and Taverns, Explorations, Moog's look-alikes)
+- [x] Backpack takes any `c:chests/wooden`, shears any `c:tools/shear`
+- [x] Furniture tooltips, recipe-book unlock advancements, mineable tags, Food Bowl recipe without clash
+- [x] Fixes: sleep flip-flop, sleeping next to the owner's bed, golden-apple dupe, backpack lunch, void faint,
+      egg survives damage, mid-air dragon after loading, Void Kitten range, owner in another dimension,
+      Sit shown after loading, Tamacon left click only (26.3 SDL buttons: left = 1)
+- [x] Verified: client checks with real clicks (`-Ptests=checks`), dedicated server with placed structures

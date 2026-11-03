@@ -54,7 +54,7 @@ public class PetGallery implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
         String only = System.getProperty("tama.tests", "all");
-        boolean checksOnly = only.equals("checks");   // -Ptests=checks: the functional checks and real clicks, no screenshots
+        boolean checksOnly = only.contains("checks") && !only.contains("pets");   // -Ptests=checks: functional checks and real clicks only
         if (!only.equals("all") && !only.contains("pets") && !checksOnly) {
             return;
         }

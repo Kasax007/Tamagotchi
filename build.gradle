@@ -83,7 +83,7 @@ loom {
 	}
 }
 // ./gradlew runClientGameTest -Ptests=blocks (or pets) runs only that part of the client tests;
-// -Ptests=checks runs only the functional pet checks and real-click tests (no screenshots)
+// -Ptests=checks runs only the functional pet checks and real-click tests (no screenshots); combine: -Ptests=blocks,checks
 tasks.matching { it.name == 'runClientGameTest' }.configureEach {
 	if (project.hasProperty('tests')) jvmArgs "-Dtama.tests=${project.property('tests')}"
 }
