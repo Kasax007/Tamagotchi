@@ -8,6 +8,10 @@
     {
       "id": "repurposed_structures:ancient_city_end",
       "required": false
+    },
+    {
+      "id": "repurposed_structures:ancient_city_ocean",
+      "required": false
     }
   ]
 }

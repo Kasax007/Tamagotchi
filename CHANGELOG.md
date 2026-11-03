@@ -8,7 +8,9 @@ Modpack-ready: modded food, ores and structures, plus a round of fixes.
 
 - Pets eat food from other mods too (the `c:foods` tags), and the Pebble Golem sniffs out modded ores (`c:ores`)
 - Pets also live in look-alike structures from other mods (Repurposed Structures pyramids, witch huts, mineshafts,
-  mansions and more); data packs can add their own through the `tamagotchi:pet_home/...` structure tags
+  mansions, monuments and more, Moog's igloos and nether fortresses); data packs can add their own through the
+  `tamagotchi:pet_home/...` structure tags
+- Any wooden chest puts a backpack on your pet and any shears take it off, also the ones from other mods
 - Furniture shows a tooltip on what your pets do with it
 - Recipes appear in the recipe book as soon as you carry one of their ingredients
 - Axes, pickaxes and hoes mine the furniture faster
@@ -22,7 +24,8 @@ Modpack-ready: modded food, ores and structures, plus a round of fixes.
 - Fix: a dragon saved in mid-air no longer hovers forever after loading the world
 - Fix: the Void Kitten only pulls items while you are near, and leaves items that players throw alone
 - Fix: pets no longer try to follow an owner who is in another dimension
-- Fix: the pet screen shows "Sit" correctly; the Tamacon contents react to the left mouse button only
+- Fix: the pet screen shows "Sit" correctly, also after loading the world; the Tamacon contents react to the left
+  mouse button only
 
 ## 1.1.0
 

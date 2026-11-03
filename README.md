@@ -91,6 +91,16 @@ Gadgets and decoration (1.1):
 
 JEI and REI show every recipe plus info pages on where to find each pet (optional plugins in `compat/`).
 
+For modpacks and data packs:
+
+* **Where pets live:** one structure tag per spawn rule, `tamagotchi:pet_home/<rule>` (e.g. `pet_home/hex_toad`,
+  `pet_home/mimic_mansion`). They already hold the look-alikes of Repurposed Structures, Dungeons and Taverns,
+  Explorations and Moog's structures as optional entries; add your own structures to them.
+* **What pets eat:** the item tags `tamagotchi:diet/meat`, `fish`, `plant`, `sweet` and `mineral`. They include the
+  `c:foods/...` tags, so food from other mods counts too.
+* **Ores:** the Pebble Golem sniffs out everything in `c:ores`.
+* **Backpack:** any wooden chest (`c:chests/wooden`) puts it on, any shears (`c:tools/shear`) take it off.
+
 ## Releasing
 
 Releases are automatic: pushing a tag `v<mod_version>`, or starting `.github/workflows/release.yml` by hand ("Run

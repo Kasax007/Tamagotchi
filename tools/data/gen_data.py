@@ -79,6 +79,9 @@ BLOCK_TIPS = {
 }
 for bid in BLOCKS:
     lang[f'block.tamagotchi.{bid}.tooltip'] = BLOCK_TIPS.get(bid, 'Click it to squeeze it. A pet sleeping next to a plush of its own kind rests faster.')
+# names of the diet item tags (below), shown by recipe viewers
+for diet, name in {'meat': 'Meat', 'fish': 'Fish', 'plant': 'Plants', 'sweet': 'Sweets', 'mineral': 'Minerals'}.items():
+    lang[f'tag.item.tamagotchi.diet.{diet}'] = f'Pet Food: {name}'
 
 lang.update({
     'tooltip.tamagotchi.favorite_of': 'Favorite treat of: %s',
@@ -390,14 +393,16 @@ for diet, values in DIETS.items():
     tag(f'item/diet/{diet}', values)
 
 # where the pets live (PetSpawns: one rule per tag); look-alikes from structure mods are optional entries
+# (Repurposed Structures, Dungeons and Taverns, Explorations, Moog's structures: all in the Dreamcraft pack)
 RS = 'repurposed_structures:'
 HOMES = {
     'desert_dragon': ['minecraft:desert_pyramid', opt(RS + 'pyramid_badlands')],
     'jungle_dragon': ['minecraft:jungle_pyramid', opt(RS + 'pyramid_jungle'), opt('explorations:jungle_temple')],
-    'tide_dragon': ['minecraft:monument'],
-    'frost_penguin': ['minecraft:igloo', opt(RS + 'igloo_stone'), opt(RS + 'pyramid_icy'), opt(RS + 'pyramid_snowy')],
-    'ember_pup': ['minecraft:fortress', opt(RS + 'temple_nether_basalt')],
-    'sculk_wisp': ['minecraft:ancient_city', opt(RS + 'ancient_city_nether'), opt(RS + 'ancient_city_end')],
+    'tide_dragon': ['minecraft:monument'] + [opt(RS + 'monument_' + k) for k in ['desert', 'icy', 'jungle']],
+    'frost_penguin': ['minecraft:igloo', opt(RS + 'igloo_stone'), opt(RS + 'pyramid_icy'), opt(RS + 'pyramid_snowy'),
+                      opt('mvs:small_igloo'), opt('mvs:medium_igloo_1'), opt('mvs:medium_igloo_2')],
+    'ember_pup': ['minecraft:fortress', opt(RS + 'temple_nether_basalt'), opt('mns:mega_fortress')],
+    'sculk_wisp': ['minecraft:ancient_city', opt(RS + 'ancient_city_nether'), opt(RS + 'ancient_city_end'), opt(RS + 'ancient_city_ocean')],
     'void_kitten': ['minecraft:end_city', opt(RS + 'pyramid_end'), opt('nova_structures:end_castle')],
     'pebble_golem': ['minecraft:trail_ruins'],
     'pebble_golem_mineshaft': ['minecraft:mineshaft', 'minecraft:mineshaft_mesa'] + [opt(RS + 'mineshaft_' + k) for k in

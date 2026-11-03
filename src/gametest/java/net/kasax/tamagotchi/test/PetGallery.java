@@ -54,7 +54,8 @@ public class PetGallery implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
         String only = System.getProperty("tama.tests", "all");
-        if (!only.equals("all") && !only.contains("pets")) {
+        boolean checksOnly = only.equals("checks");   // -Ptests=checks: the functional checks and real clicks, no screenshots
+        if (!only.equals("all") && !only.contains("pets") && !checksOnly) {
             return;
         }
         this.ctx = context;
@@ -67,20 +68,24 @@ public class PetGallery implements FabricClientGameTest {
             cmd("time set noon");
             cmd("weather clear");
             ctx.waitTicks(40);
-            if (recipeViewerCheck()) {
-                return;
+            if (!checksOnly) {
+                if (recipeViewerCheck()) {
+                    return;
+                }
+                lineup(false);
+                lineup(true);
+                closeups();
+                furniture();
+                screen();
+                live();
+                extras();
             }
-            lineup(false);
-            lineup(true);
-            closeups();
-            furniture();
-            screen();
-            live();
-            extras();
             checks();
             fixes();
         }
-        naturalSpawns();
+        if (!checksOnly) {
+            naturalSpawns();
+        }
         LOG.info("[TamaTest] ===== results =====");
         for (String r : this.results) {
             LOG.info("[TamaTest] {}", r);
@@ -631,6 +636,38 @@ public class PetGallery implements FabricClientGameTest {
         check("a dragon saved while flying lands again after loading", lands[0]);
         clear();
 
+        // a pet told to stay still still shows "Sit" on its screen after loading (vanilla loads "Sitting" behind our back)
+        boolean[] stays = {false};
+        server.runOnServer(s -> {
+            ServerLevel level = s.overworld();
+            TamaPet pet = spawn(level, player(s), PetSpecies.HEX_TOAD, 2.5, 2.5, 0, true);
+            pet.setMode(TamaPet.Mode.SIT);
+            ItemStack egg = net.kasax.tamagotchi.item.TamaEggItem.fromPet(pet);
+            pet.discard();
+            TamaPet back = net.kasax.tamagotchi.item.TamaEggItem.wake(level, egg, new net.minecraft.world.phys.Vec3(2.5, Y, 2.5), 0, false);
+            stays[0] = back != null && back.mode() == TamaPet.Mode.SIT && back.hasFlag(TamaPet.F_STAY);
+        });
+        check("a sitting pet shows Sit on its screen after loading", stays[0]);
+        clear();
+
+        // any wooden chest (c:chests/wooden, here a trapped chest) puts a backpack on, any shears (c:tools/shear) take it off
+        boolean[] pack = {false, false};
+        server.runOnServer(s -> {
+            ServerPlayer p = player(s);
+            TamaPet pet = spawn(s.overworld(), p, PetSpecies.PEBBLE_GOLEM, 1.5, 1.5, 0, true);
+            p.setShiftKeyDown(true);
+            p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.TRAPPED_CHEST));
+            pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
+            pack[0] = pet.hasBackpack();
+            p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+            pet.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
+            pack[1] = !pet.hasBackpack();
+            p.setShiftKeyDown(false);
+            p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        });
+        check("any wooden chest puts a backpack on, shears take it off (on " + pack[0] + ", off " + pack[1] + ")", pack[0] && pack[1]);
+        clear();
+
         // the Void Kitten only pulls items while its owner is near (a kitten left at home must not send them away)
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
@@ -711,7 +748,7 @@ public class PetGallery implements FabricClientGameTest {
     private double[] buttonCentre(int n) {
         double[] at = new double[2];
         ctx.runOnClient(mc -> {
-            var b = mc.screen.children().stream().filter(net.minecraft.client.gui.components.Button.class::isInstance)
+            var b = mc.gui.screen().children().stream().filter(net.minecraft.client.gui.components.Button.class::isInstance)
                     .map(net.minecraft.client.gui.components.Button.class::cast).toList().get(n);
             at[0] = b.getX() + b.getWidth() / 2.0;
             at[1] = b.getY() + b.getHeight() / 2.0;
@@ -742,14 +779,15 @@ public class PetGallery implements FabricClientGameTest {
             server.runOnServer(s -> got[0] = onlyPet(s).mode());
             boolean[] greyed = {false};
             int n = button[i];
-            ctx.runOnClient(mc -> greyed[0] = mc.screen instanceof net.kasax.tamagotchi.client.screen.PetScreen && !mc.screen.children().stream()
+            ctx.runOnClient(mc -> greyed[0] = mc.gui.screen() instanceof net.kasax.tamagotchi.client.screen.PetScreen && !mc.gui.screen().children().stream()
                     .filter(net.minecraft.client.gui.components.Button.class::isInstance).map(net.minecraft.client.gui.components.Button.class::cast)
                     .toList().get(n).active);
             modes &= got[0] == want[i] && greyed[0];
             LOG.info("[TamaTest] pet screen click {}: mode {}, button greyed {}", want[i], got[0], greyed[0]);
         }
         check("the pet screen's Sit / Follow / Wander buttons work with real left clicks", modes);
-        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        ctx.runOnClient(mc -> mc.gui.screen().onClose());   // like Esc: the server closes the menu too
+        ctx.waitTicks(5);
         clear();
 
         // the Tamacon: the Contents button, then a chapter on the contents page (a right click does nothing)
@@ -765,13 +803,13 @@ public class PetGallery implements FabricClientGameTest {
                 Class<?> c = net.kasax.tamagotchi.client.screen.TamaconScreen.class;
                 var pageField = c.getDeclaredField("page");
                 pageField.setAccessible(true);
-                page[0] = pageField.getInt(mc.screen);
+                page[0] = pageField.getInt(mc.gui.screen());
                 var starts = c.getDeclaredField("chapterStart");
                 starts.setAccessible(true);
-                chapter[0] = ((List<?>) starts.get(mc.screen)).get(3) instanceof Integer at ? at : -1;
+                chapter[0] = ((List<?>) starts.get(mc.gui.screen())).get(3) instanceof Integer at ? at : -1;
                 var rect = c.getDeclaredMethod("contentsRect", int.class);
                 rect.setAccessible(true);
-                int[] r = (int[]) rect.invoke(mc.screen, 3);
+                int[] r = (int[]) rect.invoke(mc.gui.screen(), 3);
                 entry[0] = r[0] + r[2] / 2.0;
                 entry[1] = r[1] + r[3] / 2.0 - 1;
             } catch (ReflectiveOperationException e) {

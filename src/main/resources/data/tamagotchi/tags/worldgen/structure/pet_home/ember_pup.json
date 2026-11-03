@@ -4,6 +4,10 @@
     {
       "id": "repurposed_structures:temple_nether_basalt",
       "required": false
+    },
+    {
+      "id": "mns:mega_fortress",
+      "required": false
     }
   ]
 }

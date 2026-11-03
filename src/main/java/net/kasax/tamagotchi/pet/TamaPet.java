@@ -2,6 +2,7 @@ package net.kasax.tamagotchi.pet;
 
 import java.util.List;
 import java.util.UUID;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.kasax.tamagotchi.Tamagotchi;
 import net.kasax.tamagotchi.item.TamaEggItem;
 import net.kasax.tamagotchi.menu.PetMenu;
@@ -255,6 +256,7 @@ public class TamaPet extends TamableAnimal {
         this.needs.load(input);
         setFlag(F_BACKPACK, input.getBooleanOr("Backpack", false));
         setFlag(F_WANDER, input.getBooleanOr("Wander", false));
+        setFlag(F_STAY, isOrderedToSit());   // vanilla loads "Sitting" without setOrderedToSit
         this.legacySnacks = input.getIntOr("Snacks", 0);   // old snack pouch: moved into storage on the first tick
         this.home = input.read("Home", BlockPos.CODEC).orElse(null);
         // a dragon saved (or fainted) in mid-air lands again instead of hovering with no gravity forever;
@@ -524,14 +526,15 @@ public class TamaPet extends TamableAnimal {
 
         // sneak + right-click: open the pet screen / backpack on (chest) / backpack off (shears)
         if (player.isSecondaryUseActive()) {
-            if (stack.is(Items.CHEST) && !hasBackpack()) {
+            // any wooden chest and any shears (c: tags), so the chests and shears of other mods work too
+            if ((stack.is(Items.CHEST) || stack.is(ConventionalItemTags.WOODEN_CHESTS)) && !hasBackpack()) {
                 if (!client) {
                     equipBackpack();
                     stack.consume(1, player);
                 }
                 return InteractionResult.SUCCESS;
             }
-            if (stack.is(Items.SHEARS) && hasBackpack()) {
+            if ((stack.is(Items.SHEARS) || stack.is(ConventionalItemTags.SHEAR_TOOLS)) && hasBackpack()) {
                 if (!client) {
                     removeBackpack(true);
                     playSound(net.minecraft.sounds.SoundEvents.SHEEP_SHEAR, 0.7F, 1.3F);
