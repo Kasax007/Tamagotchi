@@ -320,7 +320,7 @@ public class PetGallery implements FabricClientGameTest {
         });
         ctx.getInput().setCursorPos(win[0] * Double.parseDouble(System.getProperty("tama.sx", "0.84")),
                 win[1] * Double.parseDouble(System.getProperty("tama.sy", "0.94")));
-        ctx.getInput().pressMouse(0);
+        ctx.getInput().pressMouse(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT);   // 26.3: SDL numbering, left = 1
         ctx.waitTicks(2);
         ctx.getInput().typeChars("@tamagotchi");
         ctx.waitTicks(20);
@@ -479,7 +479,7 @@ public class PetGallery implements FabricClientGameTest {
         }
     }
 
-    // ------------------------------------------------------------------ regression checks (1.1.1)
+    // ------------------------------------------------------------------ regression checks (1.2.0)
 
     /** Counts how often the pet falls asleep or wakes up during {@code ticks}. */
     private int sleepFlips(int ticks) {
@@ -695,6 +695,104 @@ public class PetGallery implements FabricClientGameTest {
                 net.minecraft.core.registries.Registries.RECIPE, net.kasax.tamagotchi.Tamagotchi.id("food_bowl"))));
         check("picking up an ingredient unlocks the recipe in the recipe book", unlocked[0]);
         server.runOnServer(s -> player(s).getInventory().clearContent());
+        clicks();
+    }
+
+    /** Moves the real cursor onto a GUI point and presses a mouse button (26.3: SDL numbering, left = 1, right = 3). */
+    private void clickGui(double gx, double gy, int button) {
+        int[] scale = {1};
+        ctx.runOnClient(mc -> scale[0] = mc.getWindow().getGuiScale());
+        ctx.getInput().setCursorPos(gx * scale[0], gy * scale[0]);
+        ctx.getInput().pressMouse(button);
+        ctx.waitTicks(5);
+    }
+
+    /** Centre of the n-th button on the open screen, in GUI coordinates. */
+    private double[] buttonCentre(int n) {
+        double[] at = new double[2];
+        ctx.runOnClient(mc -> {
+            var b = mc.screen.children().stream().filter(net.minecraft.client.gui.components.Button.class::isInstance)
+                    .map(net.minecraft.client.gui.components.Button.class::cast).toList().get(n);
+            at[0] = b.getX() + b.getWidth() / 2.0;
+            at[1] = b.getY() + b.getHeight() / 2.0;
+        });
+        return at;
+    }
+
+    /** Every click path of the mod's screens, with real mouse clicks. */
+    private void clicks() {
+        int left = com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT;
+        clear();
+        cmd("tp @p 0.5 " + Y + " 0.5 0 0");
+        server.runOnServer(s -> {
+            TamaPet pet = spawn(s.overworld(), player(s), PetSpecies.HEX_TOAD, 1.5, 1.5, 0, true);
+            pet.setMode(TamaPet.Mode.FOLLOW);
+        });
+        ctx.waitTicks(5);
+        server.runOnServer(s -> onlyPet(s).openPetScreen(player(s)));
+        ctx.waitTicks(10);
+        // the pet screen: Wander, Sit, Follow (buttons 2, 0, 1); the pressed one greys out on the client
+        TamaPet.Mode[] want = {TamaPet.Mode.WANDER, TamaPet.Mode.SIT, TamaPet.Mode.FOLLOW};
+        int[] button = {2, 0, 1};
+        boolean modes = true;
+        for (int i = 0; i < want.length; i++) {
+            double[] at = buttonCentre(button[i]);
+            clickGui(at[0], at[1], left);
+            TamaPet.Mode[] got = {null};
+            server.runOnServer(s -> got[0] = onlyPet(s).mode());
+            boolean[] greyed = {false};
+            int n = button[i];
+            ctx.runOnClient(mc -> greyed[0] = mc.screen instanceof net.kasax.tamagotchi.client.screen.PetScreen && !mc.screen.children().stream()
+                    .filter(net.minecraft.client.gui.components.Button.class::isInstance).map(net.minecraft.client.gui.components.Button.class::cast)
+                    .toList().get(n).active);
+            modes &= got[0] == want[i] && greyed[0];
+            LOG.info("[TamaTest] pet screen click {}: mode {}, button greyed {}", want[i], got[0], greyed[0]);
+        }
+        check("the pet screen's Sit / Follow / Wander buttons work with real left clicks", modes);
+        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        clear();
+
+        // the Tamacon: the Contents button, then a chapter on the contents page (a right click does nothing)
+        ctx.runOnClient(mc -> mc.gui.setScreen(new net.kasax.tamagotchi.client.screen.TamaconScreen()));
+        ctx.waitTicks(5);
+        double[] contents = buttonCentre(1);
+        clickGui(contents[0], contents[1], left);
+        int[] page = {-1};
+        int[] chapter = {-1};
+        double[] entry = new double[2];
+        Runnable read = () -> ctx.runOnClient(mc -> {
+            try {
+                Class<?> c = net.kasax.tamagotchi.client.screen.TamaconScreen.class;
+                var pageField = c.getDeclaredField("page");
+                pageField.setAccessible(true);
+                page[0] = pageField.getInt(mc.screen);
+                var starts = c.getDeclaredField("chapterStart");
+                starts.setAccessible(true);
+                chapter[0] = ((List<?>) starts.get(mc.screen)).get(3) instanceof Integer at ? at : -1;
+                var rect = c.getDeclaredMethod("contentsRect", int.class);
+                rect.setAccessible(true);
+                int[] r = (int[]) rect.invoke(mc.screen, 3);
+                entry[0] = r[0] + r[2] / 2.0;
+                entry[1] = r[1] + r[3] / 2.0 - 1;
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        read.run();
+        boolean onContents = page[0] == 0;
+        clickGui(entry[0], entry[1], com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT);
+        read.run();
+        boolean rightIgnored = page[0] == 0;
+        clickGui(entry[0], entry[1], left);
+        read.run();
+        check("Tamacon: Contents button and chapter links work with real left clicks (contents " + onContents + ", right click ignored "
+                + rightIgnored + ", page " + page[0] + " = chapter " + chapter[0] + ")", onContents && rightIgnored && page[0] == chapter[0] && page[0] > 0);
+        int before = page[0];
+        double[] next = buttonCentre(2);
+        clickGui(next[0], next[1], left);
+        read.run();
+        check("Tamacon: the > button turns the page (" + before + " -> " + page[0] + ")", page[0] == before + 1);
+        ctx.runOnClient(mc -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ functional checks

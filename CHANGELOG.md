@@ -2,6 +2,28 @@
 
 Each release uploads the section of its version as the changelog on CurseForge, Modrinth and GitHub.
 
+## 1.2.0
+
+Modpack-ready: modded food, ores and structures, plus a round of fixes.
+
+- Pets eat food from other mods too (the `c:foods` tags), and the Pebble Golem sniffs out modded ores (`c:ores`)
+- Pets also live in look-alike structures from other mods (Repurposed Structures pyramids, witch huts, mineshafts,
+  mansions and more); data packs can add their own through the `tamagotchi:pet_home/...` structure tags
+- Furniture shows a tooltip on what your pets do with it
+- Recipes appear in the recipe book as soon as you carry one of their ingredients
+- Axes, pickaxes and hoes mine the furniture faster
+- The Food Bowl recipe now has a bone in the middle (the old one clashed with another mod's clay cup)
+- Fix: a tired pet that cannot reach you no longer falls asleep and wakes up again over and over
+- Fix: pets stay curled up next to your bed until you get up
+- Fix: a golden-apple feeding that gets interrupted no longer makes a free golden apple
+- Fix: hurt pets eat their lunch from the backpack, not the golden apples meant for you
+- Fix: a pet that faints in the void lands in your inventory as an egg instead of falling forever
+- Fix: Tama Eggs on the ground survive fire, lava, cacti and explosions
+- Fix: a dragon saved in mid-air no longer hovers forever after loading the world
+- Fix: the Void Kitten only pulls items while you are near, and leaves items that players throw alone
+- Fix: pets no longer try to follow an owner who is in another dimension
+- Fix: the pet screen shows "Sit" correctly; the Tamacon contents react to the left mouse button only
+
 ## 1.1.0
 
 The furniture update: plushies, gadgets and colours.

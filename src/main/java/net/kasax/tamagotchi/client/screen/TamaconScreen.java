@@ -176,7 +176,7 @@ public class TamaconScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (this.page == 0) {
+        if (this.page == 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             int hit = contentsEntryAt(event.x(), event.y());
             if (hit >= 0) {
                 turn(this.chapterStart.get(hit));

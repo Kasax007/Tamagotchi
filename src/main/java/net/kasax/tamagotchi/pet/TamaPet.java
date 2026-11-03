@@ -1125,7 +1125,7 @@ public class TamaPet extends TamableAnimal {
     private static void dropEgg(ServerLevel level, Vec3 at, ItemStack egg) {
         ItemEntity item = new ItemEntity(level, at.x, at.y + 0.3, at.z, egg);
         item.setUnlimitedLifetime();
-        item.setInvulnerable(true);
+        item.setPermanentlyInvulnerable(true);
         item.setDefaultPickUpDelay();
         level.addFreshEntity(item);
     }
