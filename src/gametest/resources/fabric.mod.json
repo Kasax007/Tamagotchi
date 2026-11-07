@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "tamagotchi-gametest",
+  "id": "tamacraft-gametest",
   "version": "1.0.0",
-  "name": "Tamagotchi tests",
+  "name": "Tamacraft tests",
   "environment": "*",
   "entrypoints": {
     "fabric-client-gametest": [
-      "net.kasax.tamagotchi.test.PetGallery",
-      "net.kasax.tamagotchi.test.BlockGallery"
+      "net.kasax.tamacraft.test.PetGallery",
+      "net.kasax.tamacraft.test.BlockGallery"
     ]
   },
   "depends": {
-    "tamagotchi": "*"
+    "tamacraft": "*"
   }
 }

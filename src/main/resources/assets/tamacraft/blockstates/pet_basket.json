@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tamacraft:block/pet_basket"
+    },
+    "facing=east": {
+      "model": "tamacraft:block/pet_basket",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tamacraft:block/pet_basket",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tamacraft:block/pet_basket",
+      "y": 270
+    }
+  }
+}

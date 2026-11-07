@@ -1,12 +1,12 @@
-# Tamagotchi sounds
+# Tamacraft sounds
 
-All custom sounds are synthesized from scratch (numpy only, no samples or downloads) by `make_sfx.py` and encoded as mono 44.1 kHz Ogg Vorbis (`-q:a 4`) into `src/main/resources/assets/tamagotchi/sounds/<group>/<name>.ogg`. Creature vocals mix synthesized calls with pitched-up references to vanilla sound files (no vanilla audio is copied; sounds.json only points at it).
+All custom sounds are synthesized from scratch (numpy only, no samples or downloads) by `make_sfx.py` and encoded as mono 44.1 kHz Ogg Vorbis (`-q:a 4`) into `src/main/resources/assets/tamacraft/sounds/<group>/<name>.ogg`. Creature vocals mix synthesized calls with pitched-up references to vanilla sound files (no vanilla audio is copied; sounds.json only points at it).
 
 | File | Purpose |
 | --- | --- |
 | `make_sfx.py` | Synthesizer + encoder + spectrogram sheet. Deterministic and re-runnable: `python3 tools/sfx/make_sfx.py` (`--only "pet/*"`, `--list`, `--no-sheet`, `-j 1`). Needs numpy, Pillow (sheet only) and ffmpeg with libvorbis. |
 | `validate_sounds.py` | Checks every sounds.json reference (custom files exist and decode, vanilla keys exist in the asset index), subtitles, variant counts, expected events, size. |
-| `subtitles_en_us.json` | `subtitles.tamagotchi.*` keys; merge into `assets/tamagotchi/lang/en_us.json`. |
+| `subtitles_en_us.json` | `subtitles.tamacraft.*` keys; merge into `assets/tamacraft/lang/en_us.json`. |
 | `out/spectrograms.png` | Contact sheet of all custom sounds, read back from the encoded files. |
 
 Notes: custom files are peak-normalized to about -3 dBFS; per-variant `volume` in sounds.json balances them against each other and against vanilla (A-weighted loudness matching, so high whistles are set lower than soft rumbles). The engine clamps pitch to 0.5-2.0, so referenced pitches stay at or below 1.75 to leave room for entity pitch variation. Every event has 1-4 variants. Events are listed as `event` - description (custom files; vanilla references).

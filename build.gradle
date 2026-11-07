@@ -26,7 +26,7 @@ fabricApi {
 	// Headless server tests (src/gametest) and client screenshot tests: ./gradlew runGameTest / runClientGameTest
 	configureTests {
 		createSourceSet = true
-		modId = "tamagotchi-gametest"
+		modId = "tamacraft-gametest"
 		enableGameTests = true
 		enableClientGameTests = true
 		eula = true
@@ -64,7 +64,7 @@ sourceSets {
 }
 loom {
 	mods {
-		"tamagotchi-film" {
+		"tamacraft-film" {
 			sourceSet sourceSets.film
 		}
 	}
@@ -124,7 +124,7 @@ jar {
 def changelogFor = { String v ->
 	def text = file("CHANGELOG.md").text
 	def m = (text =~ /(?ms)^## \[?${java.util.regex.Pattern.quote(v)}\]?[^\n]*\n(.*?)(?=^## |\z)/)
-	m.find() ? m.group(1).trim() : "Tamagotchi ${v}"
+	m.find() ? m.group(1).trim() : "Tamacraft ${v}"
 }
 def curseforgeId = providers.gradleProperty("curseforge_id").getOrElse("")
 def modrinthId = providers.gradleProperty("modrinth_id").getOrElse("")
@@ -139,7 +139,7 @@ publishMods {
 	file = jar.archiveFile
 	changelog = changelogFor(project.version.toString())
 	type = STABLE
-	displayName = "Tamagotchi ${project.version}"
+	displayName = "Tamacraft ${project.version}"
 	modLoaders.add("fabric")
 	dryRun = isDryRun
 

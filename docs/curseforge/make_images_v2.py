@@ -1,7 +1,7 @@
-"""Images of the CurseForge page of Tamagotchi 1.2 (docs/curseforge/img/*_v2.*): the header, the video card, the "at a
+"""Images of the CurseForge page of Tamacraft (1.2, renamed in 1.3) (docs/curseforge/img/*_v2.*): the header, the video card, the "at a
 glance" numbers, the two flow diagrams (how it works, always at your side), the ten pet cards, the care diagram, the
 furniture shelf, the "made for modpacks" diagram, the section strips and the collages cut from the footage of the
-Tamagotchi videos. The images of the page before (header.png, pets.png, strip_*.png ...) are left as they are.
+Tamacraft videos. The images of the page before (header.png, pets.png, strip_*.png ...) are left as they are.
 
   python3 docs/curseforge/make_images_v2.py FOOTAGE_DIR FONT_DIR [what ...]
 
@@ -10,7 +10,7 @@ shot, 1080x1920). FONT_DIR: the archive's fonts folder (Lilita One, Press Start 
 The pets are drawn with tools/petart from the textures in src/main/resources, the furniture with
 tools/sprites/render.py; the vanilla models and textures they need come from the Minecraft client jar ($MC_JAR,
 default: the Loom cache). Frames are cut with ffmpeg into $TAMA_FRAMES (default: a temporary folder). The length of
-the showcase on the video card is read from $TAMA_VIDEO (default: FOOTAGE_DIR/../tamagotchi/longform/...).
+the showcase on the video card is read from $TAMA_VIDEO (default: FOOTAGE_DIR/../tamagotchi/longform/..., the video archive keeps its folder name).
 what: header video glance flow_start pets care flow_side shelf modpack strips collages counts, or image names such as
 play_v2.jpg (default: everything). Every number on the images is counted from the repository (see counts())."""
 import importlib
@@ -31,15 +31,15 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 OUT = os.path.join(HERE, 'img')
-JAVA = os.path.join(ROOT, 'src', 'main', 'java', 'net', 'kasax', 'tamagotchi')
+JAVA = os.path.join(ROOT, 'src', 'main', 'java', 'net', 'kasax', 'tamacraft')
 RES = os.path.join(ROOT, 'src', 'main', 'resources')
-ASSETS = os.path.join(RES, 'assets', 'tamagotchi')
-DATA = os.path.join(RES, 'data', 'tamagotchi')
+ASSETS = os.path.join(RES, 'assets', 'tamacraft')
+DATA = os.path.join(RES, 'data', 'tamacraft')
 FOOT = sys.argv[1]
 FONTS = sys.argv[2]
 CACHE = os.environ.get('TAMA_FRAMES') or os.path.join(tempfile.gettempdir(), 'tama_frames')
 MC_JAR = os.environ.get('MC_JAR') or os.path.expanduser('~/.gradle/caches/fabric-loom/26.3/minecraft-client.jar')
-VIDEO = os.environ.get('TAMA_VIDEO') or os.path.join(FOOT, '..', 'tamagotchi', 'longform',
+VIDEO = os.environ.get('TAMA_VIDEO') or os.path.join(FOOT, '..', 'tamagotchi', 'longform',   # archive folder
                                                      'tamagotchi_showcase_clean_music.mp4')
 W = 1200
 MAX_BYTES = 900 * 1024
@@ -81,8 +81,8 @@ def counts():
     lang = json.loads(read(ASSETS, 'lang', 'en_us.json'))
     info = {}
     for const, pid, props in pets:
-        info[pid] = dict(name=lang['entity.tamagotchi.' + pid], talent=lang['talent.tamagotchi.' + pid],
-                         desc=lang['talent.tamagotchi.%s.desc' % pid],
+        info[pid] = dict(name=lang['entity.tamacraft.' + pid], talent=lang['talent.tamacraft.' + pid],
+                         desc=lang['talent.tamacraft.%s.desc' % pid],
                          color=int(re.search(r'\.color\(0x([0-9A-Fa-f]{6})\)', props).group(1), 16),
                          treat=re.search(r'ModItems\.(\w+)', props).group(1).lower(), homes=[])
     spawns = read(JAVA, 'world', 'PetSpawns.java')
@@ -336,7 +336,7 @@ def gradient(w, h, c0, c1, horizontal=True):
 
 
 def dots(im, step=44, r=6, color=(255, 255, 255, 80), box=None):
-    """Polka dots like the Tamagotchi shell."""
+    """Polka dots like the Tamacraft shell."""
     x0, y0, x1, y1 = box or (0, 0, im.width, im.height)
     lay = Image.new('RGBA', im.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
@@ -578,9 +578,9 @@ def header(name='header_v2.png', size=(1600, 500)):
     floaters(im, [('heart', 944, 240, 40), ('sparkle_2', 1270, 116, 44), ('heart', 1572, 170, 34),
                   ('sparkle_1', 1030, 368, 30), ('heart', 1190, 352, 30), ('sparkle_3', 1560, 392, 30)])
     d = ImageDraw.Draw(im)
-    outlined(d, (58, 84), 'TAMAGOTCHI', title(114), stroke=10)
-    tw = d.textlength('TAMAGOTCHI', font=title(114))
-    st = sticker('1.2', 104)
+    outlined(d, (58, 84), 'TAMACRAFT', title(114), stroke=10)
+    tw = d.textlength('TAMACRAFT', font=title(114))
+    st = sticker('1.3', 104)
     im.alpha_composite(st, (int(58 + tw - 34), 40))
     d = ImageDraw.Draw(im)
     outlined(d, (64, 238), 'Find them. Tame them. Love them.', title(46), fill=CRIMSON, stroke=6, stroke_fill=WHITE,
@@ -594,7 +594,7 @@ def header(name='header_v2.png', size=(1600, 500)):
 
 
 # ----------------------------------------------------------------------------------------------- strips
-STRIPS = [('start', 'HOW IT WORKS', lambda: tex('item/tamagotchi_heart', 64)),
+STRIPS = [('start', 'HOW IT WORKS', lambda: tex('item/tamacraft_heart', 64)),
           ('pets', 'THE TEN PETS', lambda: tex('item/frost_penguin_spawn_egg', 64)),
           ('care', 'A REAL PET', lambda: tex('item/tama_pager', 64)),
           ('play', 'PLAY TIME', lambda: tex('item/squeaky_ball', 64)),
@@ -652,7 +652,7 @@ def video_card(name='video_v2.jpg'):
     im = Image.alpha_composite(im, shade)
     d = ImageDraw.Draw(im)
     outlined(d, (w // 2, 82), 'MEET THE PETS', title(84), stroke=9, anchor='mm')
-    outlined(d, (w // 2, 150), 'The Tamagotchi showcase', title(38), fill=SHELL_LIGHT, stroke=5, anchor='mm')
+    outlined(d, (w // 2, 150), 'The Tamacraft showcase', title(38), fill=SHELL_LIGHT, stroke=5, anchor='mm')
     p = play_glyph(184)
     shadowed(im, p, ((w - 184) // 2, (h - 184) // 2 + 6), blur=14, offset=(0, 8), alpha=150, color=(60, 0, 30))
     d = ImageDraw.Draw(im)
@@ -712,7 +712,7 @@ def glance(name='glance_v2.png'):
     h = by + band_h + 34
     im = candy(W, h)
     d = ImageDraw.Draw(im)
-    outlined(d, (W // 2, 58), 'TAMAGOTCHI AT A GLANCE', title(58), stroke=8, anchor='mm')
+    outlined(d, (W // 2, 58), 'TAMACRAFT AT A GLANCE', title(58), stroke=8, anchor='mm')
     x0 = (W - cols * tw - (cols - 1) * gx) // 2
     for k, (ic, num, label, sub) in enumerate(tiles):
         x, y = x0 + (k % cols) * (tw + gx), top + (k // cols) * (th + gy)
@@ -827,13 +827,13 @@ def flow_start(name='flow_start_v2.png'):
     c = counts()
     cw, ch, ph = 204, 470, 250
     pic = lambda spec, focus, zoom: photo(spec, cw - 16, ph, focus, zoom)
-    heart = lambda k: k.alpha_composite(tex('item/tamagotchi_heart', 56), (k.width - 72, ph - 66))
+    heart = lambda k: k.alpha_composite(tex('item/tamacraft_heart', 56), (k.width - 72, ph - 66))
     hearts = lambda k: k.alpha_composite(lcd_hearts(c['hearts'], c['hearts'], 22), (14, ph - 58))
     cards = [
         step_card(cw, ch, pic('tama/jungle_wild@2.8', (0.52, 0.52), 1.5), 1, 'FIND',
                   'Pets hide in structures, but not every structure holds one.'),
         step_card(cw, ch, pic('tama2/tame_heart@3.1', (0.45, 0.42), 1.35), 2, 'TAME',
-                  'Use a Tamagotchi Heart on a wild pet. It gets a name and follows you.', extra=heart),
+                  'Use a Tamacraft Heart on a wild pet. It gets a name and follows you.', extra=heart),
         step_card(cw, ch, pic('tama2/bowl_eat@1.3', (0.44, 0.5), 1.45), 3, 'CARE',
                   'Feed it, play with it, keep it clean and let it sleep.'),
         step_card(cw, ch, pic('tama2/petting_closeups@4.5', (0.48, 0.45), 1.3), 4, 'BOND',
@@ -868,7 +868,7 @@ def flow_start(name='flow_start_v2.png'):
 
 
 # ----------------------------------------------------------------------------------------------- the ten pets
-SHORT_TALENT = {  # talent.tamagotchi.<pet>.desc in assets/tamagotchi/lang/en_us.json, shortened
+SHORT_TALENT = {  # talent.tamacraft.<pet>.desc in assets/tamacraft/lang/en_us.json, shortened
     'desert_dragon': 'Roasts raw food and smelts raw ore with a puff of flame.',
     'jungle_dragon': 'Makes the crops and saplings around it grow.',
     'tide_dragon': "Water Breathing and Dolphin's Grace while you swim near it.",
@@ -1190,7 +1190,7 @@ def shelf(name='shelf_v2.png'):
                 pic = premul_resize(pic, (int(cw - 12), int(pic.height * (cw - 12) / pic.width)))
             im.alpha_composite(pic, (int(cx - pic.width / 2), y + 136 - pic.height))
             d = ImageDraw.Draw(im)
-            label = lang['block.tamagotchi.' + b]
+            label = lang['block.tamacraft.' + b]
             para(d, (cx, y + 154), label, small(18), cw - 6, fill=INK, anchor='ma', gap=0)
             if b in dye:
                 sw = Image.new('RGBA', (34, 34), (0, 0, 0, 0))
@@ -1224,7 +1224,7 @@ def shelf(name='shelf_v2.png'):
 
 # ----------------------------------------------------------------------------------------------- made for modpacks
 def modpack(name='modpack_v2.png'):
-    """What 1.2 changed for modpacks (CHANGELOG.md 1.2.0; tags in data/tamagotchi/tags, pet/PetSpecies.Diet)."""
+    """What 1.2 changed for modpacks (CHANGELOG.md 1.2.0; tags in data/tamacraft/tags, pet/PetSpecies.Diet)."""
     c = counts()
     cw, ch, gap = 276, 330, 16
     x0 = (W - 4 * cw - 3 * gap) // 2
@@ -1236,7 +1236,7 @@ def modpack(name='modpack_v2.png'):
          'The Pebble Golem sniffs out modded ores.', 'c:ores'),
         ('HOMES', [vcube('block/mossy_stone_bricks', a=30), vcube('block/sandstone_top', 'block/chiseled_sandstone', a=30),
                    vcube('block/snow', a=30)],
-         '%d look-alike structures of other mods are pet homes too.' % c['lookalikes'], 'tamagotchi:pet_home'),
+         '%d look-alike structures of other mods are pet homes too.' % c['lookalikes'], 'tamacraft:pet_home'),
         ('BACKPACK', [chest(30), van('item/shears', 54)],
          'Any wooden chest puts it on, any shears take it off.', 'c:chests/wooden'),
     ]
@@ -1269,7 +1269,7 @@ def modpack(name='modpack_v2.png'):
               (van('item/knowledge_book', 52), 'Recipes unlock early'),
               (furniture('food_bowl', 40), 'Food Bowl with a bone'),
               (van('item/iron_axe', 50), 'Tools mine furniture faster'),
-              (tex('item/tamagotchi_heart', 50), '%d fixes' % c['fixes'])]
+              (tex('item/tamacraft_heart', 50), '%d fixes' % c['fixes'])]
     ew = (W - 2 * x0 - 20) / len(extras)
     for k, (ic, label) in enumerate(extras):
         cx = x0 + 10 + ew * k + ew / 2

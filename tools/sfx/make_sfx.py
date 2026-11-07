@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Tamagotchi sound synthesizer.
+"""Tamacraft sound synthesizer.
 
 Builds every custom sound of the mod from scratch (numpy only, no samples, no downloads) and encodes
 each one as mono 44.1 kHz Ogg Vorbis (ffmpeg / libvorbis, -q:a 4) to
 
-    src/main/resources/assets/tamagotchi/sounds/<group>/<name>.ogg
+    src/main/resources/assets/tamacraft/sounds/<group>/<name>.ogg
 
 Afterwards it renders a spectrogram contact sheet of everything it wrote to tools/sfx/out/spectrograms.png
 (read from the encoded files, so it shows what the game really plays).
@@ -39,7 +39,7 @@ TAU = 2.0 * np.pi
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, '..', '..'))
-SOUND_DIR = os.path.join(REPO, 'src', 'main', 'resources', 'assets', 'tamagotchi', 'sounds')
+SOUND_DIR = os.path.join(REPO, 'src', 'main', 'resources', 'assets', 'tamacraft', 'sounds')
 SHEET_PNG = os.path.join(HERE, 'out', 'spectrograms.png')
 
 # =====================================================================================================
@@ -694,7 +694,7 @@ def spectrogram_rgb(x, w, h, fmin=60.0, fmax=16000.0, dyn=72.0):
     return img[:, idx]
 
 
-def render_sheet(files, out_png, title='Tamagotchi custom sounds', cols=6, cell_w=300, spec_h=96):
+def render_sheet(files, out_png, title='Tamacraft custom sounds', cols=6, cell_w=300, spec_h=96):
     """files: list of (name, path). Groups (directories) get their own header row."""
     from PIL import Image, ImageDraw, ImageFont
     try:
@@ -2531,7 +2531,7 @@ def select(patterns):
 
 
 def main():
-    ap = argparse.ArgumentParser(description='Synthesize the Tamagotchi mod sounds.')
+    ap = argparse.ArgumentParser(description='Synthesize the Tamacraft mod sounds.')
     ap.add_argument('--only', nargs='*', help='fnmatch patterns on group/name (default: everything)')
     ap.add_argument('--out', default=SOUND_DIR, help='output directory (default: the mod resources)')
     ap.add_argument('--sheet', default=SHEET_PNG, help='path of the spectrogram contact sheet')

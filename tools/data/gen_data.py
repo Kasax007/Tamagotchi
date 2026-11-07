@@ -3,8 +3,8 @@ import json
 import os
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-ASSETS = os.path.join(REPO, 'src/main/resources/assets/tamagotchi')
-DATA = os.path.join(REPO, 'src/main/resources/data/tamagotchi')
+ASSETS = os.path.join(REPO, 'src/main/resources/assets/tamacraft')
+DATA = os.path.join(REPO, 'src/main/resources/data/tamacraft')
 
 PETS = {
     'desert_dragon': ('Desert Dragon', 'Ember Roast', 'Hand it raw food or raw ore and it roasts or smelts it with a little puff of flame.'),
@@ -20,7 +20,7 @@ PETS = {
 }
 
 ITEMS = {
-    'tamagotchi_heart': ('Tamagotchi Heart', 'Use it on a wild pet to tame it.'),
+    'tamacraft_heart': ('Tamacraft Heart', 'Use it on a wild pet to tame it.'),
     'tama_pager': ('Tama Pager', 'Right-click your pet: stay / follow. Use it in the air: screen of your nearest pet. Beeps when a pet needs care.'),
     'tamacon': ('Tamacon', 'Your guide to pets, care, toys and furniture. Right-click to read.'),
     'pet_brush': ('Pet Brush', 'Brush your pet to keep it clean and happy.'),
@@ -47,19 +47,19 @@ BLOCKS = {
 for _pid, (_name, _t, _d) in PETS.items():
     BLOCKS[f'{_pid}_plush'] = f'{_name} Plush'
 
-lang = {'itemGroup.tamagotchi': 'Tamagotchi'}
+lang = {'itemGroup.tamacraft': 'Tamacraft'}
 for pid, (name, talent, desc) in PETS.items():
-    lang[f'entity.tamagotchi.{pid}'] = name
-    lang[f'item.tamagotchi.{pid}_spawn_egg'] = f'{name} Spawn Egg'
-    lang[f'talent.tamagotchi.{pid}'] = talent
-    lang[f'talent.tamagotchi.{pid}.desc'] = desc
+    lang[f'entity.tamacraft.{pid}'] = name
+    lang[f'item.tamacraft.{pid}_spawn_egg'] = f'{name} Spawn Egg'
+    lang[f'talent.tamacraft.{pid}'] = talent
+    lang[f'talent.tamacraft.{pid}.desc'] = desc
 for iid, (name, tip) in ITEMS.items():
-    lang[f'item.tamagotchi.{iid}'] = name
+    lang[f'item.tamacraft.{iid}'] = name
     if tip:
-        lang[f'item.tamagotchi.{iid}.tooltip'] = tip
-lang['item.tamagotchi.tama_egg.named'] = "%s's Egg"
+        lang[f'item.tamacraft.{iid}.tooltip'] = tip
+lang['item.tamacraft.tama_egg.named'] = "%s's Egg"
 for bid, name in BLOCKS.items():
-    lang[f'block.tamagotchi.{bid}'] = name
+    lang[f'block.tamacraft.{bid}'] = name
 BLOCK_TIPS = {
     'pet_bed': 'Pets sleep in it at night or when they are tired. Takes any dye.',
     'pet_basket': 'Pets sleep in it at night or when they are tired. The cushion takes any dye.',
@@ -78,57 +78,57 @@ BLOCK_TIPS = {
     'pet_incubator': 'Put a Tama Egg in: the pet hatches in thirty seconds, fully healed.',
 }
 for bid in BLOCKS:
-    lang[f'block.tamagotchi.{bid}.tooltip'] = BLOCK_TIPS.get(bid, 'Click it to squeeze it. A pet sleeping next to a plush of its own kind rests faster.')
+    lang[f'block.tamacraft.{bid}.tooltip'] = BLOCK_TIPS.get(bid, 'Click it to squeeze it. A pet sleeping next to a plush of its own kind rests faster.')
 # names of the diet item tags (below), shown by recipe viewers
 for diet, name in {'meat': 'Meat', 'fish': 'Fish', 'plant': 'Plants', 'sweet': 'Sweets', 'mineral': 'Minerals'}.items():
-    lang[f'tag.item.tamagotchi.diet.{diet}'] = f'Pet Food: {name}'
+    lang[f'tag.item.tamacraft.diet.{diet}'] = f'Pet Food: {name}'
 
 lang.update({
-    'tooltip.tamagotchi.favorite_of': 'Favorite treat of: %s',
-    'message.tamagotchi.stay': '%s will stay here.',
-    'message.tamagotchi.follow': '%s follows you again.',
-    'message.tamagotchi.snack_stored': '%s packed the golden apple into its backpack (%s). It brings you one when you are hurt!',
-    'message.tamagotchi.snack_no_backpack': '%s needs a backpack to carry golden apples for you. Sneak + right-click it with a chest!',
-    'message.tamagotchi.snack_full': "%s's backpack is full!",
-    'message.tamagotchi.full': '%s is full!',
-    'message.tamagotchi.favorite': '%s loves this treat! ♥',
-    'message.tamagotchi.tamed': '♥ %s trusts you now!',
-    'message.tamagotchi.tamed_help': 'Right-click: pet it • Sneak + right-click: pet screen and backpack • Sneak + right-click with a chest: backpack on, with shears: off • Tama Pager on it: stay / follow • Golden apples in its backpack: it feeds you when you are hurt • Craft a Tamacon to learn everything!',
-    'message.tamagotchi.got_pager': 'You got a Tama Pager! It beeps when your pet needs you.',
-    'message.tamagotchi.need.hunger': '%s is hungry!',
-    'message.tamagotchi.need.fun': '%s is bored!',
-    'message.tamagotchi.need.energy': '%s is sleepy!',
-    'message.tamagotchi.need.hygiene': '%s needs a bath!',
-    'message.tamagotchi.need.hurt': '%s is hurt!',
-    'message.tamagotchi.fainted': '%s fainted and curled up into its egg at %s %s %s. Use the egg to wake it up!',
-    'message.tamagotchi.fainted_void': '%s fell out of the world and fainted. Its egg is in your inventory: use it to wake it up!',
-    'message.tamagotchi.no_pet': 'No pet of yours nearby.',
-    'message.tamagotchi.fed_you': '%s gave you a golden apple! (%s left)',
-    'message.tamagotchi.too_sad': '%s is too sad to help right now...',
-    'message.tamagotchi.talent.warm': '%s keeps you safe from the flames!',
-    'message.tamagotchi.talent.ore': '%s sniffed out %s!',
-    'message.tamagotchi.talent.brew': '%s brewed you %s!',
-    'message.tamagotchi.talent.treasure': '%s coughed up a treasure!',
-    'message.tamagotchi.incubating': '%s is warming up in the incubator...',
-    'message.tamagotchi.portrait': 'You painted a portrait of %s!',
-    'message.tamagotchi.portrait_none': 'None of your pets is close enough to paint.',
-    'gui.tamagotchi.sit': 'Sit',
-    'gui.tamagotchi.tamacon.contents': 'Contents',
-    'gui.tamagotchi.follow': 'Follow',
-    'gui.tamagotchi.wander': 'Wander',
-    'gui.tamagotchi.backpack': 'Backpack',
-    'gui.tamagotchi.no_backpack_title': 'Backpack',
-    'gui.tamagotchi.no_backpack': 'No backpack yet! Sneak + right-click your pet with a chest to give it one.',
-    'gui.tamagotchi.talent': 'Talent',
-    'gui.tamagotchi.mood.miserable': 'Miserable',
-    'gui.tamagotchi.mood.sad': 'Sad',
-    'gui.tamagotchi.mood.okay': 'Okay',
-    'gui.tamagotchi.mood.happy': 'Happy',
-    'gui.tamagotchi.mood.ecstatic': 'Ecstatic!',
-    'gui.tamagotchi.need.hunger': 'Hunger: %s / 100',
-    'gui.tamagotchi.need.fun': 'Fun: %s / 100',
-    'gui.tamagotchi.need.energy': 'Energy: %s / 100',
-    'gui.tamagotchi.need.hygiene': 'Hygiene: %s / 100',
+    'tooltip.tamacraft.favorite_of': 'Favorite treat of: %s',
+    'message.tamacraft.stay': '%s will stay here.',
+    'message.tamacraft.follow': '%s follows you again.',
+    'message.tamacraft.snack_stored': '%s packed the golden apple into its backpack (%s). It brings you one when you are hurt!',
+    'message.tamacraft.snack_no_backpack': '%s needs a backpack to carry golden apples for you. Sneak + right-click it with a chest!',
+    'message.tamacraft.snack_full': "%s's backpack is full!",
+    'message.tamacraft.full': '%s is full!',
+    'message.tamacraft.favorite': '%s loves this treat! ♥',
+    'message.tamacraft.tamed': '♥ %s trusts you now!',
+    'message.tamacraft.tamed_help': 'Right-click: pet it • Sneak + right-click: pet screen and backpack • Sneak + right-click with a chest: backpack on, with shears: off • Tama Pager on it: stay / follow • Golden apples in its backpack: it feeds you when you are hurt • Craft a Tamacon to learn everything!',
+    'message.tamacraft.got_pager': 'You got a Tama Pager! It beeps when your pet needs you.',
+    'message.tamacraft.need.hunger': '%s is hungry!',
+    'message.tamacraft.need.fun': '%s is bored!',
+    'message.tamacraft.need.energy': '%s is sleepy!',
+    'message.tamacraft.need.hygiene': '%s needs a bath!',
+    'message.tamacraft.need.hurt': '%s is hurt!',
+    'message.tamacraft.fainted': '%s fainted and curled up into its egg at %s %s %s. Use the egg to wake it up!',
+    'message.tamacraft.fainted_void': '%s fell out of the world and fainted. Its egg is in your inventory: use it to wake it up!',
+    'message.tamacraft.no_pet': 'No pet of yours nearby.',
+    'message.tamacraft.fed_you': '%s gave you a golden apple! (%s left)',
+    'message.tamacraft.too_sad': '%s is too sad to help right now...',
+    'message.tamacraft.talent.warm': '%s keeps you safe from the flames!',
+    'message.tamacraft.talent.ore': '%s sniffed out %s!',
+    'message.tamacraft.talent.brew': '%s brewed you %s!',
+    'message.tamacraft.talent.treasure': '%s coughed up a treasure!',
+    'message.tamacraft.incubating': '%s is warming up in the incubator...',
+    'message.tamacraft.portrait': 'You painted a portrait of %s!',
+    'message.tamacraft.portrait_none': 'None of your pets is close enough to paint.',
+    'gui.tamacraft.sit': 'Sit',
+    'gui.tamacraft.tamacon.contents': 'Contents',
+    'gui.tamacraft.follow': 'Follow',
+    'gui.tamacraft.wander': 'Wander',
+    'gui.tamacraft.backpack': 'Backpack',
+    'gui.tamacraft.no_backpack_title': 'Backpack',
+    'gui.tamacraft.no_backpack': 'No backpack yet! Sneak + right-click your pet with a chest to give it one.',
+    'gui.tamacraft.talent': 'Talent',
+    'gui.tamacraft.mood.miserable': 'Miserable',
+    'gui.tamacraft.mood.sad': 'Sad',
+    'gui.tamacraft.mood.okay': 'Okay',
+    'gui.tamacraft.mood.happy': 'Happy',
+    'gui.tamacraft.mood.ecstatic': 'Ecstatic!',
+    'gui.tamacraft.need.hunger': 'Hunger: %s / 100',
+    'gui.tamacraft.need.fun': 'Fun: %s / 100',
+    'gui.tamacraft.need.energy': 'Energy: %s / 100',
+    'gui.tamacraft.need.hygiene': 'Hygiene: %s / 100',
 })
 # ------------------------------------------------------------------ Tamacon (in-game guide)
 FOUND = {
@@ -163,7 +163,7 @@ EXTRA = {
 TAMACON = {
     'welcome': ('Welcome!', 'The Tamacon knows everything about the ten rare pets of this world and how to make them happy.\n\n'
                 'Use the arrows, your mouse wheel or the arrow keys to turn the pages, and click a chapter on the contents page to jump there.\n\n'
-                'Tip: craft a Tamagotchi Heart first (red dye and an amethyst shard). You need it to tame a pet.'),
+                'Tip: craft a Tamacraft Heart first (red dye and an amethyst shard). You need it to tame a pet.'),
     'finding': ('Finding pets', 'Pets live in structures, but not in every one: each structure rolls once whether a pet lives there.\n\n'
                 'Desert pyramid: Desert Dragon. Jungle temple: Jungle Dragon. Ocean monument: Tide Dragon. Igloo: Frost Penguin. '
                 'Nether fortress: Ember Pup. Ancient city: Sculk Wisp. End city: Void Kitten. Trail ruins and mineshafts: Pebble Golem. '
@@ -172,7 +172,7 @@ TAMACON = {
                 'mineshafts and mansions of Repurposed Structures.\n\n'
                 'Wild pets stay near their home and never despawn. Look inside and around the building. The cute ones run away when hit, '
                 'the Ember Pup, Sculk Wisp and Mimic bite back.\n\n'
-                'Hold a Tamagotchi Heart and wild pets come closer. Right-click one with the heart to tame it.'),
+                'Hold a Tamacraft Heart and wild pets come closer. Right-click one with the heart to tame it.'),
     'controls': ('Controls', 'Right-click with an empty hand: pet it.\n\n'
                  'Sneak + right-click with an empty hand: open the pet screen with its needs, mood, backpack and the Sit / Follow / Wander buttons.\n\n'
                  'Sneak + right-click with a chest: put a backpack on.\n\n'
@@ -243,34 +243,34 @@ TAMACON = {
 for pid, (name, talent, desc) in PETS.items():
     TAMACON[pid] = (name, f'Lives in {FOUND[pid]}.\n\nTalent - {talent}: {desc}\n\nFavorite treat: {TREAT[pid]}.\n\n'
                           f'Fights with {FIGHT[pid]}.\n\n{EXTRA[pid]}')
-lang['info.tamagotchi.tamagotchi_heart'] = 'Tames a wild pet. Pets live in structures: desert pyramids, jungle temples, ocean monuments, igloos, nether fortresses, ancient cities, end cities, trail ruins, mineshafts, swamp huts, trial chambers and woodland mansions. Not every structure has one!'
-lang['info.tamagotchi.tamacon'] = 'The in-game guide: everything about the pets, their care, controls, toys, food and furniture. Right-click to read.'
-lang['info.tamagotchi.tama_pager'] = 'You get one for free when you tame your first pet. Right-click your pet: stay / follow. Use it in the air: screen of your nearest pet. It beeps when a pet needs you.'
-lang['info.tamagotchi.treat_dispenser'] = 'Fill it with treats or pet food, then give it a redstone pulse: it shoots a treat to the hungriest pet nearby, and the pet catches it.'
-lang['info.tamagotchi.pet_incubator'] = 'Put a Tama Egg in: after thirty seconds your pet hatches fully healed and rested.'
-lang['info.tamagotchi.toy_box'] = 'Nine slots for toys. Bored pets open it and play with what is inside.'
-lang['info.tamagotchi.pet_flap'] = 'For a one-block hole in a wall: your pets walk through, everyone else is blocked.'
-lang['info.tamagotchi.pet_portrait'] = 'Click it with an empty hand to paint your nearest pet (click again for the next one). Click it with a dye to change the backdrop.'
-lang['info.tamagotchi.egg_lamp'] = 'A glowing night light. Click it to switch it on and off, click it with a dye to change its colour.'
-lang['info.tamagotchi.pet_bed'] = 'Pets sleep in it at night or when they are tired. Click it with a dye to change its colour.'
-lang['info.tamagotchi.pet_basket'] = 'Pets sleep in it at night or when they are tired. Click it with a dye to change the cushion.'
-lang['info.tamagotchi.plush'] = 'Click it to squeeze it. Lonely pets cuddle plushies, and a pet sleeping next to a plush of its own kind rests faster.'
-lang['info.tamagotchi.tama_egg'] = 'A tamed pet that fainted curls up into this egg. Use it on a block to wake the pet up again, with everything it had.'
+lang['info.tamacraft.tamacraft_heart'] = 'Tames a wild pet. Pets live in structures: desert pyramids, jungle temples, ocean monuments, igloos, nether fortresses, ancient cities, end cities, trail ruins, mineshafts, swamp huts, trial chambers and woodland mansions. Not every structure has one!'
+lang['info.tamacraft.tamacon'] = 'The in-game guide: everything about the pets, their care, controls, toys, food and furniture. Right-click to read.'
+lang['info.tamacraft.tama_pager'] = 'You get one for free when you tame your first pet. Right-click your pet: stay / follow. Use it in the air: screen of your nearest pet. It beeps when a pet needs you.'
+lang['info.tamacraft.treat_dispenser'] = 'Fill it with treats or pet food, then give it a redstone pulse: it shoots a treat to the hungriest pet nearby, and the pet catches it.'
+lang['info.tamacraft.pet_incubator'] = 'Put a Tama Egg in: after thirty seconds your pet hatches fully healed and rested.'
+lang['info.tamacraft.toy_box'] = 'Nine slots for toys. Bored pets open it and play with what is inside.'
+lang['info.tamacraft.pet_flap'] = 'For a one-block hole in a wall: your pets walk through, everyone else is blocked.'
+lang['info.tamacraft.pet_portrait'] = 'Click it with an empty hand to paint your nearest pet (click again for the next one). Click it with a dye to change the backdrop.'
+lang['info.tamacraft.egg_lamp'] = 'A glowing night light. Click it to switch it on and off, click it with a dye to change its colour.'
+lang['info.tamacraft.pet_bed'] = 'Pets sleep in it at night or when they are tired. Click it with a dye to change its colour.'
+lang['info.tamacraft.pet_basket'] = 'Pets sleep in it at night or when they are tired. Click it with a dye to change the cushion.'
+lang['info.tamacraft.plush'] = 'Click it to squeeze it. Lonely pets cuddle plushies, and a pet sleeping next to a plush of its own kind rests faster.'
+lang['info.tamacraft.tama_egg'] = 'A tamed pet that fainted curls up into this egg. Use it on a block to wake the pet up again, with everything it had.'
 for pid, (name, talent, desc) in PETS.items():
-    lang[f'info.tamagotchi.pet.{pid}'] = f'The {name} lives in {FOUND[pid]}. Tame it with a Tamagotchi Heart. Talent - {talent}: {desc} Favorite treat: {TREAT[pid]}.'
+    lang[f'info.tamacraft.pet.{pid}'] = f'The {name} lives in {FOUND[pid]}. Tame it with a Tamacraft Heart. Talent - {talent}: {desc} Favorite treat: {TREAT[pid]}.'
 for cid, (title, text) in TAMACON.items():
-    lang[f'tamacon.tamagotchi.{cid}.title'] = title
-    lang[f'tamacon.tamagotchi.{cid}'] = text
+    lang[f'tamacon.tamacraft.{cid}.title'] = title
+    lang[f'tamacon.tamacraft.{cid}'] = text
 
 lang.update({
-    'advancements.tamagotchi.root.title': 'Tamagotchi',
-    'advancements.tamagotchi.root.description': 'Get a Tamagotchi Heart. Rare pets hide in pyramids, temples, igloos, monuments and more...',
-    'advancements.tamagotchi.first_friend.title': 'A New Best Friend',
-    'advancements.tamagotchi.first_friend.description': 'Tame a pet with a Tamagotchi Heart',
-    'advancements.tamagotchi.pager.title': 'Beep Beep!',
-    'advancements.tamagotchi.pager.description': 'Get a Tama Pager to check on your pets',
-    'advancements.tamagotchi.all_pets.title': "Gotta Pet 'Em All",
-    'advancements.tamagotchi.all_pets.description': 'Tame all ten pets',
+    'advancements.tamacraft.root.title': 'Tamacraft',
+    'advancements.tamacraft.root.description': 'Get a Tamacraft Heart. Rare pets hide in pyramids, temples, igloos, monuments and more...',
+    'advancements.tamacraft.first_friend.title': 'A New Best Friend',
+    'advancements.tamacraft.first_friend.description': 'Tame a pet with a Tamacraft Heart',
+    'advancements.tamacraft.pager.title': 'Beep Beep!',
+    'advancements.tamacraft.pager.description': 'Get a Tama Pager to check on your pets',
+    'advancements.tamacraft.all_pets.title': "Gotta Pet 'Em All",
+    'advancements.tamacraft.all_pets.description': 'Tame all ten pets',
 })
 subs = os.path.join(REPO, 'tools/sfx/subtitles_en_us.json')
 if os.path.exists(subs):
@@ -293,9 +293,9 @@ def shapeless(name, ingredients, result, count=1):
                   'result': {'id': result, 'count': count} if count > 1 else {'id': result}}
 
 
-T = 'tamagotchi:'
+T = 'tamacraft:'
 RECIPES = [
-    shaped('tamagotchi_heart', ['R R', 'RAR', ' R '], {'R': 'minecraft:red_dye', 'A': 'minecraft:amethyst_shard'}, T + 'tamagotchi_heart'),
+    shaped('tamacraft_heart', ['R R', 'RAR', ' R '], {'R': 'minecraft:red_dye', 'A': 'minecraft:amethyst_shard'}, T + 'tamacraft_heart'),
     shapeless('tamacon', ['minecraft:book', 'minecraft:pink_dye', 'minecraft:redstone'], T + 'tamacon'),
     shaped('tama_pager', [' N ', 'NGN', 'NRN'], {'N': 'minecraft:iron_nugget', 'G': 'minecraft:glass_pane', 'R': 'minecraft:redstone'}, T + 'tama_pager'),
     shaped('pet_brush', ['WWW', ' S '], {'W': '#minecraft:wool', 'S': 'minecraft:stick'}, T + 'pet_brush'),
@@ -461,7 +461,7 @@ def loot(bid, copy=None):
         entry['modifier'] = [{'type': 'minecraft:copy_state', 'block': T + bid, 'properties': [copy]}]   # 26.x: was functions
     write(os.path.join(DATA, 'loot_table/blocks', bid + '.json'),
           {'type': 'minecraft:block', 'pools': [{'condition': {'type': 'minecraft:survives_explosion'}, 'entries': [entry], 'rolls': 1}],
-           'random_sequence': f'tamagotchi:blocks/{bid}'})
+           'random_sequence': f'tamacraft:blocks/{bid}'})
 
 
 for bid in ['egg_lamp', 'pet_portrait', 'toy_box', 'pet_flap', 'treat_dispenser', 'pet_incubator', 'pet_bed', 'pet_basket']:
@@ -486,7 +486,7 @@ for bid, (prop, kind, default) in DYED.items():
                            'cases': [{'when': name, 'model': case(rgb)} for name, rgb in DYES],
                            'fallback': case(dict(DYES)[default])}})
 
-# plushies: drawn by PlushRenderer / the tamagotchi:plush item model from the pet's own model
+# plushies: drawn by PlushRenderer / the tamacraft:plush item model from the pet's own model
 PLUSH_WOOL = {'desert_dragon': 'yellow', 'jungle_dragon': 'lime', 'tide_dragon': 'cyan', 'frost_penguin': 'black',
               'ember_pup': 'orange', 'sculk_wisp': 'cyan', 'void_kitten': 'magenta', 'pebble_golem': 'gray', 'hex_toad': 'green',
               'mimic': 'yellow'}
@@ -505,9 +505,9 @@ write(os.path.join(ASSETS, 'models/item/template_plush.json'), {
     }})
 for pid in PETS:
     bid = f'{pid}_plush'
-    write(os.path.join(ASSETS, 'blockstates', bid + '.json'), {'variants': {'': {'model': f'tamagotchi:block/{bid}'}}})
+    write(os.path.join(ASSETS, 'blockstates', bid + '.json'), {'variants': {'': {'model': f'tamacraft:block/{bid}'}}})
     write(os.path.join(ASSETS, 'models/block', bid + '.json'), {'textures': {'particle': f'minecraft:block/{PLUSH_WOOL[pid]}_wool'}})
     write(os.path.join(ASSETS, 'items', bid + '.json'), {'model': {
-        'type': 'minecraft:special', 'base': 'tamagotchi:item/template_plush', 'model': {'type': 'tamagotchi:plush', 'species': pid},
+        'type': 'minecraft:special', 'base': 'tamacraft:item/template_plush', 'model': {'type': 'tamacraft:plush', 'species': pid},
         'transformation': {'left_rotation': [0, 0, 0, 1], 'right_rotation': [0, 0, 0, 1], 'scale': [1, -1, -1], 'translation': [0.5, 1.5, 0.5]}}})
 print('loot tables, plush assets and dyed item models written')

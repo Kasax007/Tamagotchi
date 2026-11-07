@@ -1,4 +1,4 @@
-"""Block models, blockstates, block items and loot tables for the Tamagotchi blocks (nine furniture blocks + the second
+"""Block models, blockstates, block items and loot tables for the Tamacraft blocks (nine furniture blocks + the second
 batch: egg lamp, pet portrait, toy box, pet flap, treat dispenser, pet incubator; bed and basket have dyeable fabric).
 
 Boxes are built on a 1px grid (see modelkit); footprints come from block_tex.GEO so textures, boxes and
@@ -10,7 +10,7 @@ import pal  # noqa: F401
 from block_tex import GEO, egg_plan
 from modelkit import Model, default_uv, merge_rects, rect_cells, round_rect
 
-NS = "tamagotchi"
+NS = "tamacraft"
 
 BOUNDS = {
     "pet_bed": ((1, 0, 1), (15, 6, 15)),

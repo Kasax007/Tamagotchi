@@ -1,4 +1,4 @@
-"""Core helpers for the Tamagotchi pixel-art generators.
+"""Core helpers for the Tamacraft pixel-art generators.
 
 Everything (blocks, items, spawn eggs, particles) is drawn from hand-authored ASCII maps
 (one character = one pixel) plus named palette ramps, so any asset can be regenerated and tweaked.
@@ -22,8 +22,8 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
-ASSETS = ROOT / "src/main/resources/assets/tamagotchi"
-DATA = ROOT / "src/main/resources/data/tamagotchi"
+ASSETS = ROOT / "src/main/resources/assets/tamacraft"
+DATA = ROOT / "src/main/resources/data/tamacraft"
 OUT = Path(__file__).resolve().parent / "out"
 
 # --------------------------------------------------------------------------------------

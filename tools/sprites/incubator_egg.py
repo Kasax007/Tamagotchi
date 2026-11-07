@@ -4,7 +4,7 @@ import os
 import random
 from PIL import Image
 
-OUT = os.path.join(os.path.dirname(__file__), '../../src/main/resources/assets/tamagotchi/textures/entity/incubator_egg.png')
+OUT = os.path.join(os.path.dirname(__file__), '../../src/main/resources/assets/tamacraft/textures/entity/incubator_egg.png')
 
 
 def box_uv(u, v, w, h, d):

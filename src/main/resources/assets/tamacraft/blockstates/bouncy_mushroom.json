@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "squished=false": {
+      "model": "tamacraft:block/bouncy_mushroom"
+    },
+    "squished=true": {
+      "model": "tamacraft:block/bouncy_mushroom_squished"
+    }
+  }
+}

@@ -1,0 +1,1335 @@
+{
+  "desert_dragon.ambient": {
+    "subtitle": "subtitles.tamacraft.desert_dragon.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:desert_dragon/ambient1",
+        "volume": 0.3
+      },
+      {
+        "name": "tamacraft:desert_dragon/ambient2",
+        "volume": 0.6
+      },
+      {
+        "name": "tamacraft:desert_dragon/ambient3",
+        "volume": 0.22
+      },
+      {
+        "name": "tamacraft:desert_dragon/ambient4",
+        "volume": 0.34
+      }
+    ]
+  },
+  "desert_dragon.happy": {
+    "subtitle": "subtitles.tamacraft.desert_dragon.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:desert_dragon/happy1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamacraft:desert_dragon/happy2",
+        "volume": 0.3
+      },
+      {
+        "name": "tamacraft:desert_dragon/happy3",
+        "volume": 0.25
+      },
+      {
+        "name": "tamacraft:desert_dragon/happy4",
+        "volume": 0.27
+      }
+    ]
+  },
+  "desert_dragon.hurt": {
+    "subtitle": "subtitles.tamacraft.desert_dragon.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:desert_dragon/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "tamacraft:desert_dragon/hurt2",
+        "volume": 0.25
+      },
+      {
+        "name": "tamacraft:desert_dragon/hurt3",
+        "volume": 0.25
+      }
+    ]
+  },
+  "desert_dragon.death": {
+    "subtitle": "subtitles.tamacraft.desert_dragon.death",
+    "sounds": [
+      {
+        "name": "tamacraft:desert_dragon/death1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamacraft:desert_dragon/death2",
+        "volume": 0.34
+      }
+    ]
+  },
+  "desert_dragon.attack": {
+    "subtitle": "subtitles.tamacraft.desert_dragon.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:desert_dragon/attack1",
+        "volume": 0.75
+      },
+      {
+        "name": "tamacraft:desert_dragon/attack2",
+        "volume": 0.7
+      }
+    ]
+  },
+  "jungle_dragon.ambient": {
+    "subtitle": "subtitles.tamacraft.jungle_dragon.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:jungle_dragon/ambient1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamacraft:jungle_dragon/ambient2",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/parrot/idle2",
+        "volume": 0.85
+      },
+      {
+        "name": "minecraft:mob/parrot/idle4"
+      }
+    ]
+  },
+  "jungle_dragon.happy": {
+    "subtitle": "subtitles.tamacraft.jungle_dragon.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:jungle_dragon/happy1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamacraft:jungle_dragon/happy2",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/parrot/idle6",
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:mob/parrot/idle3",
+        "pitch": 1.2,
+        "volume": 0.55
+      }
+    ]
+  },
+  "jungle_dragon.hurt": {
+    "subtitle": "subtitles.tamacraft.jungle_dragon.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:jungle_dragon/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/parrot/hurt1",
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/parrot/hurt2",
+        "volume": 0.8
+      }
+    ]
+  },
+  "jungle_dragon.death": {
+    "subtitle": "subtitles.tamacraft.jungle_dragon.death",
+    "sounds": [
+      {
+        "name": "tamacraft:jungle_dragon/death1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/parrot/death2",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/parrot/death4",
+        "pitch": 0.95,
+        "volume": 0.85
+      }
+    ]
+  },
+  "jungle_dragon.attack": {
+    "subtitle": "subtitles.tamacraft.jungle_dragon.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:jungle_dragon/attack1"
+      },
+      {
+        "name": "tamacraft:jungle_dragon/attack2"
+      }
+    ]
+  },
+  "tide_dragon.ambient": {
+    "subtitle": "subtitles.tamacraft.tide_dragon.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:tide_dragon/ambient1",
+        "volume": 0.25
+      },
+      {
+        "name": "tamacraft:tide_dragon/ambient2",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/dolphin/idle4",
+        "pitch": 1.1
+      },
+      {
+        "name": "minecraft:mob/dolphin/idle5",
+        "pitch": 1.15,
+        "volume": 0.7
+      }
+    ]
+  },
+  "tide_dragon.happy": {
+    "subtitle": "subtitles.tamacraft.tide_dragon.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:tide_dragon/happy1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamacraft:tide_dragon/happy2",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/dolphin/play1",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "tide_dragon.hurt": {
+    "subtitle": "subtitles.tamacraft.tide_dragon.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:tide_dragon/hurt1",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/baby_nautilus/hurt_land3",
+        "pitch": 1.1,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/baby_nautilus/hurt_land1",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "tide_dragon.death": {
+    "subtitle": "subtitles.tamacraft.tide_dragon.death",
+    "sounds": [
+      {
+        "name": "tamacraft:tide_dragon/death1",
+        "volume": 0.2
+      },
+      {
+        "name": "minecraft:mob/dolphin/death2",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/axolotl/death1",
+        "volume": 0.95
+      }
+    ]
+  },
+  "tide_dragon.attack": {
+    "subtitle": "subtitles.tamacraft.tide_dragon.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:tide_dragon/attack1",
+        "volume": 0.7
+      },
+      {
+        "name": "tamacraft:tide_dragon/attack2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "frost_penguin.ambient": {
+    "subtitle": "subtitles.tamacraft.frost_penguin.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:frost_penguin/ambient1",
+        "volume": 0.4
+      },
+      {
+        "name": "tamacraft:frost_penguin/ambient2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/chicken/say3",
+        "pitch": 1.25
+      },
+      {
+        "name": "minecraft:mob/horse/donkey/idle3",
+        "pitch": 1.5
+      }
+    ]
+  },
+  "frost_penguin.happy": {
+    "subtitle": "subtitles.tamacraft.frost_penguin.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:frost_penguin/happy1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamacraft:frost_penguin/happy2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/parrot/idle5",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "frost_penguin.hurt": {
+    "subtitle": "subtitles.tamacraft.frost_penguin.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:frost_penguin/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/chicken/baby_chicken/hurt1",
+        "pitch": 0.9
+      },
+      {
+        "name": "minecraft:mob/horse/donkey/hit2",
+        "pitch": 1.3,
+        "volume": 0.55
+      }
+    ]
+  },
+  "frost_penguin.death": {
+    "subtitle": "subtitles.tamacraft.frost_penguin.death",
+    "sounds": [
+      {
+        "name": "tamacraft:frost_penguin/death1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/chicken/baby_chicken/death",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "frost_penguin.attack": {
+    "subtitle": "subtitles.tamacraft.frost_penguin.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:frost_penguin/attack1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamacraft:frost_penguin/attack2",
+        "volume": 0.5
+      }
+    ]
+  },
+  "ember_pup.ambient": {
+    "subtitle": "subtitles.tamacraft.ember_pup.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:ember_pup/ambient1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamacraft:ember_pup/ambient2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/ambient1",
+        "pitch": 1.1,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/wolf/puglin/bark2",
+        "pitch": 1.4,
+        "volume": 0.3
+      }
+    ]
+  },
+  "ember_pup.happy": {
+    "subtitle": "subtitles.tamacraft.ember_pup.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:ember_pup/happy1",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/ambient4",
+        "pitch": 1.2,
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/ambient7",
+        "pitch": 1.2,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/fox/idle1",
+        "pitch": 1.15
+      }
+    ]
+  },
+  "ember_pup.hurt": {
+    "subtitle": "subtitles.tamacraft.ember_pup.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:ember_pup/hurt1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/hurt2",
+        "pitch": 1.15,
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/hurt3",
+        "pitch": 1.15,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/fox/hurt2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "ember_pup.death": {
+    "subtitle": "subtitles.tamacraft.ember_pup.death",
+    "sounds": [
+      {
+        "name": "tamacraft:ember_pup/death1",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/wolf/puglin/death",
+        "pitch": 1.25,
+        "volume": 0.5
+      },
+      {
+        "name": "minecraft:mob/fox/death1",
+        "pitch": 1.1,
+        "volume": 0.35
+      }
+    ]
+  },
+  "ember_pup.attack": {
+    "subtitle": "subtitles.tamacraft.ember_pup.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:ember_pup/attack1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamacraft:ember_pup/attack2",
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:mob/fox/bite2",
+        "pitch": 0.9,
+        "volume": 0.6
+      }
+    ]
+  },
+  "sculk_wisp.ambient": {
+    "subtitle": "subtitles.tamacraft.sculk_wisp.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:sculk_wisp/ambient1",
+        "volume": 0.65
+      },
+      {
+        "name": "tamacraft:sculk_wisp/ambient2",
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient3",
+        "pitch": 1.6
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient6",
+        "pitch": 1.6,
+        "volume": 0.8
+      }
+    ]
+  },
+  "sculk_wisp.happy": {
+    "subtitle": "subtitles.tamacraft.sculk_wisp.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:sculk_wisp/happy1",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient7",
+        "pitch": 1.75,
+        "volume": 0.75
+      },
+      {
+        "name": "minecraft:mob/happy_ghast/ambient9",
+        "pitch": 1.75
+      }
+    ]
+  },
+  "sculk_wisp.hurt": {
+    "subtitle": "subtitles.tamacraft.sculk_wisp.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:sculk_wisp/hurt1",
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/allay/hurt1",
+        "pitch": 1.1,
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/allay/hurt2",
+        "pitch": 1.1,
+        "volume": 0.6
+      }
+    ]
+  },
+  "sculk_wisp.death": {
+    "subtitle": "subtitles.tamacraft.sculk_wisp.death",
+    "sounds": [
+      {
+        "name": "tamacraft:sculk_wisp/death1",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/vex/death1",
+        "pitch": 0.9
+      },
+      {
+        "name": "minecraft:mob/vex/death2",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "sculk_wisp.attack": {
+    "subtitle": "subtitles.tamacraft.sculk_wisp.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:sculk_wisp/attack1",
+        "volume": 0.8
+      },
+      {
+        "name": "tamacraft:sculk_wisp/attack2",
+        "volume": 0.6
+      }
+    ]
+  },
+  "void_kitten.ambient": {
+    "subtitle": "subtitles.tamacraft.void_kitten.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:void_kitten/ambient1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamacraft:void_kitten/ambient2",
+        "volume": 0.3
+      },
+      {
+        "name": "minecraft:mob/cat/meow2",
+        "pitch": 1.4,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/cat/meow3",
+        "pitch": 1.45
+      }
+    ]
+  },
+  "void_kitten.happy": {
+    "subtitle": "subtitles.tamacraft.void_kitten.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:void_kitten/happy1",
+        "volume": 0.9
+      },
+      {
+        "name": "tamacraft:void_kitten/happy2",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:mob/cat/meow1",
+        "pitch": 1.55
+      }
+    ]
+  },
+  "void_kitten.hurt": {
+    "subtitle": "subtitles.tamacraft.void_kitten.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:void_kitten/hurt1",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/cat/hitt1",
+        "pitch": 1.3
+      },
+      {
+        "name": "minecraft:mob/cat/hitt3",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "void_kitten.death": {
+    "subtitle": "subtitles.tamacraft.void_kitten.death",
+    "sounds": [
+      {
+        "name": "tamacraft:void_kitten/death1",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:mob/cat/ocelot/death1",
+        "pitch": 1.3,
+        "volume": 0.95
+      },
+      {
+        "name": "minecraft:mob/cat/ocelot/death3",
+        "pitch": 1.3,
+        "volume": 0.95
+      }
+    ]
+  },
+  "void_kitten.attack": {
+    "subtitle": "subtitles.tamacraft.void_kitten.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:void_kitten/attack1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamacraft:void_kitten/attack2",
+        "volume": 0.95
+      },
+      {
+        "name": "minecraft:mob/endermen/portal2",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "pebble_golem.ambient": {
+    "subtitle": "subtitles.tamacraft.pebble_golem.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:pebble_golem/ambient3",
+        "volume": 0.9
+      },
+      {
+        "name": "tamacraft:pebble_golem/ambient3",
+        "volume": 0.8,
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:mob/sniffer/happy3",
+        "pitch": 1.3,
+        "volume": 0.95
+      }
+    ]
+  },
+  "pebble_golem.happy": {
+    "subtitle": "subtitles.tamacraft.pebble_golem.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:pebble_golem/happy1",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/sniffer/happy2",
+        "pitch": 1.4
+      },
+      {
+        "name": "minecraft:mob/sniffer/happy4",
+        "pitch": 1.4,
+        "volume": 0.95
+      }
+    ]
+  },
+  "pebble_golem.hurt": {
+    "subtitle": "subtitles.tamacraft.pebble_golem.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:pebble_golem/hurt1",
+        "volume": 0.45
+      },
+      {
+        "name": "minecraft:mob/armadillo/hurt4",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/armadillo/hurt5",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/coppergolem/regular/hurt3"
+      }
+    ]
+  },
+  "pebble_golem.death": {
+    "subtitle": "subtitles.tamacraft.pebble_golem.death",
+    "sounds": [
+      {
+        "name": "tamacraft:pebble_golem/death1",
+        "volume": 0.75
+      },
+      {
+        "name": "minecraft:mob/armadillo/death3",
+        "pitch": 1.2,
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/armadillo/death4",
+        "pitch": 1.2,
+        "volume": 0.7
+      }
+    ]
+  },
+  "pebble_golem.attack": {
+    "subtitle": "subtitles.tamacraft.pebble_golem.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:pebble_golem/attack1"
+      },
+      {
+        "name": "tamacraft:pebble_golem/attack2"
+      },
+      {
+        "name": "minecraft:item/mace/smash_ground1",
+        "pitch": 1.2,
+        "volume": 0.9
+      }
+    ]
+  },
+  "hex_toad.ambient": {
+    "subtitle": "subtitles.tamacraft.hex_toad.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:hex_toad/ambient1",
+        "volume": 0.65
+      },
+      {
+        "name": "tamacraft:hex_toad/ambient2",
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:mob/frog/idle1",
+        "pitch": 1.2
+      },
+      {
+        "name": "minecraft:mob/frog/idle4",
+        "pitch": 1.25
+      }
+    ]
+  },
+  "hex_toad.happy": {
+    "subtitle": "subtitles.tamacraft.hex_toad.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:hex_toad/happy1",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/frog/idle1",
+        "pitch": 1.45
+      },
+      {
+        "name": "minecraft:mob/frog/idle4",
+        "pitch": 1.5
+      }
+    ]
+  },
+  "hex_toad.hurt": {
+    "subtitle": "subtitles.tamacraft.hex_toad.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:hex_toad/hurt1",
+        "volume": 0.65
+      },
+      {
+        "name": "minecraft:mob/frog/hurt1",
+        "pitch": 1.15,
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:mob/frog/hurt3",
+        "pitch": 1.15,
+        "volume": 0.85
+      },
+      {
+        "name": "minecraft:mob/frog/hurt2",
+        "pitch": 1.2,
+        "volume": 0.7
+      }
+    ]
+  },
+  "hex_toad.death": {
+    "subtitle": "subtitles.tamacraft.hex_toad.death",
+    "sounds": [
+      {
+        "name": "tamacraft:hex_toad/death1",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/frog/death1",
+        "pitch": 1.2,
+        "volume": 0.85
+      },
+      {
+        "name": "minecraft:mob/frog/death2",
+        "pitch": 1.2,
+        "volume": 0.9
+      }
+    ]
+  },
+  "hex_toad.attack": {
+    "subtitle": "subtitles.tamacraft.hex_toad.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:hex_toad/attack1",
+        "volume": 0.85
+      },
+      {
+        "name": "tamacraft:hex_toad/attack2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "mimic.ambient": {
+    "subtitle": "subtitles.tamacraft.mimic.ambient",
+    "sounds": [
+      {
+        "name": "tamacraft:mimic/ambient1",
+        "volume": 0.85
+      },
+      {
+        "name": "tamacraft:mimic/ambient2"
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway3",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:block/chest/open",
+        "pitch": 0.9
+      }
+    ]
+  },
+  "mimic.happy": {
+    "subtitle": "subtitles.tamacraft.mimic.happy",
+    "sounds": [
+      {
+        "name": "tamacraft:mimic/happy1",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway2",
+        "pitch": 1.3
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway4",
+        "pitch": 1.2
+      }
+    ]
+  },
+  "mimic.hurt": {
+    "subtitle": "subtitles.tamacraft.mimic.hurt",
+    "sounds": [
+      {
+        "name": "tamacraft:mimic/hurt1",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:block/chest/close_locked",
+        "pitch": 1.1,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_sway3",
+        "pitch": 1.5,
+        "volume": 0.7
+      }
+    ]
+  },
+  "mimic.death": {
+    "subtitle": "subtitles.tamacraft.mimic.death",
+    "sounds": [
+      {
+        "name": "tamacraft:mimic/death1"
+      },
+      {
+        "name": "minecraft:mob/creaking/creaking_deactivate"
+      }
+    ]
+  },
+  "mimic.attack": {
+    "subtitle": "subtitles.tamacraft.mimic.attack",
+    "sounds": [
+      {
+        "name": "tamacraft:mimic/attack1"
+      },
+      {
+        "name": "tamacraft:mimic/attack2"
+      },
+      {
+        "name": "minecraft:block/chest/close1",
+        "pitch": 1.3,
+        "volume": 0.95
+      }
+    ]
+  },
+  "talent.roast": {
+    "subtitle": "subtitles.tamacraft.talent.roast",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/roast1",
+        "volume": 0.7
+      },
+      {
+        "name": "tamacraft:talent/roast2",
+        "volume": 0.75
+      }
+    ]
+  },
+  "talent.grow": {
+    "subtitle": "subtitles.tamacraft.talent.grow",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/grow1",
+        "volume": 0.6
+      }
+    ]
+  },
+  "talent.blessing": {
+    "subtitle": "subtitles.tamacraft.talent.blessing",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/blessing1",
+        "volume": 0.6
+      }
+    ]
+  },
+  "talent.freeze": {
+    "subtitle": "subtitles.tamacraft.talent.freeze",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/freeze1"
+      }
+    ]
+  },
+  "talent.warm": {
+    "subtitle": "subtitles.tamacraft.talent.warm",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/warm1"
+      }
+    ]
+  },
+  "talent.ping": {
+    "subtitle": "subtitles.tamacraft.talent.ping",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/ping1",
+        "volume": 0.45
+      }
+    ]
+  },
+  "talent.magnet": {
+    "subtitle": "subtitles.tamacraft.talent.magnet",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/magnet1",
+        "volume": 0.6
+      }
+    ]
+  },
+  "talent.sniff": {
+    "subtitle": "subtitles.tamacraft.talent.sniff",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/sniff1",
+        "volume": 0.75
+      },
+      {
+        "name": "tamacraft:talent/sniff2",
+        "volume": 0.65
+      }
+    ]
+  },
+  "talent.brew": {
+    "subtitle": "subtitles.tamacraft.talent.brew",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/brew1",
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:block/brewing_stand/brew1",
+        "pitch": 1.15
+      },
+      {
+        "name": "minecraft:block/brewing_stand/brew2",
+        "pitch": 1.15
+      }
+    ]
+  },
+  "talent.treasure": {
+    "subtitle": "subtitles.tamacraft.talent.treasure",
+    "sounds": [
+      {
+        "name": "tamacraft:talent/treasure1"
+      }
+    ]
+  },
+  "pet.petting": {
+    "subtitle": "subtitles.tamacraft.pet.petting",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/petting1",
+        "volume": 0.6
+      },
+      {
+        "name": "tamacraft:pet/petting2",
+        "volume": 0.3
+      }
+    ]
+  },
+  "pet.eat": {
+    "subtitle": "subtitles.tamacraft.pet.eat",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/eat1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:pet/eat2",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:random/eat3",
+        "pitch": 1.3,
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:random/eat1",
+        "pitch": 1.3,
+        "volume": 0.9
+      }
+    ]
+  },
+  "pet.yawn": {
+    "subtitle": "subtitles.tamacraft.pet.yawn",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/yawn1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamacraft:pet/yawn2",
+        "volume": 0.35
+      }
+    ]
+  },
+  "pet.snore": {
+    "subtitle": "subtitles.tamacraft.pet.snore",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/snore1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:pet/snore2",
+        "volume": 0.55
+      }
+    ]
+  },
+  "pet.splash": {
+    "subtitle": "subtitles.tamacraft.pet.splash",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/splash1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:pet/splash2",
+        "volume": 0.4
+      },
+      {
+        "name": "minecraft:liquid/splash",
+        "pitch": 1.5
+      }
+    ]
+  },
+  "pet.shake": {
+    "subtitle": "subtitles.tamacraft.pet.shake",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/shake1",
+        "volume": 0.55
+      },
+      {
+        "name": "tamacraft:pet/shake2",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:mob/wolf/shake",
+        "pitch": 1.3
+      }
+    ]
+  },
+  "pet.tame": {
+    "subtitle": "subtitles.tamacraft.pet.tame",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/tame1",
+        "volume": 0.55
+      },
+      {
+        "name": "tamacraft:pet/tame2",
+        "volume": 0.55
+      }
+    ]
+  },
+  "pet.faint": {
+    "subtitle": "subtitles.tamacraft.pet.faint",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/faint1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamacraft:pet/faint2",
+        "volume": 0.45
+      }
+    ]
+  },
+  "pet.wake": {
+    "subtitle": "subtitles.tamacraft.pet.wake",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/wake1"
+      },
+      {
+        "name": "tamacraft:pet/wake2"
+      }
+    ]
+  },
+  "pet.celebrate": {
+    "subtitle": "subtitles.tamacraft.pet.celebrate",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/celebrate1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamacraft:pet/celebrate2",
+        "volume": 0.3
+      }
+    ]
+  },
+  "pet.scared": {
+    "subtitle": "subtitles.tamacraft.pet.scared",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/scared1",
+        "volume": 0.25
+      },
+      {
+        "name": "tamacraft:pet/scared2",
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:mob/wolf/baby/whine1",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "pet.feed_owner": {
+    "subtitle": "subtitles.tamacraft.pet.feed_owner",
+    "sounds": [
+      {
+        "name": "tamacraft:pet/feed_owner1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamacraft:pet/feed_owner2",
+        "volume": 0.5
+      }
+    ]
+  },
+  "pager.beep": {
+    "subtitle": "subtitles.tamacraft.pager.beep",
+    "sounds": [
+      {
+        "name": "tamacraft:pager/beep1",
+        "volume": 0.15
+      },
+      {
+        "name": "tamacraft:pager/beep2",
+        "volume": 0.15
+      },
+      {
+        "name": "tamacraft:pager/beep3",
+        "volume": 0.15
+      }
+    ]
+  },
+  "pager.open": {
+    "subtitle": "subtitles.tamacraft.pager.open",
+    "sounds": [
+      {
+        "name": "tamacraft:pager/open1",
+        "volume": 0.15
+      },
+      {
+        "name": "tamacraft:pager/open2",
+        "volume": 0.15
+      }
+    ]
+  },
+  "toy.squeak": {
+    "subtitle": "subtitles.tamacraft.toy.squeak",
+    "sounds": [
+      {
+        "name": "tamacraft:toy/squeak1",
+        "volume": 0.2
+      },
+      {
+        "name": "tamacraft:toy/squeak2",
+        "volume": 0.25
+      }
+    ]
+  },
+  "toy.laser": {
+    "subtitle": "subtitles.tamacraft.toy.laser",
+    "sounds": [
+      {
+        "name": "tamacraft:toy/laser1",
+        "volume": 0.35
+      },
+      {
+        "name": "tamacraft:toy/laser2",
+        "volume": 0.35
+      }
+    ]
+  },
+  "toy.feather": {
+    "subtitle": "subtitles.tamacraft.toy.feather",
+    "sounds": [
+      {
+        "name": "tamacraft:toy/feather1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:toy/feather2",
+        "volume": 0.45
+      }
+    ]
+  },
+  "block.bounce": {
+    "subtitle": "subtitles.tamacraft.block.bounce",
+    "sounds": [
+      {
+        "name": "tamacraft:block/bounce1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:block/bounce2",
+        "volume": 0.35
+      }
+    ]
+  },
+  "block.wheel": {
+    "subtitle": "subtitles.tamacraft.block.wheel",
+    "sounds": [
+      {
+        "name": "tamacraft:block/wheel1",
+        "volume": 0.65
+      }
+    ]
+  },
+  "block.bowl_fill": {
+    "subtitle": "subtitles.tamacraft.block.bowl_fill",
+    "sounds": [
+      {
+        "name": "tamacraft:block/bowl_fill1",
+        "volume": 0.75
+      },
+      {
+        "name": "tamacraft:block/bowl_fill2",
+        "volume": 0.45
+      }
+    ]
+  },
+  "item.brush": {
+    "subtitle": "subtitles.tamacraft.item.brush",
+    "sounds": [
+      {
+        "name": "tamacraft:item/brush1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:item/brush2",
+        "volume": 0.55
+      }
+    ]
+  },
+  "backpack.equip": {
+    "subtitle": "subtitles.tamacraft.backpack.equip",
+    "sounds": [
+      {
+        "name": "tamacraft:backpack/equip1",
+        "volume": 0.5
+      },
+      {
+        "name": "tamacraft:backpack/equip2",
+        "volume": 0.55
+      },
+      {
+        "name": "minecraft:item/armor/equip_leather1",
+        "pitch": 1.1
+      },
+      {
+        "name": "minecraft:item/armor/equip_leather5",
+        "pitch": 1.1
+      }
+    ]
+  },
+  "backpack.spill": {
+    "subtitle": "subtitles.tamacraft.backpack.spill",
+    "sounds": [
+      {
+        "name": "tamacraft:backpack/spill1",
+        "volume": 0.45
+      },
+      {
+        "name": "tamacraft:backpack/spill2",
+        "volume": 0.6
+      },
+      {
+        "name": "minecraft:item/bundle/drop_contents3"
+      }
+    ]
+  }
+}

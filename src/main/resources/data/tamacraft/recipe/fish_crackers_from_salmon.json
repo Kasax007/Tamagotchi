@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:wheat",
+    "minecraft:salmon"
+  ],
+  "result": {
+    "id": "tamacraft:fish_crackers",
+    "count": 3
+  }
+}

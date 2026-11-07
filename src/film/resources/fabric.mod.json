@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "id": "tamagotchi-film",
+  "id": "tamacraft-film",
   "version": "1.0.0",
-  "name": "Tamagotchi film director",
+  "name": "Tamacraft film director",
   "description": "Films scenes for the videos frame by frame (dev only, never shipped).",
   "environment": "client",
   "entrypoints": {
     "fabric-client-gametest": [
-      "net.kasax.tamagotchi.film.FilmDirector"
+      "net.kasax.tamacraft.film.FilmDirector"
     ]
   },
   "depends": {
-    "tamagotchi": "*",
+    "tamacraft": "*",
     "fabric-client-gametest-api-v1": "*"
   },
   "mixins": [
-    "tamagotchi-film.mixins.json"
+    "tamacraft-film.mixins.json"
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "tamacraft:pet_basket",
+          "modifier": [
+            {
+              "type": "minecraft:copy_state",
+              "block": "tamacraft:pet_basket",
+              "properties": [
+                "color"
+              ]
+            }
+          ]
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "tamacraft:blocks/pet_basket"
+}

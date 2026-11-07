@@ -1,14 +1,14 @@
-# Tamagotchi – Design & Build Plan
+# Tamacraft – Design & Build Plan
 
 Fabric mod for Minecraft **26.3** (same toolchain as Challenge Craft: Loom 1.17.21, Loader 0.19.5,
-Fabric API 0.161.0+26.3, Java 25, unobfuscated Mojang names). Mod id `tamagotchi`, package
-`net.kasax.tamagotchi`. This file is the single source of truth for the design **and** the progress list,
+Fabric API 0.161.0+26.3, Java 25, unobfuscated Mojang names). Mod id `tamacraft`, package
+`net.kasax.tamacraft`. This file is the single source of truth for the design **and** the progress list,
 so an interrupted session can pick up exactly where the last one stopped.
 
 ## 1. The ten pets
 
 Each pet is rare: it only appears in its structure, and only by chance (one roll per structure).
-All are tamed with the **Tamagotchi Heart**.
+All are tamed with the **Tamacraft Heart**.
 
 | # | Pet | Found in (chance) | Look | Talent (use for the player) | Fights with |
 |---|-----|-------------------|------|-----------------------------|-------------|
@@ -24,7 +24,7 @@ All are tamed with the **Tamagotchi Heart**.
 | 10 | **Mimic** | Trial chambers (30 %), woodland mansion (60 %) | living chest with teeth and tongue (dangerous look) | **Treasure Belly** – double backpack (54 slots) and coughs up small treasures | chomp |
 
 Wild pets stay near their structure, never despawn, shy ones flee when hit, the dangerous-looking
-ones (Ember Pup, Sculk Wisp, Mimic) bite back. A player holding a Tamagotchi Heart makes them curious.
+ones (Ember Pup, Sculk Wisp, Mimic) bite back. A player holding a Tamacraft Heart makes them curious.
 
 ## 2. Controls
 
@@ -43,7 +43,7 @@ ones (Ember Pup, Sculk Wisp, Mimic) bite back. A player holding a Tamagotchi Hea
 The pager also works in the air (nearest own pet within 64 blocks) and **beeps** when a pet needs care.
 The first taming gives a free pager.
 
-## 3. Care (the Tamagotchi part)
+## 3. Care (the Tamacraft part)
 
 Needs 0–100: **Hunger**, **Fun**, **Energy**, **Hygiene** → **Mood** (Ecstatic / Happy / Okay / Sad / Miserable).
 Needs only drain while the pet is loaded. **Bond** (0–100, shown as hearts) grows with care and
@@ -61,7 +61,7 @@ dies: it **faints into a Tama Egg** that keeps everything (name, stats, backpack
 
 ## 4. Items, blocks, toys, food
 
-* **Tamagotchi Heart** (tames), **Tama Pager** (screen + beeps), **Pet Brush**, **Tama Egg** (fainted pet)
+* **Tamacraft Heart** (tames), **Tama Pager** (screen + beeps), **Pet Brush**, **Tama Egg** (fainted pet)
 * Toys: **Laser Pointer** (hold use – pets chase the red dot and pounce), **Squeaky Ball** (throw – fetch),
   **Feather Wand** (pets jump and swipe at it)
 * Food: **Pet Kibble** (all) + favourite treats: **Fish Crackers**, **Dragon Fruit**, **Ember Jerky**,
@@ -94,7 +94,7 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
   emissive layer, held-item layer, `PetRenderer`.
 * Structure spawning: mixin at the end of `StructureStart.placeInChunk`, one roll per structure in the
   chunk that holds the first piece's centre; spot search inside the pieces. Which structures count is a structure
-  tag per rule, `tamagotchi:pet_home/<rule>` (vanilla plus optional look-alikes from structure mods).
+  tag per rule, `tamacraft:pet_home/<rule>` (vanilla plus optional look-alikes from structure mods).
 * Art pipeline (`tools/`): Python model + texture generator (pets as data → Java model code + painted
   64×64 textures + preview contact sheets); pixel-map sprites for items; synthesized + pitched vanilla sounds.
 * Tests: client game tests (`src/gametest`: `PetGallery`, `BlockGallery`) that screenshot every pet, block and
@@ -139,7 +139,7 @@ snow/ice → penguin belly-slides · lava → ember pup swims · sculk sensor �
 
 ### Round 3 (1.2.0: bug check, modpack-ready)
 
-- [x] Diets as item tags `tamagotchi:diet/*` with the `c:foods/...` tags; Ore Sniffer uses `c:ores`
+- [x] Diets as item tags `tamacraft:diet/*` with the `c:foods/...` tags; Ore Sniffer uses `c:ores`
 - [x] Pet homes as structure tags (Repurposed Structures, Dungeons and Taverns, Explorations, Moog's look-alikes)
 - [x] Backpack takes any `c:chests/wooden`, shears any `c:tools/shear`
 - [x] Furniture tooltips, recipe-book unlock advancements, mineable tags, Food Bowl recipe without clash

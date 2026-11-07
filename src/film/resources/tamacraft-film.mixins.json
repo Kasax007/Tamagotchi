@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "net.kasax.tamacraft.film.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ScreenshotLeakMixin",
+    "FreeCamPlayerMixin",
+    "FreeCamInputMixin",
+    "ClientLockstepMixin",
+    "NoCrosshairMixin",
+    "NoToastMixin",
+    "FilmUserMixin",
+    "ScreenEffectFilmMixin",
+    "SoundLogMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "ServerLockstepMixin",
+    "SoundRangeMixin"
+  ]
+}
