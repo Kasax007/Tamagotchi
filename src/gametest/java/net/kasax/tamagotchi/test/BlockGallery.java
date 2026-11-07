@@ -2,11 +2,11 @@ package net.kasax.tamagotchi.test;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
-import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
+import net.kasax.tamagotchi.test.harness.FabricClientGameTest;
+import net.kasax.tamagotchi.test.harness.ClientGameTestContext;
+import net.kasax.tamagotchi.test.harness.TestServerContext;
+import net.kasax.tamagotchi.test.harness.TestWorldBuilder.TestSingleplayerContext;
+import net.kasax.tamagotchi.test.harness.TestScreenshotOptions;
 import net.kasax.tamagotchi.block.Dyeing;
 import net.kasax.tamagotchi.block.EggLampBlock;
 import net.kasax.tamagotchi.block.PetFlapBlock;
@@ -36,8 +36,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -79,7 +79,7 @@ public class BlockGallery implements FabricClientGameTest {
             cmd("gamemode creative @p");
             cmd("time set noon");
             cmd("weather clear");
-            cmd("gamerule advance_time false");
+            cmd("gamerule doDaylightCycle false");
             ctx.waitTicks(40);
             overview();
             plushies();
@@ -98,9 +98,7 @@ public class BlockGallery implements FabricClientGameTest {
 
     private void hud(boolean visible) {
         ctx.runOnClient(mc -> {
-            if (mc.gui.hud.isHidden() == visible) {
-                mc.gui.hud.toggle();
-            }
+            mc.options.hideGui = !visible;
         });
     }
 
@@ -327,7 +325,7 @@ public class BlockGallery implements FabricClientGameTest {
             ItemStack blueBed = new ItemStack(ModBlocks.PET_BED);
             blueBed.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY.with(Dyeing.COLOR, DyeColor.BLUE));
             p.getInventory().setItem(8, blueBed);
-            p.getInventory().setSelectedSlot(0);
+            p.getInventory().selected = 0;
         });
         cam("0.5 -59 -2.5 0 10");
         ctx.waitTicks(20);
@@ -336,12 +334,12 @@ public class BlockGallery implements FabricClientGameTest {
         ctx.waitTicks(10);
         ctx.runOnClient(mc -> {
             CreativeModeInventoryScreen inv = new CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), false);
-            mc.gui.setScreen(inv);
-            inv.setSelectedTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
+            mc.setScreen(inv);
+            ((net.kasax.tamagotchi.test.mixin.CreativeScreenAccessor) inv).tamatest$selectTab(BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(ModTab.KEY));
         });
         ctx.waitTicks(10);
         shot("49_creative_tab");
-        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        ctx.runOnClient(mc -> mc.setScreen(null));
         hud(false);
         ctx.waitTicks(5);
     }
@@ -373,7 +371,7 @@ public class BlockGallery implements FabricClientGameTest {
             p.teleportTo(0.5, Y, 6.5);
             TamaPet pet = spawn(level, p, PetSpecies.VOID_KITTEN, 0.5, -4.5, 0, true);
             pet.getNavigation().moveTo(0.5, Y, 5.5, 1.0);
-            Cow cow = EntityTypes.COW.create(level);
+            Cow cow = EntityType.COW.create(level);
             cow.moveTo(2.5, Y, -4.5, 0, 0);
             level.addFreshEntity(cow);
         });
@@ -557,7 +555,7 @@ public class BlockGallery implements FabricClientGameTest {
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
             for (TamaPet t : level.getEntitiesOfClass(TamaPet.class, new AABB(0, Y, 0, 0, Y, 0).inflate(12))) {
-                end[t.entityTags().contains("plush_side") ? 0 : 1] = t.needs().energy;
+                end[t.getTags().contains("plush_side") ? 0 : 1] = t.needs().energy;
             }
             BlockPos plush = new BlockPos(-6, Y, 0);
             click(player(s), level, plush, ItemStack.EMPTY);
@@ -590,11 +588,11 @@ public class BlockGallery implements FabricClientGameTest {
             painted[0] = ((PetPortraitBlockEntity) level.getBlockEntity(portrait)).name();
             click(p, level, portrait, ItemStack.EMPTY);
             painted[1] = ((PetPortraitBlockEntity) level.getBlockEntity(portrait)).name();
-            click(p, level, portrait, new ItemStack(Items.DYE.pick(DyeColor.LIME)));
+            click(p, level, portrait, new ItemStack(Items.LIME_DYE));
             backdrop[0] = level.getBlockState(portrait).getValue(Dyeing.BACKDROP) == DyeColor.LIME;
 
             level.setBlockAndUpdate(bed, ModBlocks.PET_BED.defaultBlockState());
-            click(p, level, bed, new ItemStack(Items.DYE.pick(DyeColor.BLUE)));
+            click(p, level, bed, new ItemStack(Items.BLUE_DYE));
             bedColor[0] = level.getBlockState(bed).getValue(Dyeing.COLOR);
             level.destroyBlock(bed, true, p);
             for (ItemEntity it : level.getEntitiesOfClass(ItemEntity.class, new AABB(bed).inflate(2))) {

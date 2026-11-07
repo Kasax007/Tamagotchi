@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
-import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
+import net.kasax.tamagotchi.test.harness.FabricClientGameTest;
+import net.kasax.tamagotchi.test.harness.ClientGameTestContext;
+import net.kasax.tamagotchi.test.harness.TestServerContext;
+import net.kasax.tamagotchi.test.harness.TestWorldBuilder.TestSingleplayerContext;
+import net.kasax.tamagotchi.test.harness.TestScreenshotOptions;
 import net.kasax.tamagotchi.block.FoodBowlBlock;
 import net.kasax.tamagotchi.block.PetBathBlock;
 import net.kasax.tamagotchi.block.RunningWheelBlock;
@@ -94,9 +94,7 @@ public class PetGallery implements FabricClientGameTest {
 
     private void hud(boolean visible) {
         ctx.runOnClient(mc -> {
-            if (mc.gui.hud.isHidden() == visible) {
-                mc.gui.hud.toggle();
-            }
+            mc.options.hideGui = !visible;
         });
     }
 
@@ -269,12 +267,12 @@ public class PetGallery implements FabricClientGameTest {
         // the creative tab with every item and block
         ctx.runOnClient(mc -> {
             CreativeModeInventoryScreen inv = new CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), false);
-            mc.gui.setScreen(inv);
-            inv.setSelectedTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
+            mc.setScreen(inv);
+            ((net.kasax.tamagotchi.test.mixin.CreativeScreenAccessor) inv).tamatest$selectTab(BuiltInRegistries.CREATIVE_MODE_TAB.getOrThrow(ModTab.KEY));
         });
         ctx.waitTicks(10);
         shot("31_creative_tab");
-        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        ctx.runOnClient(mc -> mc.setScreen(null));
         hud(false);
         ctx.waitTicks(5);
     }
@@ -316,7 +314,7 @@ public class PetGallery implements FabricClientGameTest {
         cmd("gamemode survival @p");
         hud(true);
         ctx.waitTicks(10);
-        ctx.runOnClient(mc -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        ctx.runOnClient(mc -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
         ctx.waitTicks(20);
         double[] win = new double[2];
         ctx.runOnClient(mc -> {
@@ -325,7 +323,7 @@ public class PetGallery implements FabricClientGameTest {
         });
         ctx.getInput().setCursorPos(win[0] * Double.parseDouble(System.getProperty("tama.sx", "0.84")),
                 win[1] * Double.parseDouble(System.getProperty("tama.sy", "0.94")));
-        ctx.getInput().pressMouse(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT);   // 26.3: SDL numbering, left = 1
+        ctx.getInput().pressMouse(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT);   // 1.21.1: GLFW numbering, left = 0
         ctx.waitTicks(2);
         ctx.getInput().typeChars("@tamagotchi");
         ctx.waitTicks(20);
@@ -345,7 +343,7 @@ public class PetGallery implements FabricClientGameTest {
             ctx.waitTicks(20);
             shot("6" + (i + 1) + "_" + viewer + "_" + (i == 0 ? "tamacon_recipe" : "egg_info"));
         }
-        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        ctx.runOnClient(mc -> mc.setScreen(null));
         return true;
     }
 
@@ -404,7 +402,7 @@ public class PetGallery implements FabricClientGameTest {
         cmd("fill -3 -61 4 3 -61 6 grass_block");
         clear();
         // the Tamacon guide
-        ctx.runOnClient(mc -> mc.gui.setScreen(new net.kasax.tamagotchi.client.screen.TamaconScreen()));
+        ctx.runOnClient(mc -> mc.setScreen(new net.kasax.tamagotchi.client.screen.TamaconScreen()));
         ctx.waitTicks(5);
         shot("53_tamacon_contents");
         ctx.getInput().pressKey(com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT);
@@ -428,7 +426,7 @@ public class PetGallery implements FabricClientGameTest {
                 shot("59_tamacon_pet_" + i);
             }
         }
-        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        ctx.runOnClient(mc -> mc.setScreen(null));
         // the 3D pager and laser pointer, in first and third person
         cam("0.5 -60 0.5 0 15");
         hud(true);
@@ -452,7 +450,7 @@ public class PetGallery implements FabricClientGameTest {
         PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F));
         String[][] targets = {{"jungle_pyramid", "jungle_dragon"}, {"monument", "tide_dragon"}, {"desert_pyramid", "desert_dragon"}};
         try (TestSingleplayerContext sp = ctx.worldBuilder().setUseConsistentSettings(false)
-                .adjustSettings(s -> s.setSeed("tamagotchi")).create()) {
+                .setSeed("tamagotchi").create()) {
             this.server = sp.getServer();
             cmd("gamemode spectator @p");
             for (String[] t : targets) {
@@ -728,17 +726,16 @@ public class PetGallery implements FabricClientGameTest {
         cmd("give @p minecraft:bone");
         ctx.waitTicks(10);
         boolean[] unlocked = {false};
-        server.runOnServer(s -> unlocked[0] = player(s).getRecipeBook().contains(net.minecraft.resources.ResourceKey.create(
-                net.minecraft.core.registries.Registries.RECIPE, net.kasax.tamagotchi.Tamagotchi.id("food_bowl"))));
+        server.runOnServer(s -> unlocked[0] = player(s).getRecipeBook().contains(net.kasax.tamagotchi.Tamagotchi.id("food_bowl")));
         check("picking up an ingredient unlocks the recipe in the recipe book", unlocked[0]);
         server.runOnServer(s -> player(s).getInventory().clearContent());
         clicks();
     }
 
-    /** Moves the real cursor onto a GUI point and presses a mouse button (26.3: SDL numbering, left = 1, right = 3). */
+    /** Moves the real cursor onto a GUI point and presses a mouse button (1.21.1: GLFW numbering, left = 0, right = 1). */
     private void clickGui(double gx, double gy, int button) {
         int[] scale = {1};
-        ctx.runOnClient(mc -> scale[0] = mc.getWindow().getGuiScale());
+        ctx.runOnClient(mc -> scale[0] = (int) mc.getWindow().getGuiScale());
         ctx.getInput().setCursorPos(gx * scale[0], gy * scale[0]);
         ctx.getInput().pressMouse(button);
         ctx.waitTicks(5);
@@ -748,7 +745,7 @@ public class PetGallery implements FabricClientGameTest {
     private double[] buttonCentre(int n) {
         double[] at = new double[2];
         ctx.runOnClient(mc -> {
-            var b = mc.gui.screen().children().stream().filter(net.minecraft.client.gui.components.Button.class::isInstance)
+            var b = mc.screen.children().stream().filter(net.minecraft.client.gui.components.Button.class::isInstance)
                     .map(net.minecraft.client.gui.components.Button.class::cast).toList().get(n);
             at[0] = b.getX() + b.getWidth() / 2.0;
             at[1] = b.getY() + b.getHeight() / 2.0;
@@ -779,19 +776,19 @@ public class PetGallery implements FabricClientGameTest {
             server.runOnServer(s -> got[0] = onlyPet(s).mode());
             boolean[] greyed = {false};
             int n = button[i];
-            ctx.runOnClient(mc -> greyed[0] = mc.gui.screen() instanceof net.kasax.tamagotchi.client.screen.PetScreen && !mc.gui.screen().children().stream()
+            ctx.runOnClient(mc -> greyed[0] = mc.screen instanceof net.kasax.tamagotchi.client.screen.PetScreen && !mc.screen.children().stream()
                     .filter(net.minecraft.client.gui.components.Button.class::isInstance).map(net.minecraft.client.gui.components.Button.class::cast)
                     .toList().get(n).active);
             modes &= got[0] == want[i] && greyed[0];
             LOG.info("[TamaTest] pet screen click {}: mode {}, button greyed {}", want[i], got[0], greyed[0]);
         }
         check("the pet screen's Sit / Follow / Wander buttons work with real left clicks", modes);
-        ctx.runOnClient(mc -> mc.gui.screen().onClose());   // like Esc: the server closes the menu too
+        ctx.runOnClient(mc -> mc.screen.onClose());   // like Esc: the server closes the menu too
         ctx.waitTicks(5);
         clear();
 
         // the Tamacon: the Contents button, then a chapter on the contents page (a right click does nothing)
-        ctx.runOnClient(mc -> mc.gui.setScreen(new net.kasax.tamagotchi.client.screen.TamaconScreen()));
+        ctx.runOnClient(mc -> mc.setScreen(new net.kasax.tamagotchi.client.screen.TamaconScreen()));
         ctx.waitTicks(5);
         double[] contents = buttonCentre(1);
         clickGui(contents[0], contents[1], left);
@@ -803,13 +800,13 @@ public class PetGallery implements FabricClientGameTest {
                 Class<?> c = net.kasax.tamagotchi.client.screen.TamaconScreen.class;
                 var pageField = c.getDeclaredField("page");
                 pageField.setAccessible(true);
-                page[0] = pageField.getInt(mc.gui.screen());
+                page[0] = pageField.getInt(mc.screen);
                 var starts = c.getDeclaredField("chapterStart");
                 starts.setAccessible(true);
-                chapter[0] = ((List<?>) starts.get(mc.gui.screen())).get(3) instanceof Integer at ? at : -1;
+                chapter[0] = ((List<?>) starts.get(mc.screen)).get(3) instanceof Integer at ? at : -1;
                 var rect = c.getDeclaredMethod("contentsRect", int.class);
                 rect.setAccessible(true);
-                int[] r = (int[]) rect.invoke(mc.gui.screen(), 3);
+                int[] r = (int[]) rect.invoke(mc.screen, 3);
                 entry[0] = r[0] + r[2] / 2.0;
                 entry[1] = r[1] + r[3] / 2.0 - 1;
             } catch (ReflectiveOperationException e) {
@@ -830,7 +827,7 @@ public class PetGallery implements FabricClientGameTest {
         clickGui(next[0], next[1], left);
         read.run();
         check("Tamacon: the > button turns the page (" + before + " -> " + page[0] + ")", page[0] == before + 1);
-        ctx.runOnClient(mc -> mc.gui.setScreen(null));
+        ctx.runOnClient(mc -> mc.setScreen(null));
     }
 
     // ------------------------------------------------------------------ functional checks

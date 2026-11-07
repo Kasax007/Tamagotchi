@@ -6,11 +6,13 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "net.kasax.tamagotchi.test.PetGallery",
-      "net.kasax.tamagotchi.test.BlockGallery"
+      "net.kasax.tamagotchi.test.harness.TestRunner"
     ]
   },
   "depends": {
     "tamagotchi": "*"
-  }
+  },
+  "mixins": [
+    "tamagotchi-gametest.mixins.json"
+  ]
 }

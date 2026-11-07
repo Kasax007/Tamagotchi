@@ -2,6 +2,16 @@
 
 Each release uploads the section of its version as the changelog on CurseForge, Modrinth and GitHub.
 
+## 1.2.0+1.21.1
+
+The Minecraft 1.21.1 version of 1.2.0: the same pets, furniture and features as Tamagotchi 1.2.0 for 26.3, now for
+Minecraft 1.21.1 (Fabric, requires Fabric API).
+
+- Ten rare pets to find, tame and look after, with needs, moods, bond, talents, toys, the Tama Pager and the Tamacon
+- All 25 pieces of furniture, the plushies and the dyeable colours
+- Everything new in 1.2.0 for modpacks (modded food and ores, look-alike structures, pet_home structure tags, any
+  wooden chest and shears, diet tags, tooltips, recipe-book unlocks) and all its fixes
+
 ## 1.2.0
 
 Modpack-ready: modded food, ores and structures, plus a round of fixes.

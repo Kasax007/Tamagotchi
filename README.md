@@ -1,5 +1,9 @@
 # Tamagotchi
 
+> **Branch `port/1.21.1`:** Tamagotchi 1.2.0 for **Minecraft 1.21.1** (Fabric, version `1.2.0+1.21.1`), the same
+> pets, furniture and features as the 26.3 release. Differences in building and testing are listed under
+> [Building](#building).
+
 A Fabric mod for **Minecraft 26.3**: ten rare pets hide in the world's structures. Find one, tame it with a
 **Tamagotchi Heart**, and look after it – feed it, play with it, keep it clean and let it sleep – and it becomes
 your best friend: it follows you, carries a backpack, helps you fight, feeds you golden apples when you are hurt
@@ -125,7 +129,13 @@ push the tag `v<version>` (a tag that does not match `mod_version` is refused) o
 
 ## Building
 
-Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,
+On this branch (Minecraft 1.21.1): Java 21, `./gradlew build`; Loom remaps with the official Mojang mappings.
+`tools/data/gen_data.py` ends with the 1.21.1 target `tools/data/mc1211.py`, which turns the generated 26.x data and
+item definitions into the 1.21.1 formats. Fabric API has no client game tests for 1.21.1, so `src/gametest` brings a
+small harness of its own (`net.kasax.tamagotchi.test.harness`, real mouse and key input through the game's GLFW
+handlers): `xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks]`. The video harness (`src/film`) is only on 26.3.
+
+On 26.3: Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,
 `tools/sfx`, `tools/gui`, `tools/data`) and regenerate every texture, model and sound. The client game test
 `./gradlew runClientGameTest` renders a review gallery into `build/run/clientGameTest/screenshots` and logs
 functional checks as `[TamaTest] PASS/FAIL`. Headless: start `Xvfb :98`, then run it with
