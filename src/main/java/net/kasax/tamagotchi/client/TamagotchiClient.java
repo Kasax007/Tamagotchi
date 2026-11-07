@@ -104,6 +104,7 @@ public class TamagotchiClient implements ClientModInitializer {
                 ModBlocks.PET_INCUBATOR, ModBlocks.TREAT_DISPENSER);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PET_BATH, RenderType.translucent());
         HeldItemModels.register();
+        net.kasax.tamagotchi.client.render.EmissiveModels.register();
         PetParticles.register();
         MenuScreens.register(ModMenus.PET_MENU, PetScreen::new);
         net.kasax.tamagotchi.item.TamaconItem.openScreen = () -> net.minecraft.client.Minecraft.getInstance().setScreen(

@@ -28,8 +28,14 @@ public final class TestRunner implements ClientModInitializer {
             if (this.ctx != null) {
                 this.ctx.onTick();
             }
-            if (!this.started && mc.screen instanceof TitleScreen && mc.getOverlay() == null) {
+            if (!this.started && mc.screen != null && mc.getOverlay() == null) {
+                // the first start shows the accessibility onboarding screen instead of the title screen
                 this.started = true;
+                mc.options.onboardAccessibility = false;
+                mc.options.save();
+                if (!(mc.screen instanceof TitleScreen)) {
+                    mc.setScreen(new TitleScreen());
+                }
                 this.ctx = new ClientGameTestContext(mc);
                 Thread t = new Thread(() -> run(mc), "TamaTest");
                 t.setDaemon(true);

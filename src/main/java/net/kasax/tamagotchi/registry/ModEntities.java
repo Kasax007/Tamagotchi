@@ -28,7 +28,7 @@ public final class ModEntities {
             if (s.fireImmune()) {
                 b = b.fireImmune();
             }
-            EntityType<TamaPet> type = b.build(s.key().toString());
+            EntityType<TamaPet> type = b.build((String) null);   // like Fabric's builders: no data fixer lookup for a modded id
             TYPES.put(s, type);
             SPECIES.put(type, s);
         }

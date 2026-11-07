@@ -73,6 +73,10 @@ loom {
 }
 // ./gradlew runClientGameTest -Ptests=blocks (or pets) runs only that part of the client tests;
 // -Ptests=checks runs only the functional pet checks and real-click tests (no screenshots); combine: -Ptests=blocks,checks
+// the game runs on Java 21 like a 1.21.1 player's (Gradle itself may run on a newer JDK)
+tasks.withType(JavaExec).configureEach {
+	javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+}
 tasks.matching { it.name == 'runClientGameTest' }.configureEach {
 	if (project.hasProperty('tests')) jvmArgs "-Dtama.tests=${project.property('tests')}"
 }
