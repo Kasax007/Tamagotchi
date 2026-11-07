@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:tama_pager"
+        "recipe": "tamagotchi:tama_pager"
       }
     },
     "has_iron_nugget": {

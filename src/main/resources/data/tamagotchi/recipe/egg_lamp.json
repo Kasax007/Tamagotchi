@@ -1,12 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:egg",
-    "minecraft:torch",
-    "minecraft:glass_pane",
-    "minecraft:pink_dye"
+    {
+      "item": "minecraft:egg"
+    },
+    {
+      "item": "minecraft:torch"
+    },
+    {
+      "item": "minecraft:glass_pane"
+    },
+    {
+      "item": "minecraft:pink_dye"
+    }
   ],
   "result": {
     "id": "tamagotchi:egg_lamp"
-  }
+  },
+  "category": "misc"
 }

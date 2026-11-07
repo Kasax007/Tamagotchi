@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:squeaky_ball"
+        "recipe": "tamagotchi:squeaky_ball"
       }
     },
     "has_wool": {

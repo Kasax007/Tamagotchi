@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "W": "#minecraft:wool",
-    "X": "minecraft:lily_pad"
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "X": {
+      "item": "minecraft:lily_pad"
+    }
   },
   "pattern": [
     " W ",
@@ -11,5 +15,6 @@
   ],
   "result": {
     "id": "tamagotchi:hex_toad_plush"
-  }
+  },
+  "category": "misc"
 }

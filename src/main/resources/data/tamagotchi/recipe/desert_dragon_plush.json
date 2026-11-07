@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "W": "#minecraft:wool",
-    "X": "minecraft:cactus"
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "X": {
+      "item": "minecraft:cactus"
+    }
   },
   "pattern": [
     " W ",
@@ -11,5 +15,6 @@
   ],
   "result": {
     "id": "tamagotchi:desert_dragon_plush"
-  }
+  },
+  "category": "misc"
 }

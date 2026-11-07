@@ -1,11 +1,16 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:wheat",
-    "minecraft:cod"
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "item": "minecraft:cod"
+    }
   ],
   "result": {
     "id": "tamagotchi:fish_crackers",
     "count": 3
-  }
+  },
+  "category": "misc"
 }

@@ -1,9 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "P": "#minecraft:planks",
-    "Y": "minecraft:yellow_dye",
-    "C": "minecraft:chest"
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "Y": {
+      "item": "minecraft:yellow_dye"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    }
   },
   "pattern": [
     "PYP",
@@ -11,5 +17,6 @@
   ],
   "result": {
     "id": "tamagotchi:toy_box"
-  }
+  },
+  "category": "misc"
 }

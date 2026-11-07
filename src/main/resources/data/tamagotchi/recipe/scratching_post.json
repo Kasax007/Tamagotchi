@@ -1,9 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "C": "#minecraft:wool_carpets",
-    "S": "minecraft:string",
-    "P": "#minecraft:planks"
+    "C": {
+      "tag": "minecraft:wool_carpets"
+    },
+    "S": {
+      "item": "minecraft:string"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
   },
   "pattern": [
     " C ",
@@ -12,5 +18,6 @@
   ],
   "result": {
     "id": "tamagotchi:scratching_post"
-  }
+  },
+  "category": "misc"
 }

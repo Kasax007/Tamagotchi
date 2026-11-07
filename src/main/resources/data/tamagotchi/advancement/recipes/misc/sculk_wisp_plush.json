@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:sculk_wisp_plush"
+        "recipe": "tamagotchi:sculk_wisp_plush"
       }
     },
     "has_wool": {

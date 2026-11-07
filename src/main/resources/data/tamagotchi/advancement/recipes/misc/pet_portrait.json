@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:pet_portrait"
+        "recipe": "tamagotchi:pet_portrait"
       }
     },
     "has_stick": {

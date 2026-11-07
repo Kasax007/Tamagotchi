@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "W": "#minecraft:wool",
-    "X": "minecraft:chest"
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "X": {
+      "item": "minecraft:chest"
+    }
   },
   "pattern": [
     " W ",
@@ -11,5 +15,6 @@
   ],
   "result": {
     "id": "tamagotchi:mimic_plush"
-  }
+  },
+  "category": "misc"
 }

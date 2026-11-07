@@ -1,11 +1,16 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:wheat",
-    "#minecraft:fishes"
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "tag": "minecraft:fishes"
+    }
   ],
   "result": {
     "id": "tamagotchi:pet_kibble",
     "count": 4
-  }
+  },
+  "category": "misc"
 }

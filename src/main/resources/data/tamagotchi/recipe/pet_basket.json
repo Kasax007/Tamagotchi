@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "B": "minecraft:bamboo",
-    "W": "#minecraft:wool"
+    "B": {
+      "item": "minecraft:bamboo"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
   },
   "pattern": [
     "B B",
@@ -11,5 +15,6 @@
   ],
   "result": {
     "id": "tamagotchi:pet_basket"
-  }
+  },
+  "category": "misc"
 }

@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:fish_crackers_from_salmon"
+        "recipe": "tamagotchi:fish_crackers_from_salmon"
       }
     },
     "has_wheat": {

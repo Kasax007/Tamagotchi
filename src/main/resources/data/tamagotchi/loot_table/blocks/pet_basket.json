@@ -2,25 +2,27 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "condition": {
-        "type": "minecraft:survives_explosion"
-      },
       "entries": [
         {
           "type": "minecraft:item",
           "name": "tamagotchi:pet_basket",
-          "modifier": [
+          "functions": [
             {
-              "type": "minecraft:copy_state",
               "block": "tamagotchi:pet_basket",
               "properties": [
                 "color"
-              ]
+              ],
+              "function": "minecraft:copy_state"
             }
           ]
         }
       ],
-      "rolls": 1
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
     }
   ],
   "random_sequence": "tamagotchi:blocks/pet_basket"

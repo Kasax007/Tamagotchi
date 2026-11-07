@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:frost_penguin_plush"
+        "recipe": "tamagotchi:frost_penguin_plush"
       }
     },
     "has_wool": {

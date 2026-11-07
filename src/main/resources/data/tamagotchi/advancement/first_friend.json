@@ -8,7 +8,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:desert_dragon"
+            "type": "tamagotchi:desert_dragon"
           }
         }
       }
@@ -20,7 +20,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:jungle_dragon"
+            "type": "tamagotchi:jungle_dragon"
           }
         }
       }
@@ -32,7 +32,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:tide_dragon"
+            "type": "tamagotchi:tide_dragon"
           }
         }
       }
@@ -44,7 +44,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:frost_penguin"
+            "type": "tamagotchi:frost_penguin"
           }
         }
       }
@@ -56,7 +56,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:ember_pup"
+            "type": "tamagotchi:ember_pup"
           }
         }
       }
@@ -68,7 +68,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:sculk_wisp"
+            "type": "tamagotchi:sculk_wisp"
           }
         }
       }
@@ -80,7 +80,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:void_kitten"
+            "type": "tamagotchi:void_kitten"
           }
         }
       }
@@ -92,7 +92,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:pebble_golem"
+            "type": "tamagotchi:pebble_golem"
           }
         }
       }
@@ -104,7 +104,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:hex_toad"
+            "type": "tamagotchi:hex_toad"
           }
         }
       }
@@ -116,7 +116,7 @@
           "type": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "minecraft:entity_type": "tamagotchi:mimic"
+            "type": "tamagotchi:mimic"
           }
         }
       }

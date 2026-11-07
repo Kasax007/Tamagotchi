@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:mimic_plush"
+        "recipe": "tamagotchi:mimic_plush"
       }
     },
     "has_wool": {

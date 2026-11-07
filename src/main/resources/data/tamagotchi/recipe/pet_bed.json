@@ -1,9 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "W": "#minecraft:wool",
-    "C": "#minecraft:wool_carpets",
-    "P": "#minecraft:planks"
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "C": {
+      "tag": "minecraft:wool_carpets"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
   },
   "pattern": [
     "   ",
@@ -12,5 +18,6 @@
   ],
   "result": {
     "id": "tamagotchi:pet_bed"
-  }
+  },
+  "category": "misc"
 }

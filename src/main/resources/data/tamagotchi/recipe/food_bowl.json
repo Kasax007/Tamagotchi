@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "C": "minecraft:clay_ball",
-    "B": "minecraft:bone"
+    "C": {
+      "item": "minecraft:clay_ball"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    }
   },
   "pattern": [
     "CBC",
@@ -10,5 +14,6 @@
   ],
   "result": {
     "id": "tamagotchi:food_bowl"
-  }
+  },
+  "category": "misc"
 }

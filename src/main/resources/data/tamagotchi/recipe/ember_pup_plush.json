@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "W": "#minecraft:wool",
-    "X": "minecraft:blaze_powder"
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "X": {
+      "item": "minecraft:blaze_powder"
+    }
   },
   "pattern": [
     " W ",
@@ -11,5 +15,6 @@
   ],
   "result": {
     "id": "tamagotchi:ember_pup_plush"
-  }
+  },
+  "category": "misc"
 }

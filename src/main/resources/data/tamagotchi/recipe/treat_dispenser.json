@@ -1,12 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:dispenser",
-    "minecraft:glass",
-    "minecraft:red_dye",
-    "tamagotchi:pet_kibble"
+    {
+      "item": "minecraft:dispenser"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:red_dye"
+    },
+    {
+      "item": "tamagotchi:pet_kibble"
+    }
   ],
   "result": {
     "id": "tamagotchi:treat_dispenser"
-  }
+  },
+  "category": "misc"
 }

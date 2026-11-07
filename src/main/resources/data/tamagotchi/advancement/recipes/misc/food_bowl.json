@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:food_bowl"
+        "recipe": "tamagotchi:food_bowl"
       }
     },
     "has_clay_ball": {

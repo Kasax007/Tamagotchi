@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "F": "minecraft:feather",
-    "S": "minecraft:stick"
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "pattern": [
     "  F",
@@ -11,5 +15,6 @@
   ],
   "result": {
     "id": "tamagotchi:feather_wand"
-  }
+  },
+  "category": "misc"
 }

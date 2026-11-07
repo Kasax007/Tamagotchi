@@ -511,3 +511,11 @@ for pid in PETS:
         'type': 'minecraft:special', 'base': 'tamagotchi:item/template_plush', 'model': {'type': 'tamagotchi:plush', 'species': pid},
         'transformation': {'left_rotation': [0, 0, 0, 1], 'right_rotation': [0, 0, 0, 1], 'scale': [1, -1, -1], 'translation': [0.5, 1.5, 0.5]}}})
 print('loot tables, plush assets and dyed item models written')
+
+
+# ------------------------------------------------------------------ Minecraft 1.21.1 (branch port/1.21.1)
+# Everything above is written in the 26.x formats; this turns it (and the item definitions of tools/sprites/build.py)
+# into what 1.21.1 reads. See tools/data/mc1211.py.
+import mc1211  # noqa: E402
+
+mc1211.convert()

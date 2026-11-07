@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:golden_biscuit"
+        "recipe": "tamagotchi:golden_biscuit"
       }
     },
     "has_wheat": {

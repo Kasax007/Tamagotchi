@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:ember_jerky_from_magma"
+        "recipe": "tamagotchi:ember_jerky_from_magma"
       }
     },
     "has_cooked_porkchop": {

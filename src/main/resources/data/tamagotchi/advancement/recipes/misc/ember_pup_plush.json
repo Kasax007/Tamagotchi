@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:ember_pup_plush"
+        "recipe": "tamagotchi:ember_pup_plush"
       }
     },
     "has_wool": {

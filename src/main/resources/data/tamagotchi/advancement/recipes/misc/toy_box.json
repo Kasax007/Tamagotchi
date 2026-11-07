@@ -4,7 +4,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipes": "tamagotchi:toy_box"
+        "recipe": "tamagotchi:toy_box"
       }
     },
     "has_planks": {

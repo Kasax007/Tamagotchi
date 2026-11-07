@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "W": "#minecraft:wool",
-    "S": "minecraft:slime_ball"
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "S": {
+      "item": "minecraft:slime_ball"
+    }
   },
   "pattern": [
     " W ",
@@ -12,5 +16,6 @@
   "result": {
     "id": "tamagotchi:squeaky_ball",
     "count": 2
-  }
+  },
+  "category": "misc"
 }
