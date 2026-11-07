@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "tamacraft:bouncy_mushroom"
+      }
+    },
+    "has_red_mushroom_block": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:red_mushroom_block"
+          }
+        ]
+      }
+    },
+    "has_slime_ball": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:slime_ball"
+          }
+        ]
+      }
+    },
+    "has_mushroom_stem": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:mushroom_stem"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_red_mushroom_block",
+      "has_slime_ball",
+      "has_mushroom_stem"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "tamacraft:bouncy_mushroom"
+    ]
+  }
+}

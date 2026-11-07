@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "tamagotchi",
+  "id": "tamacraft",
   "version": "${version}",
-  "name": "Tamagotchi",
-  "description": "Find, tame and care for ten cute pixel pets.",
+  "name": "Tamacraft",
+  "description": "Find, tame and care for ten cute pixel pets. Inspired by the classic Tamagotchi virtual pets of the 90s; not affiliated with or endorsed by Bandai.",
   "authors": [
     "Kasax"
   ],
@@ -15,16 +15,16 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.kasax.tamagotchi.Tamagotchi"
+      "net.kasax.tamacraft.Tamacraft"
     ],
     "client": [
-      "net.kasax.tamagotchi.client.TamagotchiClient"
+      "net.kasax.tamacraft.client.TamacraftClient"
     ],
     "jei_mod_plugin": [
-      "net.kasax.tamagotchi.compat.JeiCompat"
+      "net.kasax.tamacraft.compat.JeiCompat"
     ],
     "rei_client": [
-      "net.kasax.tamagotchi.compat.ReiCompat"
+      "net.kasax.tamacraft.compat.ReiCompat"
     ]
   },
   "depends": {
@@ -34,8 +34,8 @@
     "fabric-api": ">=0.116.0"
   },
   "mixins": [
-    "tamagotchi.mixins.json"
+    "tamacraft.mixins.json"
   ],
-  "icon": "assets/tamagotchi/icon.png",
-  "accessWidener": "tamagotchi.accesswidener"
+  "icon": "assets/tamacraft/icon.png",
+  "accessWidener": "tamacraft.accesswidener"
 }

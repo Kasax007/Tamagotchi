@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": {
+      "item": "minecraft:redstone_torch"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "  R",
+    " I ",
+    "I  "
+  ],
+  "result": {
+    "id": "tamacraft:laser_pointer"
+  },
+  "category": "misc"
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "minecraft:wool_carpets"
+    },
+    "S": {
+      "item": "minecraft:string"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    " C ",
+    " S ",
+    "CPC"
+  ],
+  "result": {
+    "id": "tamacraft:scratching_post"
+  },
+  "category": "misc"
+}

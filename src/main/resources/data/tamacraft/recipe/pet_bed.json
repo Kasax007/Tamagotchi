@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "C": {
+      "tag": "minecraft:wool_carpets"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "   ",
+    "WCW",
+    "PPP"
+  ],
+  "result": {
+    "id": "tamacraft:pet_bed"
+  },
+  "category": "misc"
+}

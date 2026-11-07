@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "tamacraft:block/pet_bath"
+    },
+    "filled=true": {
+      "model": "tamacraft:block/pet_bath_filled"
+    }
+  }
+}

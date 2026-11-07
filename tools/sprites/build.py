@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate every block / item / particle asset of the Tamagotchi mod and the review sheets.
+"""Regenerate every block / item / particle asset of the Tamacraft mod and the review sheets.
 
     python3 tools/sprites/build.py            # everything
     python3 tools/sprites/build.py items eggs # only some groups (items, eggs, particles, blocks, sheets)
@@ -9,7 +9,7 @@
 tools/data/gen_data.py runs after this script: it writes the loot tables of the dyeable / new blocks and wraps the item
 definitions of the dyeable blocks (bed, basket, egg lamp, portrait) into a select on the colour property.
 
-Writes into src/main/resources/{assets,data}/tamagotchi/ (see docs/ART.md) and tools/sprites/out/.
+Writes into src/main/resources/{assets,data}/tamacraft/ (see docs/ART.md) and tools/sprites/out/.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ from pxl import ASSETS, DATA, OUT, save_png, vstack, write_json, write_mcmeta
 from render import load_model, render_model, textures_used
 from sheets import font, scaled, small_sheet, sprite_sheet
 
-NS = "tamagotchi"
+NS = "tamacraft"
 HANDHELD = {"pet_brush", "laser_pointer", "feather_wand"}
 
 

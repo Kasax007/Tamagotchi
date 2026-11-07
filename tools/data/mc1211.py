@@ -14,7 +14,7 @@ What changes for 1.21.1:
 * item models: 1.21.1 has no assets/<ns>/items/ definitions. Each one becomes models/item/<id>.json:
   - a plain model reference becomes a child model ({"parent": ...});
   - a select on the block_state colour (dyed bed, basket, egg lamp, portrait) becomes the plain block model, the
-    colour comes from the item colour provider in TamagotchiClient;
+    colour comes from the item colour provider in TamacraftClient;
   - a select on display_context (pager, laser pointer) keeps the flat inventory model, the 3D one is swapped in by
     ItemRendererMixin outside the inventory;
   - a select on custom_model_data strings (the Tama Egg) becomes "overrides" on custom_model_data 1..10
@@ -29,10 +29,10 @@ import os
 import shutil
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-ASSETS = os.path.join(REPO, 'src/main/resources/assets/tamagotchi')
+ASSETS = os.path.join(REPO, 'src/main/resources/assets/tamacraft')
 DATA_ROOT = os.path.join(REPO, 'src/main/resources/data')
-DATA = os.path.join(DATA_ROOT, 'tamagotchi')
-NS = 'tamagotchi:'
+DATA = os.path.join(DATA_ROOT, 'tamacraft')
+NS = 'tamacraft:'
 
 # PetSpecies order: the Tama Egg's custom_model_data is the place in this list, starting at 1
 SPECIES = ['desert_dragon', 'jungle_dragon', 'tide_dragon', 'frost_penguin', 'ember_pup', 'sculk_wisp', 'void_kitten',

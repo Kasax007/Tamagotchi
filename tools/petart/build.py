@@ -19,8 +19,8 @@ from paint import Texture, Canvas, shade_face, apply_pattern, EXPRESSIONS, make_
 import render  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-TEX_DIR = os.path.join(REPO, 'src/main/resources/assets/tamagotchi/textures/entity')
-JAVA_OUT = os.path.join(REPO, 'src/main/java/net/kasax/tamagotchi/client/model/PetModels.java')
+TEX_DIR = os.path.join(REPO, 'src/main/resources/assets/tamacraft/textures/entity')
+JAVA_OUT = os.path.join(REPO, 'src/main/java/net/kasax/tamacraft/client/model/PetModels.java')
 OUT = os.path.join(HERE, 'out')
 
 ALL = ['desert_dragon', 'jungle_dragon', 'tide_dragon', 'frost_penguin', 'ember_pup',
@@ -106,7 +106,7 @@ def build(name):
 
 
 def write_java(parts):
-    header = '''package net.kasax.tamagotchi.client.model;
+    header = '''package net.kasax.tamacraft.client.model;
 
 import java.util.EnumSet;
 import net.fabricmc.api.EnvType;

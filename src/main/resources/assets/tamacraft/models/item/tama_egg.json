@@ -1,0 +1,65 @@
+{
+  "parent": "tamacraft:item/desert_dragon_spawn_egg",
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 1
+      },
+      "model": "tamacraft:item/desert_dragon_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 2
+      },
+      "model": "tamacraft:item/jungle_dragon_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3
+      },
+      "model": "tamacraft:item/tide_dragon_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 4
+      },
+      "model": "tamacraft:item/frost_penguin_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 5
+      },
+      "model": "tamacraft:item/ember_pup_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 6
+      },
+      "model": "tamacraft:item/sculk_wisp_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 7
+      },
+      "model": "tamacraft:item/void_kitten_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 8
+      },
+      "model": "tamacraft:item/pebble_golem_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 9
+      },
+      "model": "tamacraft:item/hex_toad_spawn_egg"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 10
+      },
+      "model": "tamacraft:item/mimic_spawn_egg"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "H": {
+      "item": "minecraft:hay_block"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "E": {
+      "item": "minecraft:egg"
+    }
+  },
+  "pattern": [
+    "H H",
+    "FEF",
+    "HHH"
+  ],
+  "result": {
+    "id": "tamacraft:dragon_nest"
+  },
+  "category": "misc"
+}

@@ -22,7 +22,7 @@ jobs:
           PUBLISH_DRY_RUN: 'true'
       - uses: actions/upload-artifact@v4
         with:
-          name: tamagotchi-jar
+          name: tamacraft-jar
           path: |
             build/libs/*.jar
             build/publishMods/

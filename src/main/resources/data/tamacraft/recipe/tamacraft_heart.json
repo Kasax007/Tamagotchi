@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": {
+      "item": "minecraft:red_dye"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "pattern": [
+    "R R",
+    "RAR",
+    " R "
+  ],
+  "result": {
+    "id": "tamacraft:tamacraft_heart"
+  },
+  "category": "misc"
+}

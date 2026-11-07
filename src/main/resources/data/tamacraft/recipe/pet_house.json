@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    " B ",
+    "BPB",
+    "P P"
+  ],
+  "result": {
+    "id": "tamacraft:pet_house"
+  },
+  "category": "misc"
+}

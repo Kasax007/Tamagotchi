@@ -12,7 +12,7 @@ import build
 import render
 from rig import pack
 
-OUT = os.path.join(build.REPO, 'src/main/resources/assets/tamagotchi/icon.png')
+OUT = os.path.join(build.REPO, 'src/main/resources/assets/tamacraft/icon.png')
 
 
 def pet_image(name, expr, size, yaw):

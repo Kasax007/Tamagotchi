@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "X": {
+      "item": "minecraft:chest"
+    }
+  },
+  "pattern": [
+    " W ",
+    "WXW",
+    " W "
+  ],
+  "result": {
+    "id": "tamacraft:mimic_plush"
+  },
+  "category": "misc"
+}

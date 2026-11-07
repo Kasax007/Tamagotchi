@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "tamagotchi-gametest",
+  "id": "tamacraft-gametest",
   "version": "1.0.0",
-  "name": "Tamagotchi tests",
+  "name": "Tamacraft tests",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "net.kasax.tamagotchi.test.harness.TestRunner"
+      "net.kasax.tamacraft.test.harness.TestRunner"
     ]
   },
   "depends": {
-    "tamagotchi": "*"
+    "tamacraft": "*"
   },
   "mixins": [
-    "tamagotchi-gametest.mixins.json"
+    "tamacraft-gametest.mixins.json"
   ]
 }

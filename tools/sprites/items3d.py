@@ -21,7 +21,7 @@ from PIL import Image
 import pal  # noqa: F401  (registers ramps)
 from pxl import ASSETS, RAMPS, hex2rgb, save_png, write_json, write_mcmeta
 
-NS = "tamagotchi"
+NS = "tamacraft"
 
 
 def _c(v):

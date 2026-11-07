@@ -1,13 +1,17 @@
-# Tamagotchi
+# Tamacraft
 
-> **Branch `port/1.21.1`:** Tamagotchi 1.2.0 for **Minecraft 1.21.1** (Fabric, version `1.2.0+1.21.1`), the same
+> **Branch `port/1.21.1`:** Tamacraft 1.3.0 for **Minecraft 1.21.1** (Fabric, version `1.3.0+1.21.1`), the same
 > pets, furniture and features as the 26.3 release. Differences in building and testing are listed under
 > [Building](#building).
 
 A Fabric mod for **Minecraft 26.3**: ten rare pets hide in the world's structures. Find one, tame it with a
-**Tamagotchi Heart**, and look after it – feed it, play with it, keep it clean and let it sleep – and it becomes
+**Tamacraft Heart**, and look after it – feed it, play with it, keep it clean and let it sleep – and it becomes
 your best friend: it follows you, carries a backpack, helps you fight, feeds you golden apples when you are hurt
 and has a special talent.
+
+Until version 1.2 the mod was called Tamagotchi; worlds, data packs and modpack files from then keep working, every
+old `tamagotchi:` id is read as the `tamacraft:` one (`LegacyIds`, `mixin/LegacyIdMixin`). Tamacraft is inspired by
+the classic virtual pets of the 90s and is not affiliated with or endorsed by Bandai.
 
 ![The ten pets](docs/screenshots/lineup.jpg)
 
@@ -27,7 +31,7 @@ and has a special talent.
 | Mimic | Trial chambers (30 %), woodland mansion (60 %) | **Treasure Belly** – 27-slot belly (54 with a backpack), coughs up treasure | Golden Biscuit |
 
 Wild pets stay around their structure and never despawn. The cute ones run away when hit; the
-Ember Pup, Sculk Wisp and Mimic bite back. Hold a Tamagotchi Heart and they come closer.
+Ember Pup, Sculk Wisp and Mimic bite back. Hold a Tamacraft Heart and they come closer.
 
 ## Controls
 
@@ -97,10 +101,10 @@ JEI and REI show every recipe plus info pages on where to find each pet (optiona
 
 For modpacks and data packs:
 
-* **Where pets live:** one structure tag per spawn rule, `tamagotchi:pet_home/<rule>` (e.g. `pet_home/hex_toad`,
+* **Where pets live:** one structure tag per spawn rule, `tamacraft:pet_home/<rule>` (e.g. `pet_home/hex_toad`,
   `pet_home/mimic_mansion`). They already hold the look-alikes of Repurposed Structures, Dungeons and Taverns,
   Explorations and Moog's structures as optional entries; add your own structures to them.
-* **What pets eat:** the item tags `tamagotchi:diet/meat`, `fish`, `plant`, `sweet` and `mineral`. They include the
+* **What pets eat:** the item tags `tamacraft:diet/meat`, `fish`, `plant`, `sweet` and `mineral`. They include the
   `c:foods/...` tags, so food from other mods counts too.
 * **Ores:** the Pebble Golem sniffs out everything in `c:ores`.
 * **Backpack:** any wooden chest (`c:chests/wooden`) puts it on, any shears (`c:tools/shear`) take it off.
@@ -132,7 +136,7 @@ push the tag `v<version>` (a tag that does not match `mod_version` is refused) o
 On this branch (Minecraft 1.21.1): Java 21, `./gradlew build`; Loom remaps with the official Mojang mappings.
 `tools/data/gen_data.py` ends with the 1.21.1 target `tools/data/mc1211.py`, which turns the generated 26.x data and
 item definitions into the 1.21.1 formats. Fabric API has no client game tests for 1.21.1, so `src/gametest` brings a
-small harness of its own (`net.kasax.tamagotchi.test.harness`, real mouse and key input through the game's GLFW
+small harness of its own (`net.kasax.tamacraft.test.harness`, real mouse and key input through the game's GLFW
 handlers): `xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks]`. The video harness (`src/film`) is only on 26.3.
 
 On 26.3: Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,

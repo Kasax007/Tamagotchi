@@ -30,6 +30,6 @@ Minecraft update, only a bit cuter. Young audience: friendly faces, soft colours
 
 ## Files
 
-* `assets/tamagotchi/textures/entity/<pet>/<pet>.png` (+ `_<expression>.png`, `_glow*.png`)
-* `assets/tamagotchi/textures/block/*.png`, `textures/item/*.png`, `textures/particle/*.png`, `textures/gui/*.png`
+* `assets/tamacraft/textures/entity/<pet>/<pet>.png` (+ `_<expression>.png`, `_glow*.png`)
+* `assets/tamacraft/textures/block/*.png`, `textures/item/*.png`, `textures/particle/*.png`, `textures/gui/*.png`
 * Sources (generators, pixel maps) live in `tools/` so every asset can be regenerated and tweaked.

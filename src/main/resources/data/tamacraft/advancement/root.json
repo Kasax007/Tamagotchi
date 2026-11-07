@@ -1,0 +1,34 @@
+{
+  "criteria": {
+    "heart": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "tamacraft:tamacraft_heart"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.tamacraft.root.title"
+    },
+    "description": {
+      "translate": "advancements.tamacraft.root.description"
+    },
+    "icon": {
+      "id": "tamacraft:tamacraft_heart"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "background": "minecraft:gui/advancements/backgrounds/husbandry"
+  },
+  "requirements": [
+    [
+      "heart"
+    ]
+  ]
+}

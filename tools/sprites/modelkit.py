@@ -74,7 +74,7 @@ class Model:
         self.name = name
         self.textures = dict(textures)
         if particle:
-            self.textures["particle"] = particle if particle.startswith("tamagotchi:") else self.textures[particle]
+            self.textures["particle"] = particle if particle.startswith("tamacraft:") else self.textures[particle]
         self.parent = parent
         self.ao = ao
         self.gui = None          # explicit display.gui transform; None = automatic (see gui_display)

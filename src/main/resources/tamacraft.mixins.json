@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "net.kasax.tamacraft.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LegacyIdMixin",
+    "StructureStartMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "client.ItemRendererMixin"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:bamboo"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "B B",
+    "BWB",
+    "BBB"
+  ],
+  "result": {
+    "id": "tamacraft:pet_basket"
+  },
+  "category": "misc"
+}

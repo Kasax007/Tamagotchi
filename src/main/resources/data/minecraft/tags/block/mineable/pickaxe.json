@@ -1,7 +1,7 @@
 {
   "values": [
-    "tamagotchi:food_bowl",
-    "tamagotchi:treat_dispenser",
-    "tamagotchi:pet_incubator"
+    "tamacraft:food_bowl",
+    "tamacraft:treat_dispenser",
+    "tamacraft:pet_incubator"
   ]
 }

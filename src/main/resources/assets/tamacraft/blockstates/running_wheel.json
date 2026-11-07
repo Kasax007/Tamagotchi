@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tamacraft:block/running_wheel"
+    },
+    "facing=east": {
+      "model": "tamacraft:block/running_wheel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tamacraft:block/running_wheel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tamacraft:block/running_wheel",
+      "y": 270
+    }
+  }
+}

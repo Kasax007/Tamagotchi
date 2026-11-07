@@ -1,0 +1,173 @@
+{
+  "parent": "tamacraft:root",
+  "criteria": {
+    "desert_dragon": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:desert_dragon"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "jungle_dragon": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:jungle_dragon"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "tide_dragon": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:tide_dragon"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "frost_penguin": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:frost_penguin"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "ember_pup": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:ember_pup"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "sculk_wisp": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:sculk_wisp"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "void_kitten": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:void_kitten"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "pebble_golem": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:pebble_golem"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "hex_toad": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:hex_toad"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    },
+    "mimic": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamacraft:mimic"
+            },
+            "condition": "minecraft:entity_properties"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "translate": "advancements.tamacraft.first_friend.title"
+    },
+    "description": {
+      "translate": "advancements.tamacraft.first_friend.description"
+    },
+    "icon": {
+      "id": "minecraft:lead"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "requirements": [
+    [
+      "desert_dragon",
+      "jungle_dragon",
+      "tide_dragon",
+      "frost_penguin",
+      "ember_pup",
+      "sculk_wisp",
+      "void_kitten",
+      "pebble_golem",
+      "hex_toad",
+      "mimic"
+    ]
+  ]
+}

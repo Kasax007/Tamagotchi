@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "tamagotchi:tide_dragon",
-    "tamagotchi:mimic"
+    "tamacraft:tide_dragon",
+    "tamacraft:mimic"
   ]
 }

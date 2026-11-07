@@ -3,7 +3,7 @@ import os
 from PIL import Image
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-TEX = os.path.join(REPO, 'src/main/resources/assets/tamagotchi/textures')
+TEX = os.path.join(REPO, 'src/main/resources/assets/tamacraft/textures')
 DARK, MID = (46, 58, 33, 255), (125, 145, 96, 255)
 
 ICONS = {

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "P": {
+      "item": "minecraft:painting"
+    },
+    "G": {
+      "item": "minecraft:gold_nugget"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SPS",
+    "SGS"
+  ],
+  "result": {
+    "id": "tamacraft:pet_portrait"
+  },
+  "category": "misc"
+}

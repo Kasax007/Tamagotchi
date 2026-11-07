@@ -43,7 +43,7 @@ dependencies {
 }
 
 // Client self-test (src/gametest): Minecraft 1.21.1 has no Fabric client game-test API yet, so the tests bring their own
-// small harness (net.kasax.tamagotchi.test.harness). Run: xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks|blocks|pets]
+// small harness (net.kasax.tamacraft.test.harness). Run: xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks|blocks|pets]
 sourceSets {
 	gametest {
 		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
@@ -51,12 +51,12 @@ sourceSets {
 	}
 }
 loom {
-	accessWidenerPath = file("src/main/resources/tamagotchi.accesswidener")
+	accessWidenerPath = file("src/main/resources/tamacraft.accesswidener")
 	mods {
-		"tamagotchi" {
+		"tamacraft" {
 			sourceSet sourceSets.main
 		}
-		"tamagotchi-gametest" {
+		"tamacraft-gametest" {
 			sourceSet sourceSets.gametest
 		}
 	}
@@ -114,7 +114,7 @@ jar {
 def changelogFor = { String v ->
 	def text = file("CHANGELOG.md").text
 	def m = (text =~ /(?ms)^## \[?${java.util.regex.Pattern.quote(v)}\]?[^\n]*\n(.*?)(?=^## |\z)/)
-	m.find() ? m.group(1).trim() : "Tamagotchi ${v}"
+	m.find() ? m.group(1).trim() : "Tamacraft ${v}"
 }
 def curseforgeId = providers.gradleProperty("curseforge_id").getOrElse("")
 def modrinthId = providers.gradleProperty("modrinth_id").getOrElse("")
@@ -129,7 +129,7 @@ publishMods {
 	file = jar.archiveFile
 	changelog = changelogFor(project.version.toString())
 	type = STABLE
-	displayName = "Tamagotchi ${project.version}"
+	displayName = "Tamacraft ${project.version}"
 	modLoaders.add("fabric")
 	dryRun = isDryRun
 

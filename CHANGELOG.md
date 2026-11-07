@@ -2,15 +2,29 @@
 
 Each release uploads the section of its version as the changelog on CurseForge, Modrinth and GitHub.
 
-## 1.2.0+1.21.1
+## 1.3.0+1.21.1
 
-The Minecraft 1.21.1 version of 1.2.0: the same pets, furniture and features as Tamagotchi 1.2.0 for 26.3, now for
-Minecraft 1.21.1 (Fabric, requires Fabric API).
+The Minecraft 1.21.1 version of Tamacraft 1.3.0: the same pets, furniture and features as Tamacraft 1.3.0 for 26.3,
+now for Minecraft 1.21.1 (Fabric, requires Fabric API). Tamacraft is the new name of the mod (formerly Tamagotchi).
 
 - Ten rare pets to find, tame and look after, with needs, moods, bond, talents, toys, the Tama Pager and the Tamacon
 - All 25 pieces of furniture, the plushies and the dyeable colours
 - Everything new in 1.2.0 for modpacks (modded food and ores, look-alike structures, pet_home structure tags, any
   wooden chest and shears, diet tags, tooltips, recipe-book unlocks) and all its fixes
+- Ids from before the rename (`tamagotchi:...`, for example `tamagotchi:tamagotchi_heart`) are read as the new
+  `tamacraft:...` ones, so data packs and modpack files that still name them keep working
+
+## 1.3.0
+
+The mod has a new name: **Tamacraft** (formerly Tamagotchi). Same pets, same furniture, same features.
+
+- Everything that carried the old name now says Tamacraft: the mod id and all ids are `tamacraft:...`, and the
+  Tamagotchi Heart is now the **Tamacraft Heart** (`tamacraft:tamacraft_heart`). The Tamacon, the Tama Pager, the
+  pets and the furniture keep their names
+- Your worlds keep working: pets (tamed, with their needs, mood, bond and backpack), furniture, Tama Eggs and every
+  item in inventories and chests load with the new ids, and so do advancements and recipe-book entries. Data packs,
+  quests and recipes that still name `tamagotchi:...` ids keep working too
+- Tamacraft is inspired by the classic virtual pets of the 90s and is not affiliated with or endorsed by Bandai
 
 ## 1.2.0
 
@@ -19,7 +33,7 @@ Modpack-ready: modded food, ores and structures, plus a round of fixes.
 - Pets eat food from other mods too (the `c:foods` tags), and the Pebble Golem sniffs out modded ores (`c:ores`)
 - Pets also live in look-alike structures from other mods (Repurposed Structures pyramids, witch huts, mineshafts,
   mansions, monuments and more, Moog's igloos and nether fortresses); data packs can add their own through the
-  `tamagotchi:pet_home/...` structure tags
+  `tamacraft:pet_home/...` structure tags
 - Any wooden chest puts a backpack on your pet and any shears take it off, also the ones from other mods
 - Furniture shows a tooltip on what your pets do with it
 - Recipes appear in the recipe book as soon as you carry one of their ingredients
@@ -60,7 +74,7 @@ The first release.
 
 - Ten rare pets that live in Minecraft's structures: Desert Dragon, Jungle Dragon, Tide Dragon, Frost Penguin,
   Ember Pup, Sculk Wisp, Void Kitten, Pebble Golem, Hex Toad and Mimic, each with its own talent
-- Tame them with a Tamagotchi Heart; care for hunger, fun, energy and hygiene; bond hearts and moods
+- Tame them with a Tamacraft Heart; care for hunger, fun, energy and hygiene; bond hearts and moods
 - Backpacks (27 slots), golden apples your pet brings you when you are hurt, fights at your side, faints into a Tama Egg
   instead of dying
 - The dragons fly when it is faster or just for fun

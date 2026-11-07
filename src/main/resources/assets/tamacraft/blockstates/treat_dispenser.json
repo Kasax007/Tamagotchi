@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tamacraft:block/treat_dispenser"
+    },
+    "facing=east": {
+      "model": "tamacraft:block/treat_dispenser",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "tamacraft:block/treat_dispenser",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tamacraft:block/treat_dispenser",
+      "y": 270
+    }
+  }
+}

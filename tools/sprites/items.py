@@ -34,7 +34,7 @@ def outline_protected(im, prot, **kw):
 
 
 # ======================================================================================
-# tamagotchi_heart  (animated: heartbeat + shine + twinkle)
+# tamacraft_heart  (animated: heartbeat + shine + twinkle)
 # ======================================================================================
 HEART_LEG = L("yYgdD=gold", "rpPsS=heartpink", "w=#FFF7F3", "k=#FFFDF0", "j=#FFE98A")
 
@@ -124,7 +124,7 @@ def build_heart():
         sparkle(outline(paint(shine(HEART_SMALL, 18), HEART_LEG), **ol), 1),
     ]
     seq = [(0, 18), (1, 2), (2, 3), (3, 2), (4, 2), (5, 2)]
-    reg("tamagotchi_heart", frames, anim=dict(frames=[{"index": i, "time": t} for i, t in seq]))
+    reg("tamacraft_heart", frames, anim=dict(frames=[{"index": i, "time": t} for i, t in seq]))
 
 
 build_heart()

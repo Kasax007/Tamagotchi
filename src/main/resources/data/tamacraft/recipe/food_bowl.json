@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "item": "minecraft:clay_ball"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    }
+  },
+  "pattern": [
+    "CBC",
+    " C "
+  ],
+  "result": {
+    "id": "tamacraft:food_bowl"
+  },
+  "category": "misc"
+}

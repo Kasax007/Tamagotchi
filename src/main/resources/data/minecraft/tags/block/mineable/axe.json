@@ -1,13 +1,13 @@
 {
   "values": [
-    "tamagotchi:pet_basket",
-    "tamagotchi:pet_bath",
-    "tamagotchi:bouncy_mushroom",
-    "tamagotchi:running_wheel",
-    "tamagotchi:scratching_post",
-    "tamagotchi:pet_house",
-    "tamagotchi:pet_portrait",
-    "tamagotchi:toy_box",
-    "tamagotchi:pet_flap"
+    "tamacraft:pet_basket",
+    "tamacraft:pet_bath",
+    "tamacraft:bouncy_mushroom",
+    "tamacraft:running_wheel",
+    "tamacraft:scratching_post",
+    "tamacraft:pet_house",
+    "tamacraft:pet_portrait",
+    "tamacraft:toy_box",
+    "tamacraft:pet_flap"
   ]
 }

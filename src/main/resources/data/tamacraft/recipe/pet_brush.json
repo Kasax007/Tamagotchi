@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "WWW",
+    " S "
+  ],
+  "result": {
+    "id": "tamacraft:pet_brush"
+  },
+  "category": "misc"
+}

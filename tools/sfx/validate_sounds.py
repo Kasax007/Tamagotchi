@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Validate the Tamagotchi sound wiring.
+"""Validate the Tamacraft sound wiring.
 
 Checks (exit code 1 if anything is an error):
   * sounds.json is valid and contains every expected event (10 pets x 5, 10 talents, shared sounds)
   * every event has a matching subtitle key in subtitles_en_us.json and 1-4 sound variants
-  * every custom reference (tamagotchi:<group>/<name>) points to an existing Ogg Vorbis file
+  * every custom reference (tamacraft:<group>/<name>) points to an existing Ogg Vorbis file
     (decoded with ffmpeg: mono, 44.1 kHz, no clipping, not silent)
   * every vanilla reference (minecraft:<path>) exists in the Minecraft asset index
     (minecraft/sounds/<path>.ogg), found under ~/.gradle/caches/fabric-loom/assets/indexes
@@ -27,12 +27,12 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, '..', '..'))
-ASSETS = os.path.join(REPO, 'src', 'main', 'resources', 'assets', 'tamagotchi')
+ASSETS = os.path.join(REPO, 'src', 'main', 'resources', 'assets', 'tamacraft')
 SOUNDS_JSON = os.path.join(ASSETS, 'sounds.json')
 SOUND_DIR = os.path.join(ASSETS, 'sounds')
 SUBTITLES = os.path.join(HERE, 'subtitles_en_us.json')
 README = os.path.join(HERE, 'README.md')
-MOD_ID = 'tamagotchi'
+MOD_ID = 'tamacraft'
 MAX_TOTAL_BYTES = 3 * 1024 * 1024
 
 SPECIES = ['desert_dragon', 'jungle_dragon', 'tide_dragon', 'frost_penguin', 'ember_pup', 'sculk_wisp', 'void_kitten',

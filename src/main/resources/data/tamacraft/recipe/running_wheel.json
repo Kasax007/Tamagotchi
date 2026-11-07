@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "pattern": [
+    "SPS",
+    "PCP",
+    "SPS"
+  ],
+  "result": {
+    "id": "tamacraft:running_wheel"
+  },
+  "category": "misc"
+}

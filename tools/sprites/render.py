@@ -33,7 +33,7 @@ def _split(ident: str, default="minecraft"):
 
 
 def _asset_file(ns, kind, path, ext):
-    if ns == "tamagotchi":
+    if ns == "tamacraft":
         p = ASSETS / kind / f"{path}{ext}"
     else:
         p = VANILLA / kind / f"{path}{ext}"
