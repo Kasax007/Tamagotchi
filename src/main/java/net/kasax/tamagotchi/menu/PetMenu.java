@@ -1,6 +1,6 @@
 package net.kasax.tamagotchi.menu;
 
-import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The pet screen opened with the Tama Pager: the pet's belly/backpack slots plus the player
@@ -125,7 +125,7 @@ public class PetMenu extends AbstractContainerMenu {
     }
 
     /** Opens the menu for a pet; the client learns which entity and how many slots. */
-    public record Provider(TamaPet pet) implements ExtendedMenuProvider<Data> {
+    public record Provider(TamaPet pet) implements ExtendedScreenHandlerFactory<Data> {
         @Override
         public Data getScreenOpeningData(ServerPlayer player) {
             return new Data(this.pet.getId(), this.pet.storageSlots());

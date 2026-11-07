@@ -6,21 +6,26 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kasax.tamagotchi.client.model.PetModel;
 import net.kasax.tamagotchi.pet.PetSpecies;
+import net.kasax.tamagotchi.pet.TamaPet;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.item.ItemDisplayContext;
 
 /** Draws a fetched toy in the pet's mouth (or arms), following the head bone. */
 @Environment(EnvType.CLIENT)
-public class PetHeldItemLayer extends RenderLayer<PetRenderState, PetModel> {
-    public PetHeldItemLayer(RenderLayerParent<PetRenderState, PetModel> parent) {
+public class PetHeldItemLayer extends RenderLayer<TamaPet, PetModel> {
+    public PetHeldItemLayer(RenderLayerParent<TamaPet, PetModel> parent) {
         super(parent);
     }
 
     @Override
-    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light, PetRenderState state, float yRot, float xRot) {
+    public void render(PoseStack poseStack, MultiBufferSource buffers, int light, TamaPet pet, float limbSwing, float limbSwingAmount,
+                       float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+        PetRenderState state = getParentModel().state;
         if (state.heldItem.isEmpty()) {
             return;
         }
@@ -37,9 +42,10 @@ public class PetHeldItemLayer extends RenderLayer<PetRenderState, PetModel> {
             body.getChild("head").translateAndRotate(poseStack);
         }
         poseStack.translate(mouth[0] / 16F, mouth[1] / 16F, mouth[2] / 16F);
-        poseStack.rotateDegrees(Axis.XP, 90);
+        poseStack.mulPose(Axis.XP.rotationDegrees(90));
         poseStack.scale(0.55F, 0.55F, 0.55F);
-        state.heldItem.submit(poseStack, collector, light, OverlayTexture.NO_OVERLAY, state.outlineColor);
+        Minecraft.getInstance().getItemRenderer().renderStatic(pet, state.heldItem, ItemDisplayContext.GROUND, false, poseStack, buffers, pet.level(),
+                light, OverlayTexture.NO_OVERLAY, pet.getId());
         poseStack.popPose();
     }
 

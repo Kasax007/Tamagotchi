@@ -5,7 +5,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 
 /** Tide Dragon: swims in 3D like a turtle while in water, walks normally on land. */
-public class PetSwimMoveControl extends MoveControl<TamaPet> {
+public class PetSwimMoveControl extends MoveControl {
     public PetSwimMoveControl(TamaPet pet) {
         super(pet);
     }

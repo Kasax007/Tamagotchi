@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 	id 'me.modmuss50.mod-publish-plugin' version '2.2.1'
 }
@@ -19,66 +19,55 @@ repositories {
 	}
 }
 
-fabricApi {
-	configureDataGeneration {
-		client = true
-	}
-	// Headless server tests (src/gametest) and client screenshot tests: ./gradlew runGameTest / runClientGameTest
-	configureTests {
-		createSourceSet = true
-		modId = "tamagotchi-gametest"
-		enableGameTests = true
-		enableClientGameTests = true
-		eula = true
-	}
-}
-
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// No mappings line: Minecraft 26.x ships unobfuscated.
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	// 1.21.1 is obfuscated: official Mojang names, so the code reads like the 26.x branch
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// optional recipe-viewer plugins (src/main/java/.../compat); only compiled against, never bundled
-	compileOnly "maven.modrinth:jei:31.16.0.87"
-	compileOnly "maven.modrinth:rei:26.3.824+fabric"
-	compileOnly "maven.modrinth:architectury-api:22.0.5+fabric"
+	modCompileOnly "maven.modrinth:jei:${project.jei_version}"
+	modCompileOnly "maven.modrinth:rei:${project.rei_version}"
+	modCompileOnly "maven.modrinth:architectury-api:${project.architectury_version}"
 
 	// ./gradlew runClientGameTest -PwithJei (or -PwithRei) loads the recipe viewer next to the mod
 	if (project.hasProperty("withJei")) {
-		localRuntime "maven.modrinth:jei:31.16.0.87"
+		modLocalRuntime "maven.modrinth:jei:${project.jei_version}"
 	}
 	if (project.hasProperty("withRei")) {
-		localRuntime "maven.modrinth:rei:26.3.824+fabric"
-		localRuntime "maven.modrinth:architectury-api:22.0.5+fabric"
-		localRuntime "maven.modrinth:cloth-config:26.3.159+fabric"
+		modLocalRuntime "maven.modrinth:rei:${project.rei_version}"
+		modLocalRuntime "maven.modrinth:architectury-api:${project.architectury_version}"
+		modLocalRuntime "maven.modrinth:cloth-config:${project.cloth_version}"
 	}
 }
 
-// Footage for the videos, frame by frame (src/film): ./gradlew runFilm -Pfilm=SCENE[,SCENE] -PfilmOut=DIR
+// Client self-test (src/gametest): Minecraft 1.21.1 has no Fabric client game-test API yet, so the tests bring their own
+// small harness (net.kasax.tamagotchi.test.harness). Run: xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks|blocks|pets]
 sourceSets {
-	film {
+	gametest {
 		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
 		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
 	}
 }
 loom {
+	accessWidenerPath = file("src/main/resources/tamagotchi.accesswidener")
 	mods {
-		"tamagotchi-film" {
-			sourceSet sourceSets.film
+		"tamagotchi" {
+			sourceSet sourceSets.main
+		}
+		"tamagotchi-gametest" {
+			sourceSet sourceSets.gametest
 		}
 	}
 	runs {
-		film {
+		clientGameTest {
 			client()
-			name "Film"
-			source sourceSets.film
-			runDir "build/run/film"
-			property "fabric.client.gametest"
-			property "fabric.client.gametest.testModResourcesPath", file("src/film/resources").absolutePath
-			vmArg "-Xmx3G"
-			if (project.hasProperty('film')) vmArg "-Dfilm.scene=${project.property('film')}"
-			if (project.hasProperty('filmOut')) vmArg "-Dfilm.out=${project.property('filmOut')}"
+			name "Client Game Test"
+			source sourceSets.gametest
+			runDir "build/run/clientGameTest"
+			property "tama.selftest", "true"
+			vmArg "-Xmx2G"
 		}
 	}
 }
@@ -86,9 +75,6 @@ loom {
 // -Ptests=checks runs only the functional pet checks and real-click tests (no screenshots); combine: -Ptests=blocks,checks
 tasks.matching { it.name == 'runClientGameTest' }.configureEach {
 	if (project.hasProperty('tests')) jvmArgs "-Dtama.tests=${project.property('tests')}"
-}
-tasks.matching { it.name == 'runFilm' }.configureEach {
-	onlyIf { project.hasProperty('film') }
 }
 
 processResources {
@@ -100,14 +86,14 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = 21
 	it.options.compilerArgs += ["-Xmaxerrs", "2000"]
 }
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
@@ -165,7 +151,7 @@ publishMods {
 		github {
 			repository = "Kasax007/Tamagotchi"
 			accessToken = providers.environmentVariable("GITHUB_TOKEN")
-			commitish = providers.environmentVariable("GITHUB_SHA").orElse("26.3")
+			commitish = providers.environmentVariable("GITHUB_SHA").orElse("port/1.21.1")
 			tagName = "v${project.version}"
 		}
 	}

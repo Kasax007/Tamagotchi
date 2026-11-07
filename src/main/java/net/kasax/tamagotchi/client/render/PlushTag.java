@@ -12,17 +12,17 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector3f;
 
 /** The little heart tag sewn to the side of every plush, so it reads as a cuddly toy and not as a tiny pet. */
 @Environment(EnvType.CLIENT)
 public final class PlushTag {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Tamagotchi.id("plush_tag"), "main");
-    private static final Identifier TEXTURE = Tamagotchi.id("textures/entity/plush_tag.png");
+    private static final ResourceLocation TEXTURE = Tamagotchi.id("textures/entity/plush_tag.png");
 
     private PlushTag() {
     }
@@ -39,7 +39,7 @@ public final class PlushTag {
      * towards the front. Taken from the posed body part, so it fits every pet.
      */
     public static Vector3f anchor(PetModel model, PetRenderState pose) {
-        model.setupAnim(pose);
+        model.pose(pose);
         float[] box = {Float.MAX_VALUE, -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE};
         boolean[] found = {false};
         model.root().visit(new PoseStack(), (p, path, i, cube) -> {
@@ -47,16 +47,18 @@ public final class PlushTag {
                 return;
             }
             found[0] = true;
-            for (ModelPart.Polygon polygon : cube.polygons) {
-                for (ModelPart.Vertex v : polygon.vertices()) {
-                    Vector3f w = p.pose().transformPosition(v.worldX(), v.worldY(), v.worldZ(), new Vector3f());
-                    box[0] = Math.min(box[0], w.x);
-                    box[1] = Math.max(box[1], w.x);
-                    box[2] = Math.min(box[2], w.y);
-                    box[3] = Math.max(box[3], w.y);
-                    box[4] = Math.min(box[4], w.z);
-                    box[5] = Math.max(box[5], w.z);
-                }
+            // the eight corners of the cube (in pixels, like the vertices the renderer divides by 16)
+            for (int c = 0; c < 8; c++) {
+                float x = ((c & 1) == 0 ? cube.minX : cube.maxX) / 16F;
+                float y = ((c & 2) == 0 ? cube.minY : cube.maxY) / 16F;
+                float z = ((c & 4) == 0 ? cube.minZ : cube.maxZ) / 16F;
+                Vector3f w = p.pose().transformPosition(x, y, z, new Vector3f());
+                box[0] = Math.min(box[0], w.x);
+                box[1] = Math.max(box[1], w.x);
+                box[2] = Math.min(box[2], w.y);
+                box[3] = Math.max(box[3], w.y);
+                box[4] = Math.min(box[4], w.z);
+                box[5] = Math.max(box[5], w.z);
             }
         });
         if (!found[0]) {
@@ -66,13 +68,13 @@ public final class PlushTag {
     }
 
     /** Draws the tag at {@code at} (entity-model space, inside the usual entity flip). */
-    public static void submit(ModelPart tag, Vector3f at, PoseStack poseStack, SubmitNodeCollector collector, int light, int outline) {
+    public static void render(ModelPart tag, Vector3f at, PoseStack poseStack, MultiBufferSource buffers, int light) {
         poseStack.pushPose();
         poseStack.translate(at.x + 0.005F, at.y, at.z);
-        poseStack.rotateDegrees(Axis.YP, 62);    // turned towards the front so you see the heart
-        poseStack.rotateDegrees(Axis.XP, -8);    // and hanging a little askew
+        poseStack.mulPose(Axis.YP.rotationDegrees(62));    // turned towards the front so you see the heart
+        poseStack.mulPose(Axis.XP.rotationDegrees(-8));    // and hanging a little askew
         poseStack.scale(0.65F, 0.65F, 0.65F);
-        collector.submitModelPart(tag, poseStack, RenderTypes.entityCutout(TEXTURE), light, OverlayTexture.NO_OVERLAY, null, -1, outline);
+        tag.render(poseStack, buffers.getBuffer(RenderType.entityCutout(TEXTURE)), light, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 }

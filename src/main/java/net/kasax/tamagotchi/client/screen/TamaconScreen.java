@@ -12,16 +12,14 @@ import net.kasax.tamagotchi.pet.TamaPet;
 import net.kasax.tamagotchi.registry.ModBlocks;
 import net.kasax.tamagotchi.registry.ModEntities;
 import net.kasax.tamagotchi.registry.ModItems;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -86,7 +84,7 @@ public class TamaconScreen extends Screen {
         add("gadgets", List.of(new ItemStack(ModBlocks.TREAT_DISPENSER), new ItemStack(ModBlocks.PET_INCUBATOR),
                 new ItemStack(ModBlocks.TOY_BOX), new ItemStack(ModBlocks.PET_FLAP)));
         add("decor", List.of(new ItemStack(ModBlocks.PLUSHES.get(PetSpecies.FROST_PENGUIN)), new ItemStack(ModBlocks.PET_PORTRAIT),
-                new ItemStack(ModBlocks.EGG_LAMP), new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.PINK))));
+                new ItemStack(ModBlocks.EGG_LAMP), new ItemStack(Items.PINK_DYE)));
         add("reactions", List.of(new ItemStack(Items.JUKEBOX), new ItemStack(Items.NOTE_BLOCK), new ItemStack(Items.CAMPFIRE),
                 new ItemStack(Items.CAKE), new ItemStack(Items.POPPY), new ItemStack(Items.BELL)));
     }
@@ -156,16 +154,16 @@ public class TamaconScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        if (event.key() == InputConstants.KEY_RIGHT || event.key() == InputConstants.KEY_D) {
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (key == InputConstants.KEY_RIGHT || key == InputConstants.KEY_D) {
             turn(this.page + 1);
             return true;
         }
-        if (event.key() == InputConstants.KEY_LEFT || event.key() == InputConstants.KEY_A) {
+        if (key == InputConstants.KEY_LEFT || key == InputConstants.KEY_A) {
             turn(this.page - 1);
             return true;
         }
-        return super.keyPressed(event);
+        return super.keyPressed(key, scanCode, modifiers);
     }
 
     @Override
@@ -175,15 +173,15 @@ public class TamaconScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (this.page == 0 && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
-            int hit = contentsEntryAt(event.x(), event.y());
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.page == 0 && button == InputConstants.MOUSE_BUTTON_LEFT) {
+            int hit = contentsEntryAt(mouseX, mouseY);
             if (hit >= 0) {
                 turn(this.chapterStart.get(hit));
                 return true;
             }
         }
-        return super.mouseClicked(event, doubleClick);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -201,8 +199,8 @@ public class TamaconScreen extends Screen {
     // ------------------------------------------------------------------ drawing
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
-        super.extractBackground(g, mouseX, mouseY, a);
+    public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float a) {
+        super.renderBackground(g, mouseX, mouseY, a);
         int x = this.left, y = this.top;
         PetScreen.roundRect(g, x, y, W, H, SHELL_DARK);
         PetScreen.roundRect(g, x + 1, y + 1, W - 2, H - 2, SHELL);
@@ -220,8 +218,8 @@ public class TamaconScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
-        super.extractRenderState(g, mouseX, mouseY, a);
+    public void render(GuiGraphics g, int mouseX, int mouseY, float a) {
+        super.render(g, mouseX, mouseY, a);
         int lx = this.left + LX + 6, ly = this.top + LY + 5;
         if (this.page == 0) {
             drawContents(g, lx, ly, mouseX, mouseY);
@@ -229,18 +227,18 @@ public class TamaconScreen extends Screen {
             drawPage(g, this.pages.get(this.page - 1), lx, ly);
         }
         String num = this.page + " / " + this.pages.size();
-        g.text(this.font, num, this.left + LX + LW - 4 - this.font.width(num), this.top + LY + LH - 11, LCD_MID, false);
+        g.drawString(this.font, num, this.left + LX + LW - 4 - this.font.width(num), this.top + LY + LH - 11, LCD_MID, false);
     }
 
-    private void drawContents(GuiGraphicsExtractor g, int lx, int ly, int mouseX, int mouseY) {
-        g.text(this.font, Component.translatable("gui.tamagotchi.tamacon.contents"), lx, ly, LCD_DARK, false);
+    private void drawContents(GuiGraphics g, int lx, int ly, int mouseX, int mouseY) {
+        g.drawString(this.font, Component.translatable("gui.tamagotchi.tamacon.contents"), lx, ly, LCD_DARK, false);
         int hover = contentsEntryAt(mouseX, mouseY);
         for (int i = 0; i < this.chapters.size(); i++) {
             int[] r = contentsRect(i);
             if (i == hover) {
                 g.fill(r[0] - 1, r[1] - 1, r[0] + r[2], r[1] + r[3] - 1, LCD_HOVER);
             }
-            g.text(this.font, this.chapters.get(i).title(), r[0] + 1, r[1], i == hover ? LCD_DARK : LCD_MID, false);
+            g.drawString(this.font, this.chapters.get(i).title(), r[0] + 1, r[1], i == hover ? LCD_DARK : LCD_MID, false);
         }
     }
 
@@ -263,16 +261,16 @@ public class TamaconScreen extends Screen {
         return -1;
     }
 
-    private void drawPage(GuiGraphicsExtractor g, Page p, int lx, int ly) {
+    private void drawPage(GuiGraphics g, Page p, int lx, int ly) {
         Chapter c = p.chapter();
-        g.text(this.font, c.title(), lx, ly, LCD_DARK, false);
+        g.drawString(this.font, c.title(), lx, ly, LCD_DARK, false);
         g.fill(lx, ly + 10, this.left + LX + LW - 6, ly + 11, LCD_MID);
         int y = ly + 16;
         if (p.first() && !c.icons().isEmpty()) {
             int ix = lx;
             for (ItemStack icon : c.icons()) {
                 g.fill(ix - 1, y - 1, ix + 17, y + 17, LCD_SHADE);
-                g.item(icon, ix, y);
+                g.renderItem(icon, ix, y);
                 ix += 21;
             }
             y += 20;
@@ -283,12 +281,12 @@ public class TamaconScreen extends Screen {
                 int px = this.left + LX + LW - PORTRAIT - 6, py = ly + 16;
                 g.fill(px, py, px + PORTRAIT, py + PORTRAIT, LCD_SHADE);
                 int size = (int) (38 / Math.max(pet.getBbHeight(), pet.getBbWidth()));
-                InventoryScreen.extractEntityInInventoryFollowsMouse(g, px, py, px + PORTRAIT, py + PORTRAIT, size, 0.0625F,
+                InventoryScreen.renderEntityInInventoryFollowsMouse(g, px, py, px + PORTRAIT, py + PORTRAIT, size, 0.0625F,
                         px + PORTRAIT * 0.3F, py + PORTRAIT * 0.45F, pet);
             }
         }
         for (FormattedCharSequence line : p.lines()) {
-            g.text(this.font, line, lx, y, LCD_DARK, false);
+            g.drawString(this.font, line, lx, y, LCD_DARK, false);
             y += this.font.lineHeight + 1;
         }
     }
@@ -298,7 +296,7 @@ public class TamaconScreen extends Screen {
             return null;
         }
         return this.dummies.computeIfAbsent(s, k -> {
-            TamaPet pet = ModEntities.type(k).create(this.minecraft.level, EntitySpawnReason.LOAD);
+            TamaPet pet = ModEntities.type(k).create(this.minecraft.level);
             if (pet != null) {
                 pet.setId(-1000 - k.ordinal());   // never added to the level, but rendering asks for an id
             }

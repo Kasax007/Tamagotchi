@@ -55,14 +55,14 @@ public final class ModItems {
 
     static Item regHidden(String name, Function<Item.Properties, Item> factory, Item.Properties props) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Tamagotchi.id(name));
-        Item item = factory.apply(props.setId(key));
+        Item item = factory.apply(props);
         Registry.register(BuiltInRegistries.ITEM, key, item);
         return item;
     }
 
     public static void initialize() {
         for (PetSpecies s : PetSpecies.values()) {
-            SPAWN_EGGS.put(s, regHidden(s.id() + "_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(ModEntities.type(s))));
+            SPAWN_EGGS.put(s, regHidden(s.id() + "_spawn_egg", p -> new SpawnEggItem(ModEntities.type(s), 0xFFFFFF, 0xFFFFFF, p), new Item.Properties()));
         }
     }
 }

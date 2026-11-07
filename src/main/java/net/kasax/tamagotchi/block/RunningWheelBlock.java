@@ -1,5 +1,6 @@
 package net.kasax.tamagotchi.block;
 
+import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.kasax.tamagotchi.registry.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -18,27 +19,33 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A running wheel. While a pet runs in it the wheel spins (drawn by RunningWheelRenderer) and the
  * block gives a full redstone signal - functional decoration.
  */
 public class RunningWheelBlock extends BaseEntityBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty RUNNING = BooleanProperty.create("running");
-    private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Shapes.or(
+    private static final Map<Direction, VoxelShape> SHAPES = ShapeUtil.rotateHorizontal(Shapes.or(
             Block.box(1, 0, 1, 15, 1, 15),
             Block.box(2, 1, 14, 14, 14, 16)));
 
     public RunningWheelBlock(Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(RUNNING, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(RunningWheelBlock::new);
     }
 
     @Override

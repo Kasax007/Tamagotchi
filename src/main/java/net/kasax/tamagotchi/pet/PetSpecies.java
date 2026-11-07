@@ -8,12 +8,12 @@ import net.kasax.tamagotchi.registry.ModItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Everything that makes one pet different from another. One {@code EntityType} per species, all
@@ -97,7 +97,7 @@ public enum PetSpecies {
         return this.props.id;
     }
 
-    public Identifier key() {
+    public ResourceLocation key() {
         return Tamagotchi.id(this.props.id);
     }
 

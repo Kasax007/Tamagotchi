@@ -14,15 +14,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.ItemDisplayContext;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import org.jetbrains.annotations.Nullable;
 
 /** Renders every pet: generated model, expression textures, glow layer and a carried toy. */
 @Environment(EnvType.CLIENT)
-public class PetRenderer extends MobRenderer<TamaPet, PetRenderState, PetModel> {
+public class PetRenderer extends MobRenderer<TamaPet, PetModel> {
     public static final float MODEL_SCALE = 0.8F;
-    private static final Map<Identifier, Boolean> EXISTS = new HashMap<>();
+    private static final Map<ResourceLocation, Boolean> EXISTS = new HashMap<>();
     private final PetSpecies species;
 
     public PetRenderer(EntityRendererProvider.Context ctx, PetSpecies species, ModelLayerLocation layer) {
@@ -33,19 +33,17 @@ public class PetRenderer extends MobRenderer<TamaPet, PetRenderState, PetModel> 
     }
 
     @Override
-    public PetRenderState createRenderState() {
-        return new PetRenderState();
-    }
-
-    @Override
-    public void extractRenderState(TamaPet pet, PetRenderState state, float partialTick) {
-        super.extractRenderState(pet, state, partialTick);
+    public void render(TamaPet pet, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int light) {
+        // 1.21.1 has no render states: take the snapshot here, the model, animator and layers read it from the model
+        PetRenderState state = this.model.state;
         state.species = this.species;
         state.flags = pet.syncedFlags();
         state.sitting = pet.isInSittingPose();
         state.tame = pet.isTame();
         state.swimming = pet.isInWater() && !pet.onGround();
         state.grounded = pet.onGround();
+        state.isBaby = pet.isBaby();
+        state.isInvisible = pet.isInvisible();
         state.mood = pet.syncedMoodValue();
         float t = pet.actionProgress(partialTick);
         state.action = t >= 0 ? pet.clientAction : null;
@@ -53,7 +51,8 @@ public class PetRenderer extends MobRenderer<TamaPet, PetRenderState, PetModel> 
         state.expression = expression(pet, state);
         state.texture = TamaPet.texture(this.species, state.expression);
         state.glowTexture = glowFor(state.expression);
-        this.itemModelResolver.updateForLiving(state.heldItem, pet.getCarried(), ItemDisplayContext.GROUND, pet);
+        state.heldItem = pet.getCarried();
+        super.render(pet, yaw, partialTick, poseStack, buffers, light);
     }
 
     private static String expression(TamaPet pet, PetRenderState s) {
@@ -89,16 +88,16 @@ public class PetRenderer extends MobRenderer<TamaPet, PetRenderState, PetModel> 
         return "normal";
     }
 
-    private @Nullable Identifier glowFor(String expr) {
-        Identifier specific = Tamagotchi.id("textures/entity/" + this.species.id() + "/" + this.species.id() + "_glow_" + expr + ".png");
+    private @Nullable ResourceLocation glowFor(String expr) {
+        ResourceLocation specific = Tamagotchi.id("textures/entity/" + this.species.id() + "/" + this.species.id() + "_glow_" + expr + ".png");
         if (exists(specific)) {
             return specific;
         }
-        Identifier base = Tamagotchi.id("textures/entity/" + this.species.id() + "/" + this.species.id() + "_glow.png");
+        ResourceLocation base = Tamagotchi.id("textures/entity/" + this.species.id() + "/" + this.species.id() + "_glow.png");
         return exists(base) ? base : null;
     }
 
-    private static boolean exists(Identifier id) {
+    private static boolean exists(ResourceLocation id) {
         return EXISTS.computeIfAbsent(id, i -> Minecraft.getInstance().getResourceManager().getResource(i).isPresent());
     }
 
@@ -107,13 +106,13 @@ public class PetRenderer extends MobRenderer<TamaPet, PetRenderState, PetModel> 
     }
 
     @Override
-    public Identifier getTextureLocation(PetRenderState state) {
-        return state.texture;
+    public ResourceLocation getTextureLocation(TamaPet pet) {
+        return this.model.state.texture;
     }
 
     @Override
-    protected void scale(PetRenderState state, PoseStack poseStack) {
-        float s = MODEL_SCALE * (state.isBaby ? 0.6F : 1F);
+    protected void scale(TamaPet pet, PoseStack poseStack, float partialTick) {
+        float s = MODEL_SCALE * (pet.isBaby() ? 0.6F : 1F);
         poseStack.scale(s, s, s);
     }
 }

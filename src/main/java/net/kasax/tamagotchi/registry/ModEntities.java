@@ -28,7 +28,7 @@ public final class ModEntities {
             if (s.fireImmune()) {
                 b = b.fireImmune();
             }
-            EntityType<TamaPet> type = b.build(key);
+            EntityType<TamaPet> type = b.build(s.key().toString());
             TYPES.put(s, type);
             SPECIES.put(type, s);
         }

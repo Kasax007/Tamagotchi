@@ -15,6 +15,8 @@ import net.kasax.tamagotchi.registry.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -50,10 +52,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The pet. One class for all ten species; {@link #species()} comes from the entity type.
@@ -124,8 +124,8 @@ public class TamaPet extends TamableAnimal {
         this.setTame(false, false);
         if (species().fireImmune()) {
             this.setPathfindingMalus(PathType.LAVA, 8.0F);
-            this.setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, 0.0F);
-            this.setPathfindingMalus(PathType.FIRE, 0.0F);
+            this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
+            this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0.0F);
         }
         if (species().gait() == PetSpecies.Gait.SWIM || species().waterBreathing()) {
             this.setPathfindingMalus(PathType.WATER, 0.0F);
@@ -137,7 +137,7 @@ public class TamaPet extends TamableAnimal {
     }
 
     public static AttributeSupplier.Builder createAttributes(PetSpecies species) {
-        return Animal.createAnimalAttributes()
+        return Animal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, species.maxHealth())
                 .add(Attributes.MOVEMENT_SPEED, species.speed())
                 .add(Attributes.ATTACK_DAMAGE, species.attackDamage())
@@ -231,7 +231,7 @@ public class TamaPet extends TamableAnimal {
     // ------------------------------------------------------------------ save / load
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
+    public void addAdditionalSaveData(CompoundTag output) {
         super.addAdditionalSaveData(output);
         this.needs.save(output);
         output.putBoolean("Backpack", hasBackpack());
@@ -241,31 +241,33 @@ public class TamaPet extends TamableAnimal {
             output.putInt("Snacks", this.legacySnacks);
         }
         if (this.home != null) {
-            output.store("Home", BlockPos.CODEC, this.home);
+            output.put("Home", NbtUtils.writeBlockPos(this.home));
         }
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
         for (int i = 0; i < items.size(); i++) {
             items.set(i, this.inventory.getItem(i));
         }
-        ContainerHelper.saveAllItems(output.child("Inventory"), items);
+        CompoundTag inv = new CompoundTag();
+        ContainerHelper.saveAllItems(inv, items, registryAccess());
+        output.put("Inventory", inv);
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
+    public void readAdditionalSaveData(CompoundTag input) {
         super.readAdditionalSaveData(input);
         this.needs.load(input);
-        setFlag(F_BACKPACK, input.getBooleanOr("Backpack", false));
-        setFlag(F_WANDER, input.getBooleanOr("Wander", false));
+        setFlag(F_BACKPACK, input.getBoolean("Backpack"));
+        setFlag(F_WANDER, input.getBoolean("Wander"));
         setFlag(F_STAY, isOrderedToSit());   // vanilla loads "Sitting" without setOrderedToSit
-        this.legacySnacks = input.getIntOr("Snacks", 0);   // old snack pouch: moved into storage on the first tick
-        this.home = input.read("Home", BlockPos.CODEC).orElse(null);
+        this.legacySnacks = input.getInt("Snacks");   // old snack pouch: moved into storage on the first tick
+        this.home = NbtUtils.readBlockPos(input, "Home").orElse(null);
         // a dragon saved (or fainted) in mid-air lands again instead of hovering with no gravity forever;
         // 1.1.0 saved no "Flying", so there a winged pet with AI and no gravity was in the air
-        if (species().winged() && isNoGravity() && input.getBooleanOr("Flying", !isNoAi())) {
+        if (species().winged() && isNoGravity() && (input.contains("Flying") ? input.getBoolean("Flying") : !isNoAi())) {
             setNoGravity(false);
         }
         NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(input.childOrEmpty("Inventory"), items);
+        ContainerHelper.loadAllItems(input.getCompound("Inventory"), items, registryAccess());
         for (int i = 0; i < items.size(); i++) {
             this.inventory.setItem(i, items.get(i));
         }
@@ -553,7 +555,7 @@ public class TamaPet extends TamableAnimal {
         if (stack.is(ModItems.TAMA_PAGER)) {
             if (!client) {
                 setMode(isOrderedToSit() ? Mode.FOLLOW : Mode.SIT);
-                player.sendOverlayMessage(Component.translatable(isOrderedToSit() ? "message.tamagotchi.stay" : "message.tamagotchi.follow", getName()));
+                player.displayClientMessage(Component.translatable(isOrderedToSit() ? "message.tamagotchi.stay" : "message.tamagotchi.follow", getName()), true);
                 playSound(ModSounds.PAGER_OPEN, 0.5F, isOrderedToSit() ? 0.8F : 1.2F);
             }
             return InteractionResult.SUCCESS;
@@ -561,14 +563,14 @@ public class TamaPet extends TamableAnimal {
         if (isSnack(stack)) {
             if (!client) {
                 if (storageSlots() == 0) {
-                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_no_backpack", getName()));
+                    player.displayClientMessage(Component.translatable("message.tamagotchi.snack_no_backpack", getName()), true);
                 } else if (!canStore(stack)) {
-                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_full", getName()));
+                    player.displayClientMessage(Component.translatable("message.tamagotchi.snack_full", getName()), true);
                 } else {
                     store(stack.split(1));
                     playAction(PetAction.SNIFF);
                     playSound(ModSounds.BACKPACK_EQUIP, 0.6F, 1.4F);
-                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.snack_stored", getName(), snacks()));
+                    player.displayClientMessage(Component.translatable("message.tamagotchi.snack_stored", getName(), snacks()), true);
                 }
             }
             return InteractionResult.SUCCESS;
@@ -576,7 +578,7 @@ public class TamaPet extends TamableAnimal {
         if (stack.is(ModItems.PET_BRUSH)) {
             if (!client) {
                 groom(player);
-                stack.hurtAndBreak(1, player, hand);
+                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             }
             return InteractionResult.SUCCESS;
         }
@@ -586,7 +588,7 @@ public class TamaPet extends TamableAnimal {
         if (isPetFood(stack)) {
             if (this.needs.hunger >= 98 && getHealth() >= getMaxHealth()) {
                 if (!client) {
-                    player.sendOverlayMessage(Component.translatable("message.tamagotchi.full", getName()));
+                    player.displayClientMessage(Component.translatable("message.tamagotchi.full", getName()), true);
                 }
                 return InteractionResult.PASS;
             }
@@ -633,7 +635,7 @@ public class TamaPet extends TamableAnimal {
         player.sendSystemMessage(Component.translatable("message.tamagotchi.tamed_help").withStyle(ChatFormatting.GRAY));
         if (!player.getInventory().contains(new ItemStack(ModItems.TAMA_PAGER))) {
             ItemStack pager = new ItemStack(ModItems.TAMA_PAGER);
-            player.getInventory().placeItemBackInInventory(pager, net.minecraft.util.Prediction.SERVER_ONLY);
+            player.getInventory().placeItemBackInInventory(pager);
             player.sendSystemMessage(Component.translatable("message.tamagotchi.got_pager").withStyle(ChatFormatting.GOLD));
         }
     }
@@ -689,7 +691,7 @@ public class TamaPet extends TamableAnimal {
         if (favorite) {
             this.needs.addBond(2.0F);
             this.needs.add(Need.FUN, 10);
-            player.sendOverlayMessage(Component.translatable("message.tamagotchi.favorite", getName()));
+            player.displayClientMessage(Component.translatable("message.tamagotchi.favorite", getName()), true);
         } else {
             this.needs.addBond(0.4F);
         }
@@ -704,7 +706,7 @@ public class TamaPet extends TamableAnimal {
         playAction(PetAction.EAT);
         playSound(ModSounds.PET_EAT, 0.8F, getVoicePitch());
         if (level() instanceof ServerLevel level) {
-            level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(ParticleTypes.ITEM, one.getItem()),
+            level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(ParticleTypes.ITEM, one.copyWithCount(1)),
                     getX(), getY() + getBbHeight() * 0.5, getZ(), 6, 0.15, 0.1, 0.15, 0.05);
         }
         syncNeeds();
@@ -867,7 +869,7 @@ public class TamaPet extends TamableAnimal {
         if (this.legacySnacks > 0 && this.tickCount > 5) {
             ItemStack left = store(new ItemStack(Items.GOLDEN_APPLE, this.legacySnacks));
             if (!left.isEmpty()) {
-                spawnAtLocation(level, left);
+                spawnAtLocation(left);
             }
             this.legacySnacks = 0;
         }
@@ -998,7 +1000,7 @@ public class TamaPet extends TamableAnimal {
     }
 
     private void beep(ServerPlayer owner, Component message) {
-        owner.sendOverlayMessage(Component.literal("♪ ").append(message).withStyle(ChatFormatting.LIGHT_PURPLE));
+        owner.displayClientMessage(Component.literal("♪ ").append(message).withStyle(ChatFormatting.LIGHT_PURPLE), true);
         owner.level().playSound(null, owner.blockPosition(), ModSounds.PAGER_BEEP, SoundSource.PLAYERS, 0.7F, 1.0F);
     }
 
@@ -1056,8 +1058,8 @@ public class TamaPet extends TamableAnimal {
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        if (isInvulnerableTo(level, source)) {
+    public boolean hurt(DamageSource source, float amount) {
+        if (isInvulnerableTo(source)) {
             return false;
         }
         Entity attacker = source.getEntity();
@@ -1072,7 +1074,7 @@ public class TamaPet extends TamableAnimal {
         setOrderedToSit(false);
         setInSittingPose(false);
         setFlag(F_DANCING | F_BEGGING | F_WARMING, false);
-        boolean hurt = super.hurtServer(level, source, amount);
+        boolean hurt = super.hurt(source, amount);
         if (hurt && isTame()) {
             this.needs.add(Need.FUN, -2);
         }
@@ -1100,15 +1102,14 @@ public class TamaPet extends TamableAnimal {
         }
         ItemStack egg = TamaEggItem.fromPet(this);
         ServerPlayer owner = getOwner() instanceof ServerPlayer p ? p : null;
-        if (getY() < level.getMinY()) {
+        if (getY() < level.getMinBuildHeight()) {
             // fell out of the world: an egg dropped here would fall forever, so it goes to the owner (or the world spawn)
             if (owner != null) {
-                owner.getInventory().placeItemBackInInventory(egg, net.minecraft.util.Prediction.SERVER_ONLY);
+                owner.getInventory().placeItemBackInInventory(egg);
                 owner.sendSystemMessage(Component.translatable("message.tamagotchi.fainted_void", getName()).withStyle(ChatFormatting.GOLD));
             } else {
-                var spawn = level.getRespawnData().globalPos();
-                ServerLevel at = level.getServer().getLevel(spawn.dimension());
-                dropEgg(at != null ? at : level, Vec3.atBottomCenterOf(spawn.pos()), egg);
+                ServerLevel at = level.getServer().overworld();
+                dropEgg(at, Vec3.atBottomCenterOf(at.getSharedSpawnPos()), egg);
             }
             discard();
             return;
@@ -1128,14 +1129,14 @@ public class TamaPet extends TamableAnimal {
     private static void dropEgg(ServerLevel level, Vec3 at, ItemStack egg) {
         ItemEntity item = new ItemEntity(level, at.x, at.y + 0.3, at.z, egg);
         item.setUnlimitedLifetime();
-        item.setPermanentlyInvulnerable(true);
+        item.setInvulnerable(true);
         item.setDefaultPickUpDelay();
         level.addFreshEntity(item);
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        boolean hit = super.doHurtTarget(level, target);
+    public boolean doHurtTarget(Entity target) {
+        boolean hit = super.doHurtTarget(target);
         if (hit && isTame()) {
             this.needs.add(Need.ENERGY, -1.5F);
             this.needs.add(Need.FUN, 1.0F);
@@ -1219,34 +1220,24 @@ public class TamaPet extends TamableAnimal {
     }
 
     @Override
-    public boolean canBreatheUnderwater() {
-        return species().waterBreathing() || species().gait() == PetSpecies.Gait.SWIM;
-    }
-
-    @Override
-    protected void travelInWater(Vec3 input, double baseGravity, boolean isFalling, double oldY) {
-        if (species().gait() != PetSpecies.Gait.SWIM) {
-            super.travelInWater(input, baseGravity, isFalling, oldY);
-            return;
-        }
-        moveRelative(0.1F, input);
-        move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
-        setDeltaMovement(getDeltaMovement().scale(0.9));
-    }
-
-    @Override
     public boolean dampensVibrations() {
         return species() == PetSpecies.SCULK_WISP;   // a sculk creature does not set off sculk sensors
     }
 
     @Override
-    public boolean causeFallDamage(double fallDistance, float damageModifier, DamageSource source) {
+    public boolean causeFallDamage(float fallDistance, float damageModifier, DamageSource source) {
         return !species().winged() && super.causeFallDamage(fallDistance, damageModifier, source);
     }
 
     @Override
-    protected void travelInFluid(Vec3 input) {
-        if (isInLava() && species().fireImmune()) {
+    public void travel(Vec3 input) {
+        if (isControlledByLocalInstance() && isInWater() && species().gait() == PetSpecies.Gait.SWIM) {
+            moveRelative(0.1F, input);
+            move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
+            setDeltaMovement(getDeltaMovement().scale(0.9));
+            return;
+        }
+        if (isControlledByLocalInstance() && isInLava() && species().fireImmune()) {
             // lava is the ember pup's pool: swim almost as fast as walking and stay near the surface
             moveRelative(0.09F, input);
             move(net.minecraft.world.entity.MoverType.SELF, getDeltaMovement());
@@ -1255,7 +1246,7 @@ public class TamaPet extends TamableAnimal {
             setDeltaMovement(v.x, depth > getBbHeight() * 0.4 ? v.y + 0.025 : v.y - 0.01, v.z);
             return;
         }
-        super.travelInFluid(input);
+        super.travel(input);
     }
 
     @Override
@@ -1316,10 +1307,10 @@ public class TamaPet extends TamableAnimal {
     }
 
     public @Nullable UUID ownerUuid() {
-        return getOwnerReference() == null ? null : getOwnerReference().getUUID();
+        return getOwnerUUID();
     }
 
-    public static net.minecraft.resources.Identifier texture(PetSpecies s, String expression) {
+    public static net.minecraft.resources.ResourceLocation texture(PetSpecies s, String expression) {
         String suffix = expression.equals("normal") ? "" : "_" + expression;
         return Tamagotchi.id("textures/entity/" + s.id() + "/" + s.id() + suffix + ".png");
     }

@@ -6,9 +6,10 @@ import net.kasax.tamagotchi.pet.TamaPet;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -21,17 +22,17 @@ public class TamaPagerItem extends TooltipItem {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!(player instanceof ServerPlayer sp)) {
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
         }
         List<TamaPet> pets = level.getEntitiesOfClass(TamaPet.class, player.getBoundingBox().inflate(64), p -> p.isOwnedBy(player));
         TamaPet nearest = pets.stream().min(Comparator.comparingDouble(p -> p.distanceToSqr(player))).orElse(null);
         if (nearest == null) {
-            sp.sendOverlayMessage(Component.translatable("message.tamagotchi.no_pet"));
-            return InteractionResult.FAIL;
+            sp.displayClientMessage(Component.translatable("message.tamagotchi.no_pet"), true);
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
         nearest.openPetScreen(sp);
-        return InteractionResult.SUCCESS_SERVER;
+        return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
 }

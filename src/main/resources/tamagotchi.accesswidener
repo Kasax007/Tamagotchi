@@ -1,0 +1,3 @@
+accessWidener v2 named
+# PetModel finds bones anywhere in the model tree by name (26.x: ModelPart.createPartLookup)
+accessible field net/minecraft/client/model/geom/ModelPart children Ljava/util/Map;

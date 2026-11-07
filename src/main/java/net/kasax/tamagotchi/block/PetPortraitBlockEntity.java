@@ -9,14 +9,10 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.TagValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** Who is in the picture: the pet's kind, name and id (the id only so the next click paints another pet). */
 public class PetPortraitBlockEntity extends BlockEntity {
@@ -57,24 +53,24 @@ public class PetPortraitBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
-        this.species = PetSpecies.byId(input.getStringOr("species", ""));
-        this.name = input.getStringOr("name", "");
-        this.petId = input.read("pet", UUIDUtil.CODEC).orElse(null);
-        this.backpack = input.getBooleanOr("backpack", false);
+    protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
+        super.loadAdditional(input, registries);
+        this.species = PetSpecies.byId(input.getString("species"));
+        this.name = input.getString("name");
+        this.petId = input.hasUUID("pet") ? input.getUUID("pet") : null;
+        this.backpack = input.getBoolean("backpack");
     }
 
     @Override
-    protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        super.saveAdditional(output, registries);
         if (this.species != null) {
             output.putString("species", this.species.id());
             output.putString("name", this.name);
             output.putBoolean("backpack", this.backpack);
         }
         if (this.petId != null) {
-            output.store("pet", UUIDUtil.CODEC, this.petId);
+            output.putUUID("pet", this.petId);
         }
     }
 
@@ -85,8 +81,6 @@ public class PetPortraitBlockEntity extends BlockEntity {
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        TagValueOutput out = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
-        saveAdditional(out);
-        return out.buildResult();
+        return saveCustomOnly(registries);
     }
 }

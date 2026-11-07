@@ -11,7 +11,7 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathfindingContext;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** Pet navigation: the same as vanilla, except that a pet flap is an open doorway to a pet (and a wall to everyone else). */
 final class PetPathing {

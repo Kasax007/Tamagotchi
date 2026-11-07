@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -47,13 +48,13 @@ public class FoodBowlBlock extends Block {
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!isBowlFood(stack)) {
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         int fill = state.getValue(FILL);
         if (fill >= 3) {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide()) {
             int add = stack.is(ModItems.PET_KIBBLE) ? 2 : 1;
@@ -61,7 +62,7 @@ public class FoodBowlBlock extends Block {
             stack.consume(1, player);
             level.playSound(null, pos, ModSounds.BLOCK_BOWL_FILL, SoundSource.BLOCKS, 0.8F, 1.0F);
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
 
     public static void takePortion(ServerLevel level, BlockPos pos, BlockState state) {
@@ -77,7 +78,7 @@ public class FoodBowlBlock extends Block {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return state.getValue(FILL) * 5;
     }
 }

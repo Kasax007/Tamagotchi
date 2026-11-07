@@ -20,7 +20,7 @@ import net.kasax.tamagotchi.pet.PetNeeds.Need;
 import net.kasax.tamagotchi.registry.ModItems;
 import net.kasax.tamagotchi.registry.ModParticles;
 import net.kasax.tamagotchi.registry.ModSounds;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -55,7 +55,7 @@ import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** All pet AI goals, registered in one place. */
 public final class PetGoals {
@@ -249,7 +249,7 @@ public final class PetGoals {
             }
             PetNeeds n = this.pet.needs();
             LivingEntity owner = this.pet.ownerHere();
-            boolean night = this.pet.level().isDarkOutside();
+            boolean night = this.pet.level().isNight();
             if (owner != null && owner.isSleeping() && this.pet.distanceToSqr(owner) < 400) {
                 return true;
             }
@@ -303,7 +303,7 @@ public final class PetGoals {
             if (arrived) {
                 if (this.bed != null && this.pet.blockPosition().closerThan(this.bed, 2.5)
                         && this.pet.level().getBlockState(this.bed).getBlock() instanceof PetBedBlock) {
-                    this.pet.snapTo(this.bed.getX() + 0.5, this.bed.getY() + 0.2, this.bed.getZ() + 0.5, this.pet.getYRot(), 0);
+                    this.pet.moveTo(this.bed.getX() + 0.5, this.bed.getY() + 0.2, this.bed.getZ() + 0.5, this.pet.getYRot(), 0);
                 }
                 this.pet.setSleeping(true);
                 this.pet.playSound(ModSounds.PET_YAWN, 0.5F, this.pet.getVoicePitch());
@@ -317,7 +317,7 @@ public final class PetGoals {
             }
             PetNeeds n = this.pet.needs();
             LivingEntity owner = this.pet.ownerHere();
-            boolean night = this.pet.level().isDarkOutside();
+            boolean night = this.pet.level().isNight();
             if (owner != null && owner.isSleeping() && this.pet.distanceToSqr(owner) < 400) {
                 return true;   // stays curled up next to the bed until its owner gets up, even when fully rested
             }
@@ -489,7 +489,7 @@ public final class PetGoals {
                 this.pet.playSound(ModSounds.PET_FEED_OWNER, 1.0F, 1.0F);
                 level.sendParticles(ModParticles.HEART, owner.getX(), owner.getY() + 1.7, owner.getZ(), 5, 0.3, 0.2, 0.3, 0.0);
                 if (owner instanceof Player p) {
-                    p.sendOverlayMessage(Component.translatable("message.tamagotchi.fed_you", this.pet.getName(), this.pet.snacks()));
+                    p.displayClientMessage(Component.translatable("message.tamagotchi.fed_you", this.pet.getName(), this.pet.snacks()), true);
                 }
                 this.pet.needs().addBond(1.5F);
                 this.fed = true;
@@ -724,7 +724,7 @@ public final class PetGoals {
                 ItemStack carried = this.pet.getCarried().copy();
                 this.pet.setCarried(ItemStack.EMPTY);
                 if (!(owner instanceof Player p) || !p.getInventory().add(carried)) {
-                    this.pet.spawnAtLocation((ServerLevel) this.pet.level(), carried);
+                    this.pet.spawnAtLocation(carried);
                 }
                 this.pet.playAction(PetAction.CELEBRATE);
                 this.pet.playSound(ModSounds.PET_CELEBRATE, 0.8F, this.pet.getVoicePitch());
@@ -870,7 +870,7 @@ public final class PetGoals {
                     if (this.use == Use.WHEEL && st.hasProperty(RunningWheelBlock.FACING)) {
                         yaw = st.getValue(RunningWheelBlock.FACING).toYRot();
                     }
-                    this.pet.snapTo(c.x, y, c.z, yaw, 0);
+                    this.pet.moveTo(c.x, y, c.z, yaw, 0);
                 }
             }
             this.arrivedTicks++;
@@ -937,7 +937,7 @@ public final class PetGoals {
                 }
                 case SHELTER -> {
                     this.pet.setInSittingPose(true);
-                    if (level.isDarkOutside() && this.pet.needs().energy < 80) {
+                    if (level.isNight() && this.pet.needs().energy < 80) {
                         this.pet.setSleeping(true);
                     }
                 }
@@ -1064,7 +1064,7 @@ public final class PetGoals {
                 this.react = React.BEG_OWNER;
                 return true;
             }
-            if (this.pet.species() != PetSpecies.FROST_PENGUIN && (level.isDarkOutside() || this.pet.needs().energy < 60)) {
+            if (this.pet.species() != PetSpecies.FROST_PENGUIN && (level.isNight() || this.pet.needs().energy < 60)) {
                 BlockPos fire = BlockSearch.nearest(this.pet, 6, 2, st -> st.getBlock() instanceof CampfireBlock && st.getValue(CampfireBlock.LIT));
                 if (fire != null && this.pet.getRandom().nextInt(2) == 0) {
                     this.react = React.WARM;

@@ -15,7 +15,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -29,7 +28,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -138,7 +137,7 @@ public final class Talents {
             Object[] args = new Object[extra.length + 1];
             args[0] = pet.getName();
             System.arraycopy(extra, 0, args, 1, extra.length);
-            p.sendOverlayMessage(Component.translatable(key, args).withStyle(ChatFormatting.AQUA));
+            p.displayClientMessage(Component.translatable(key, args).withStyle(ChatFormatting.AQUA), true);
         }
     }
 
@@ -223,10 +222,10 @@ public final class Talents {
     }
 
     /** Best first. {@code c:ores} catches every other ore, including the ones other mods add (tin, silver, ruby...). */
-    private static final List<TagKey<Block>> ORES = List.of(BlockItemTags.DIAMOND_ORES.block(), BlockItemTags.EMERALD_ORES.block(),
-            ConventionalBlockTags.NETHERITE_SCRAP_ORES, BlockTags.GOLD_ORES, BlockItemTags.LAPIS_ORES.block(),
-            BlockItemTags.REDSTONE_ORES.block(), BlockTags.IRON_ORES, ConventionalBlockTags.ORES, BlockTags.COPPER_ORES,
-            BlockItemTags.COAL_ORES.block());
+    private static final List<TagKey<Block>> ORES = List.of(BlockTags.DIAMOND_ORES, BlockTags.EMERALD_ORES,
+            ConventionalBlockTags.NETHERITE_SCRAP_ORES, BlockTags.GOLD_ORES, BlockTags.LAPIS_ORES,
+            BlockTags.REDSTONE_ORES, BlockTags.IRON_ORES, ConventionalBlockTags.ORES, BlockTags.COPPER_ORES,
+            BlockTags.COAL_ORES);
 
     /** How good an ore the Pebble Golem thinks this is: 0 is the best, -1 is no ore at all. */
     public static int oreRank(BlockState st) {
@@ -289,8 +288,8 @@ public final class Talents {
         message(owner, "message.tamagotchi.talent.ore", pet, level.getBlockState(best).getBlock().getName());
     }
 
-    private static final List<Holder<MobEffect>> BREWS = List.of(MobEffects.SPEED, MobEffects.JUMP_BOOST, MobEffects.HASTE,
-            MobEffects.REGENERATION, MobEffects.NIGHT_VISION, MobEffects.LUCK, MobEffects.RESISTANCE, MobEffects.FIRE_RESISTANCE);
+    private static final List<Holder<MobEffect>> BREWS = List.of(MobEffects.MOVEMENT_SPEED, MobEffects.JUMP, MobEffects.DIG_SPEED,
+            MobEffects.REGENERATION, MobEffects.NIGHT_VISION, MobEffects.LUCK, MobEffects.DAMAGE_RESISTANCE, MobEffects.FIRE_RESISTANCE);
 
     private static void brewBuddy(TamaPet pet, ServerLevel level, LivingEntity owner) {
         if (pet.tickCount % 20 != 0 || !pet.talentReady() || !pet.needs().mood().atLeast(Mood.HAPPY) || pet.distanceToSqr(owner) > 8 * 8) {
@@ -341,18 +340,18 @@ public final class Talents {
             return false;
         }
         if (!(pet.level() instanceof ServerLevel level)) {
-            return pet.level().recipeAccess() == null || isSmeltable(stack);
+            return isSmeltable(stack);
         }
         SingleRecipeInput input = new SingleRecipeInput(stack.copyWithCount(1));
-        Optional<RecipeHolder<SmeltingRecipe>> recipe = level.recipeAccess().getRecipeFor(RecipeType.SMELTING, input, level);
+        Optional<RecipeHolder<SmeltingRecipe>> recipe = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, level);
         if (recipe.isEmpty()) {
             return false;
         }
         if (!pet.moodAllowsTalent()) {
-            player.sendOverlayMessage(Component.translatable("message.tamagotchi.too_sad", pet.getName()));
+            player.displayClientMessage(Component.translatable("message.tamagotchi.too_sad", pet.getName()), true);
             return true;
         }
-        ItemStack result = recipe.get().value().assemble(input);
+        ItemStack result = recipe.get().value().assemble(input, level.registryAccess());
         if (result.isEmpty()) {
             return false;
         }
@@ -360,8 +359,8 @@ public final class Talents {
         pet.playAction(PetAction.BREATH);
         level.playSound(null, pet.blockPosition(), ModSounds.TALENT_ROAST, SoundSource.NEUTRAL, 1.0F, 1.0F);
         breathLine(level, pet, player.position().add(0, 1.0, 0), ParticleTypes.FLAME, 10);
-        player.getInventory().placeItemBackInInventory(result.copy(), net.minecraft.util.Prediction.SERVER_ONLY);
-        float xp = recipe.get().value().experience();
+        player.getInventory().placeItemBackInInventory(result.copy());
+        float xp = recipe.get().value().getExperience();
         if (xp > 0) {
             ExperienceOrb.award(level, player.position(), Math.max(1, Mth.floor(xp + level.getRandom().nextFloat())));
         }
@@ -392,14 +391,14 @@ public final class Talents {
             case FIRE_BREATH -> {
                 pet.playAction(PetAction.BREATH);
                 breathLine(level, pet, aim, ParticleTypes.FLAME, 14);
-                if (target.hurtServer(level, pet.damageSources().mobAttack(pet), dmg)) {
+                if (target.hurt(pet.damageSources().mobAttack(pet), dmg)) {
                     target.igniteForSeconds(3);
                 }
                 return 32;
             }
             case POISON_BITE -> {
                 pet.playAction(PetAction.ATTACK);
-                if (pet.doHurtTarget(level, target)) {
+                if (pet.doHurtTarget(target)) {
                     target.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 0), pet);
                 }
                 level.sendParticles(ModParticles.LEAF, aim.x, aim.y, aim.z, 4, 0.2, 0.2, 0.2, 0.02);
@@ -409,7 +408,7 @@ public final class Talents {
                 pet.playAction(PetAction.BREATH);
                 breathLine(level, pet, aim, ParticleTypes.BUBBLE, 16);
                 level.sendParticles(ParticleTypes.BUBBLE_POP, aim.x, aim.y, aim.z, 12, 0.3, 0.3, 0.3, 0.05);
-                if (target.hurtServer(level, pet.damageSources().mobAttack(pet), dmg * 0.9F)) {
+                if (target.hurt(pet.damageSources().mobAttack(pet), dmg * 0.9F)) {
                     Vec3 push = target.position().subtract(pet.position()).normalize().scale(0.9);
                     target.push(push.x, 0.25, push.z);
                 }
@@ -417,19 +416,19 @@ public final class Talents {
             }
             case SNOWBALL -> {
                 pet.playAction(PetAction.ATTACK);
-                Snowball ball = new Snowball(level, pet, new ItemStack(Items.SNOWBALL));
+                Snowball ball = new Snowball(level, pet);
                 Vec3 d = aim.subtract(ball.position());
                 ball.shoot(d.x, d.y + d.horizontalDistance() * 0.15, d.z, 1.3F, 2.0F);
                 level.addFreshEntity(ball);
-                if (target.hurtServer(level, pet.damageSources().mobAttack(pet), dmg)) {
-                    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 60, 1), pet);
+                if (target.hurt(pet.damageSources().mobAttack(pet), dmg)) {
+                    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1), pet);
                     level.sendParticles(ParticleTypes.SNOWFLAKE, aim.x, aim.y, aim.z, 10, 0.3, 0.3, 0.3, 0.02);
                 }
                 return 24;
             }
             case BURN_BITE -> {
                 pet.playAction(PetAction.ATTACK);
-                if (pet.doHurtTarget(level, target)) {
+                if (pet.doHurtTarget(target)) {
                     target.igniteForSeconds(4);
                 }
                 return 20;
@@ -438,7 +437,7 @@ public final class Talents {
                 pet.playAction(PetAction.BREATH);
                 breathLine(level, pet, aim, ParticleTypes.SCULK_CHARGE_POP, 10);
                 level.sendParticles(ParticleTypes.SONIC_BOOM, aim.x, aim.y, aim.z, 1, 0, 0, 0, 0);
-                target.hurtServer(level, pet.damageSources().sonicBoom(pet), dmg * 0.85F);
+                target.hurt(pet.damageSources().sonicBoom(pet), dmg * 0.85F);
                 return 36;
             }
             case BLINK -> {
@@ -449,7 +448,7 @@ public final class Talents {
                     pet.getLookControl().setLookAt(target);
                 }
                 pet.playAction(PetAction.ATTACK);
-                pet.doHurtTarget(level, target);
+                pet.doHurtTarget(target);
                 return 30;
             }
             case SLAM -> {
@@ -457,7 +456,7 @@ public final class Talents {
                 level.sendParticles(ParticleTypes.EXPLOSION, pet.getX(), pet.getY() + 0.2, pet.getZ(), 1, 0, 0, 0, 0);
                 for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, pet.getBoundingBox().inflate(2.5, 1, 2.5),
                         e -> e != pet && (e == target || e instanceof Enemy) && !pet.isAlliedTo(e))) {
-                    if (e.hurtServer(level, pet.damageSources().mobAttack(pet), dmg)) {
+                    if (e.hurt(pet.damageSources().mobAttack(pet), dmg)) {
                         Vec3 push = e.position().subtract(pet.position()).normalize().scale(0.7);
                         e.push(push.x, 0.3, push.z);
                     }
@@ -466,7 +465,7 @@ public final class Talents {
             }
             case TONGUE -> {
                 pet.playAction(PetAction.ATTACK);
-                if (target.hurtServer(level, pet.damageSources().mobAttack(pet), dmg)) {
+                if (target.hurt(pet.damageSources().mobAttack(pet), dmg)) {
                     Vec3 pull = pet.position().subtract(target.position()).normalize().scale(0.55);
                     target.push(pull.x, 0.15, pull.z);
                     target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0), pet);
@@ -475,7 +474,7 @@ public final class Talents {
             }
             case CHOMP -> {
                 pet.playAction(PetAction.ATTACK);
-                pet.doHurtTarget(level, target);
+                pet.doHurtTarget(target);
                 return 24;
             }
         }

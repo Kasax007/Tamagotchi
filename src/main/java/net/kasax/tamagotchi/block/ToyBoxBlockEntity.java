@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -69,16 +68,16 @@ public class ToyBoxBlockEntity extends DispenserBlockEntity {
     }
 
     @Override
-    public void startOpen(ContainerUser user) {
-        if (!this.remove && !user.getLivingEntity().isSpectator()) {
-            this.openers.incrementOpeners(user.getLivingEntity(), getLevel(), getBlockPos(), getBlockState(), user.getContainerInteractionRange());
+    public void startOpen(Player user) {
+        if (!this.remove && !user.isSpectator()) {
+            this.openers.incrementOpeners(user, getLevel(), getBlockPos(), getBlockState());
         }
     }
 
     @Override
-    public void stopOpen(ContainerUser user) {
-        if (!this.remove && !user.getLivingEntity().isSpectator()) {
-            this.openers.decrementOpeners(user.getLivingEntity(), getLevel(), getBlockPos(), getBlockState());
+    public void stopOpen(Player user) {
+        if (!this.remove && !user.isSpectator()) {
+            this.openers.decrementOpeners(user, getLevel(), getBlockPos(), getBlockState());
         }
     }
 

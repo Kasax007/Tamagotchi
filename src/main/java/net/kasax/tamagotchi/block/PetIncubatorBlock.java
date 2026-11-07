@@ -1,11 +1,13 @@
 package net.kasax.tamagotchi.block;
 
+import com.mojang.serialization.MapCodec;
 import net.kasax.tamagotchi.registry.ModBlocks;
 import net.kasax.tamagotchi.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -22,23 +24,29 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** Put a Tama Egg in: it glows warm for thirty seconds, wobbles, and your pet hatches fully healed. */
 public class PetIncubatorBlock extends BaseEntityBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
 
     public PetIncubatorBlock(Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(PetIncubatorBlock::new);
     }
 
     @Override
@@ -72,17 +80,17 @@ public class PetIncubatorBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stack.is(ModItems.TAMA_EGG) || !(level.getBlockEntity(pos) instanceof PetIncubatorBlockEntity be)) {
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (!be.getEgg().isEmpty()) {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide()) {
             be.insert(stack.split(1), player);
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
 
     @Override
@@ -91,9 +99,17 @@ public class PetIncubatorBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            player.getInventory().placeItemBackInInventory(be.takeEgg(), net.minecraft.util.Prediction.SERVER_ONLY);
+            player.getInventory().placeItemBackInInventory(be.takeEgg());
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof PetIncubatorBlockEntity be) {
+            be.dropEgg(pos);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

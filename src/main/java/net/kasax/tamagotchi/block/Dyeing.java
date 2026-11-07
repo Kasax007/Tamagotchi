@@ -4,10 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ARGB;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.util.FastColor;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,21 +23,21 @@ public final class Dyeing {
     }
 
     /** Recolours {@code prop} with the dye in {@code stack}; anything else falls through to the empty-hand use. */
-    public static InteractionResult apply(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+    public static ItemInteractionResult apply(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           EnumProperty<DyeColor> prop) {
-        DyeColor dye = stack.get(DataComponents.DYE);
+        DyeColor dye = stack.getItem() instanceof DyeItem d ? d.getDyeColor() : null;
         if (dye == null) {
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (state.getValue(prop) == dye) {
-            return InteractionResult.PASS;
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide()) {
             level.setBlockAndUpdate(pos, state.setValue(prop, dye));
             stack.consume(1, player);
             level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
 
     /** How much white goes into the dye colour: none for fabric, some for the glowing lamp shell, lots for the backdrop. */
@@ -46,6 +47,6 @@ public final class Dyeing {
 
     /** The tint of a dyed part (opaque ARGB); the item models use the same values for their default colours. */
     public static int tint(DyeColor c, float whiten) {
-        return ARGB.opaque(ARGB.srgbLerp(whiten, c.getTextureDiffuseColor(), 0xFFFFFFFF));
+        return FastColor.ARGB32.opaque(FastColor.ARGB32.lerp(whiten, c.getTextureDiffuseColor(), 0xFFFFFFFF));
     }
 }

@@ -9,18 +9,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** Hold right-click: a red dot appears where you point, and your pets chase and pounce on it. */
 public class LaserPointerItem extends TooltipItem {
@@ -43,11 +43,11 @@ public class LaserPointerItem extends TooltipItem {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         player.startUsingItem(hand);
         // one click when the laser switches on, no repeats while it is held
         level.playSound(null, player.blockPosition(), ModSounds.TOY_LASER, SoundSource.PLAYERS, 0.3F, 1.0F);
-        return InteractionResult.CONSUME;
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
     @Override
@@ -56,8 +56,8 @@ public class LaserPointerItem extends TooltipItem {
     }
 
     @Override
-    public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return ItemUseAnimation.NONE;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class LaserPointerItem extends TooltipItem {
             DOTS.remove(user.getUUID());
             return;
         }
-        pointAt(server, user, hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getUnitVec3i()).scale(0.04)));
+        pointAt(server, user, hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getNormal()).scale(0.04)));
     }
 
     /** The red dot of {@code user}'s pointer is at {@code p} this tick (the user's pets chase it). */
@@ -82,8 +82,7 @@ public class LaserPointerItem extends TooltipItem {
     }
 
     @Override
-    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int remainingTime) {
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int remainingTime) {
         DOTS.remove(entity.getUUID());
-        return true;
     }
 }

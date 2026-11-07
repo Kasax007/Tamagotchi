@@ -2,13 +2,13 @@ package net.kasax.tamagotchi.client.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.kasax.tamagotchi.registry.ModParticles;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,7 +20,7 @@ public final class PetParticles {
     }
 
     public static void register() {
-        ParticleProviderRegistry r = ParticleProviderRegistry.getInstance();
+        ParticleFactoryRegistry r = ParticleFactoryRegistry.getInstance();
         r.register(ModParticles.ZZZ, sprites -> provider(sprites, Kind.ZZZ));
         r.register(ModParticles.HEART, sprites -> provider(sprites, Kind.HEART));
         r.register(ModParticles.SPARKLE, sprites -> provider(sprites, Kind.SPARKLE));
@@ -36,13 +36,13 @@ public final class PetParticles {
     }
 
     private static ParticleProvider<SimpleParticleType> provider(SpriteSet sprites, Kind kind) {
-        return (SimpleParticleType options, ClientLevel level, double x, double y, double z, double xa, double ya, double za,
-                RandomSource random) -> new PetParticle(level, x, y, z, xa, ya, za, sprites, kind, random);
+        return (SimpleParticleType options, ClientLevel level, double x, double y, double z, double xa, double ya, double za)
+                -> new PetParticle(level, x, y, z, xa, ya, za, sprites, kind, level.getRandom());
     }
 
     enum Kind { ZZZ, HEART, SPARKLE, SWEAT, STINK, LASER, LEAF, SONAR, EMOTE }
 
-    static final class PetParticle extends SingleQuadParticle {
+    static final class PetParticle extends TextureSheetParticle {
         private final SpriteSet sprites;
         private final Kind kind;
         private final float baseSize;
@@ -50,7 +50,8 @@ public final class PetParticles {
 
         PetParticle(ClientLevel level, double x, double y, double z, double xa, double ya, double za, SpriteSet sprites, Kind kind,
                     RandomSource random) {
-            super(level, x, y, z, sprites.get(random));
+            super(level, x, y, z);
+            pickSprite(sprites);
             this.sprites = sprites;
             this.kind = kind;
             this.phase = random.nextFloat() * Mth.TWO_PI;
@@ -163,14 +164,14 @@ public final class PetParticles {
         }
 
         @Override
-        protected int getLightCoords(float a) {
+        protected int getLightColor(float a) {
             return this.kind == Kind.HEART || this.kind == Kind.SPARKLE || this.kind == Kind.LASER || this.kind == Kind.SONAR || this.kind == Kind.EMOTE
-                    ? 0xF000F0 : super.getLightCoords(a);
+                    ? 0xF000F0 : super.getLightColor(a);
         }
 
         @Override
-        public SingleQuadParticle.Layer getLayer() {
-            return SingleQuadParticle.Layer.TRANSLUCENT;
+        public ParticleRenderType getRenderType() {
+            return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
         }
     }
 }

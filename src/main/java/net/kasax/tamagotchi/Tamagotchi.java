@@ -8,7 +8,7 @@ import net.kasax.tamagotchi.registry.ModMenus;
 import net.kasax.tamagotchi.registry.ModParticles;
 import net.kasax.tamagotchi.registry.ModSounds;
 import net.kasax.tamagotchi.registry.ModTab;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +17,8 @@ public class Tamagotchi implements ModInitializer {
     public static final String MOD_ID = "tamagotchi";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath(MOD_ID, path);
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @Override

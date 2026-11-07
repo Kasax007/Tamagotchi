@@ -1,6 +1,6 @@
 package net.kasax.tamagotchi.registry;
 
-import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.kasax.tamagotchi.Tamagotchi;
 import net.kasax.tamagotchi.pet.PetSpecies;
 import net.minecraft.core.Registry;
@@ -20,7 +20,7 @@ public final class ModTab {
     }
 
     public static void initialize() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, KEY, FabricCreativeModeTab.builder()
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, KEY, FabricItemGroup.builder()
                 .title(Component.translatable("itemGroup.tamagotchi"))
                 .icon(() -> new ItemStack(ModItems.TAMAGOTCHI_HEART))
                 .displayItems((params, output) -> {

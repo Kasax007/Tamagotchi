@@ -24,11 +24,11 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -137,8 +137,8 @@ public class PetGallery implements FabricClientGameTest {
     }
 
     private static TamaPet spawn(ServerLevel level, ServerPlayer owner, PetSpecies s, double x, double z, float yaw, boolean ai) {
-        TamaPet pet = ModEntities.type(s).create(level, EntitySpawnReason.COMMAND);
-        pet.snapTo(x, Y, z, yaw, 0);
+        TamaPet pet = ModEntities.type(s).create(level);
+        pet.moveTo(x, Y, z, yaw, 0);
         pet.setYHeadRot(yaw);
         pet.setYBodyRot(yaw);
         pet.tame(owner);
@@ -231,7 +231,7 @@ public class PetGallery implements FabricClientGameTest {
             RunningWheelBlock.setRunning(level, wheel, true);
             spawn(level, p, PetSpecies.PEBBLE_GOLEM, post.getX() + 1.45, post.getZ() + 0.5, 90, false).playAction(PetAction.SCRATCH);
             TamaPet bouncer = spawn(level, p, PetSpecies.HEX_TOAD, mushroom.getX() + 0.5, mushroom.getZ() + 0.5, 200, false);
-            bouncer.snapTo(bouncer.getX(), Y + 0.75, bouncer.getZ(), 200, 0);
+            bouncer.moveTo(bouncer.getX(), Y + 0.75, bouncer.getZ(), 200, 0);
             bouncer.playAction(PetAction.BOUNCE);
         });
         ctx.waitTicks(6);
@@ -448,7 +448,7 @@ public class PetGallery implements FabricClientGameTest {
 
     /** A real (not flat) world: pets must turn up in naturally generated jungle temples and ocean monuments. */
     private void naturalSpawns() {
-        Map<Identifier, PetSpawns.Rule> saved = new LinkedHashMap<>(PetSpawns.RULES);
+        Map<ResourceLocation, PetSpawns.Rule> saved = new LinkedHashMap<>(PetSpawns.RULES);
         PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F));
         String[][] targets = {{"jungle_pyramid", "jungle_dragon"}, {"monument", "tide_dragon"}, {"desert_pyramid", "desert_dragon"}};
         try (TestSingleplayerContext sp = ctx.worldBuilder().setUseConsistentSettings(false)
@@ -459,7 +459,7 @@ public class PetGallery implements FabricClientGameTest {
                 BlockPos[] at = {null};
                 server.runOnServer(s -> {
                     ServerLevel level = s.overworld();
-                    var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.STRUCTURE, Identifier.withDefaultNamespace(t[0]));
+                    var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.STRUCTURE, ResourceLocation.withDefaultNamespace(t[0]));
                     var holder = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.STRUCTURE).getOrThrow(key);
                     var found = level.getChunkSource().getGenerator().findNearestMapStructure(level,
                             net.minecraft.core.HolderSet.direct(holder), BlockPos.ZERO, 100, false);
@@ -601,8 +601,8 @@ public class PetGallery implements FabricClientGameTest {
             ServerPlayer p = player(s);
             p.getInventory().clearContent();
             TamaPet pet = spawn(level, p, PetSpecies.FROST_PENGUIN, 0.5, 0.5, 0, true);
-            pet.setPos(0.5, level.getMinY() - 70, 0.5);
-            pet.hurtServer(level, level.damageSources().fellOutOfWorld(), 1000F);
+            pet.setPos(0.5, level.getMinBuildHeight() - 70, 0.5);
+            pet.hurt(level.damageSources().fellOutOfWorld(), 1000F);
             voidEgg[0] = !pet.isAlive() && p.getInventory().countItem(ModItems.TAMA_EGG) == 1;
         });
         check("a pet that faints in the void lands in its owner's inventory as an egg", voidEgg[0]);
@@ -612,7 +612,7 @@ public class PetGallery implements FabricClientGameTest {
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
             TamaPet pet = spawn(level, player(s), PetSpecies.EMBER_PUP, 3.5, 3.5, 0, true);
-            pet.hurtServer(level, level.damageSources().generic(), 1000F);
+            pet.hurt(level.damageSources().generic(), 1000F);
             level.explode(null, 3.5, Y + 0.5, 3.5, 3F, net.minecraft.world.level.Level.ExplosionInteraction.NONE);
         });
         ctx.waitTicks(3);
@@ -690,9 +690,9 @@ public class PetGallery implements FabricClientGameTest {
         boolean[] homes = {false};
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
-            TamaPet jungle = ModEntities.type(PetSpecies.JUNGLE_DRAGON).create(level, EntitySpawnReason.COMMAND);
-            TamaPet penguin = ModEntities.type(PetSpecies.FROST_PENGUIN).create(level, EntitySpawnReason.COMMAND);
-            TamaPet mimic = ModEntities.type(PetSpecies.MIMIC).create(level, EntitySpawnReason.COMMAND);
+            TamaPet jungle = ModEntities.type(PetSpecies.JUNGLE_DRAGON).create(level);
+            TamaPet penguin = ModEntities.type(PetSpecies.FROST_PENGUIN).create(level);
+            TamaPet mimic = ModEntities.type(PetSpecies.MIMIC).create(level);
             food[0] = jungle.isPetFood(new ItemStack(Items.POTATO)) && penguin.isPetFood(new ItemStack(Items.COOKED_COD))
                     && !jungle.isPetFood(new ItemStack(Items.GOLDEN_APPLE)) && !mimic.isPetFood(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE))
                     && mimic.isPetFood(new ItemStack(Items.BREAD));
@@ -846,8 +846,8 @@ public class PetGallery implements FabricClientGameTest {
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
             ServerPlayer p = player(s);
-            TamaPet wild = ModEntities.type(PetSpecies.HEX_TOAD).create(level, EntitySpawnReason.COMMAND);
-            wild.snapTo(0.5, Y, 2.5, 0, 0);
+            TamaPet wild = ModEntities.type(PetSpecies.HEX_TOAD).create(level);
+            wild.moveTo(0.5, Y, 2.5, 0, 0);
             level.addFreshEntity(wild);
             p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(ModItems.TAMAGOTCHI_HEART));
             wild.mobInteract(p, net.minecraft.world.InteractionHand.MAIN_HAND);
@@ -921,7 +921,7 @@ public class PetGallery implements FabricClientGameTest {
             ServerLevel level = s.overworld();
             ServerPlayer p = player(s);
             TamaPet pet = level.getEntitiesOfClass(TamaPet.class, p.getBoundingBox().inflate(8)).get(0);
-            pet.hurtServer(level, level.damageSources().generic(), 1000F);
+            pet.hurt(level.damageSources().generic(), 1000F);
             egg[0] = !pet.isAlive() && level.getEntitiesOfClass(ItemEntity.class, p.getBoundingBox().inflate(8),
                     e -> e.getItem().is(ModItems.TAMA_EGG)).size() == 1;
         });
@@ -931,7 +931,7 @@ public class PetGallery implements FabricClientGameTest {
         // structure spawns: force the chance roll, place real structures, look for the wild pet
         String[][] structures = {{"igloo", "frost_penguin", "40", "40"}, {"swamp_hut", "hex_toad", "-40", "40"},
                 {"desert_pyramid", "desert_dragon", "40", "-40"}, {"jungle_pyramid", "jungle_dragon", "-40", "-40"}};
-        Map<Identifier, PetSpawns.Rule> saved = new LinkedHashMap<>(PetSpawns.RULES);
+        Map<ResourceLocation, PetSpawns.Rule> saved = new LinkedHashMap<>(PetSpawns.RULES);
         server.runOnServer(s -> PetSpawns.RULES.replaceAll((id, rule) -> new PetSpawns.Rule(rule.species(), 1F)));
         for (String[] st : structures) {
             cmd("place structure minecraft:" + st[0] + " " + st[2] + " " + Y + " " + st[3]);

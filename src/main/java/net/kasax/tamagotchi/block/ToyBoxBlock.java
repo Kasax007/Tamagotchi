@@ -1,5 +1,6 @@
 package net.kasax.tamagotchi.block;
 
+import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -27,17 +29,22 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** A chest for toys (nine slots). Bored pets nearby open it and play with what is inside. */
 public class ToyBoxBlock extends BaseEntityBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
-    private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Block.box(1, 0, 2, 15, 11, 14));
+    private static final Map<Direction, VoxelShape> SHAPES = ShapeUtil.rotateHorizontal(Block.box(1, 0, 2, 15, 11, 14));
 
     public ToyBoxBlock(Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(OPEN, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(ToyBoxBlock::new);
     }
 
     @Override
@@ -86,14 +93,15 @@ public class ToyBoxBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof ToyBoxBlockEntity be
                 ? net.minecraft.world.inventory.AbstractContainerMenu.getRedstoneSignalFromContainer(be) : 0;
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
-        Containers.updateNeighboursAfterDestroy(state, level, pos);
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        Containers.dropContentsOnDestroy(state, newState, level, pos);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

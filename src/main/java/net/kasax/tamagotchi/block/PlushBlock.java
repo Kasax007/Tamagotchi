@@ -1,5 +1,6 @@
 package net.kasax.tamagotchi.block;
 
+import com.mojang.serialization.MapCodec;
 import net.kasax.tamagotchi.pet.PetSpecies;
 import net.kasax.tamagotchi.registry.ModParticles;
 import net.kasax.tamagotchi.registry.ModSounds;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A plush toy of one of the pets (drawn by PlushRenderer from the pet's own model). Squeeze it with a click; a pet
@@ -40,6 +41,11 @@ public class PlushBlock extends BaseEntityBlock {
         super(properties);
         this.species = species;
         registerDefaultState(this.stateDefinition.any().setValue(ROTATION, 0));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(p -> new PlushBlock(this.species, p));
     }
 
     public PetSpecies species() {

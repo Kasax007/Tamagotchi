@@ -28,13 +28,14 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.19.5",
-    "minecraft": "~26.3",
-    "java": ">=25",
-    "fabric-api": ">=0.161.0"
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": ">=0.116.0"
   },
   "mixins": [
     "tamagotchi.mixins.json"
   ],
-  "icon": "assets/tamagotchi/icon.png"
+  "icon": "assets/tamagotchi/icon.png",
+  "accessWidener": "tamagotchi.accesswidener"
 }

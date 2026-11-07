@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -37,14 +38,23 @@ public class BouncyMushroomBlock extends Block {
     }
 
     @Override
-    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
-        // soft landing, no fall damage
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        // soft landing, no fall damage; a real fall squishes the cap
+        if (entity.isSuppressingBounce()) {
+            super.fallOn(level, state, pos, entity, fallDistance);
+        } else if (level instanceof ServerLevel server && fallDistance > 0.4) {
+            squish(server, pos);
+        }
     }
 
     @Override
-    public void bounceOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
-        if (level instanceof ServerLevel server && fallDistance > 0.4) {
-            squish(server, pos);
+    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) {
+        // springy: everyone bounces back up with most of their speed (sneaking players do not)
+        Vec3 v = entity.getDeltaMovement();
+        if (entity.isSuppressingBounce() || v.y >= 0.0) {
+            super.updateEntityAfterFallOn(level, entity);
+        } else {
+            entity.setDeltaMovement(v.x, -v.y * 0.9, v.z);
         }
     }
 

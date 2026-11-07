@@ -35,7 +35,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -139,8 +139,8 @@ public class BlockGallery implements FabricClientGameTest {
     }
 
     private static TamaPet spawn(ServerLevel level, ServerPlayer owner, PetSpecies s, double x, double z, float yaw, boolean ai) {
-        TamaPet pet = ModEntities.type(s).create(level, EntitySpawnReason.COMMAND);
-        pet.snapTo(x, Y, z, yaw, 0);
+        TamaPet pet = ModEntities.type(s).create(level);
+        pet.moveTo(x, Y, z, yaw, 0);
         pet.setYHeadRot(yaw);
         pet.setYBodyRot(yaw);
         pet.tame(owner);
@@ -373,8 +373,8 @@ public class BlockGallery implements FabricClientGameTest {
             p.teleportTo(0.5, Y, 6.5);
             TamaPet pet = spawn(level, p, PetSpecies.VOID_KITTEN, 0.5, -4.5, 0, true);
             pet.getNavigation().moveTo(0.5, Y, 5.5, 1.0);
-            Cow cow = EntityTypes.COW.create(level, EntitySpawnReason.COMMAND);
-            cow.snapTo(2.5, Y, -4.5, 0, 0);
+            Cow cow = EntityTypes.COW.create(level);
+            cow.moveTo(2.5, Y, -4.5, 0, 0);
             level.addFreshEntity(cow);
         });
         ctx.waitTicks(10);

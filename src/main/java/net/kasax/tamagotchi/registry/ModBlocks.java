@@ -59,7 +59,7 @@ public final class ModBlocks {
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0F).sound(SoundType.WOOD).noOcclusion());
     public static final Block BOUNCY_MUSHROOM = reg("bouncy_mushroom", BouncyMushroomBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.6F).sound(SoundType.SLIME_BLOCK)
-                    .bounceRestitution(0.9F).noOcclusion());
+                    .noOcclusion());
     public static final Block RUNNING_WHEEL = reg("running_wheel", RunningWheelBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0F).sound(SoundType.WOOD).noOcclusion());
     public static final Block SCRATCHING_POST = reg("scratching_post", ScratchingPostBlock::new,
@@ -88,7 +88,7 @@ public final class ModBlocks {
         for (PetSpecies s : PetSpecies.values()) {
             PLUSHES.put(s, reg(s.id() + "_plush", p -> new PlushBlock(s, p),
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(0.4F).sound(SoundType.WOOL)
-                            .pushReaction(PushReaction.POPPED).noOcclusion()));
+                            .pushReaction(PushReaction.DESTROY).noOcclusion()));
         }
     }
 
@@ -110,10 +110,10 @@ public final class ModBlocks {
 
     private static Block reg(String name, Function<BlockBehaviour.Properties, Block> factory, BlockBehaviour.Properties props) {
         ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Tamagotchi.id(name));
-        Block block = factory.apply(props.setId(key));
+        Block block = factory.apply(props);
         Registry.register(BuiltInRegistries.BLOCK, key, block);
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, Tamagotchi.id(name));
-        Item item = new FurnitureItem(block, new Item.Properties().setId(itemKey).useBlockDescriptionPrefix());
+        Item item = new FurnitureItem(block, new Item.Properties());
         Registry.register(BuiltInRegistries.ITEM, itemKey, item);
         BLOCK_ITEMS.add(item);
         return block;

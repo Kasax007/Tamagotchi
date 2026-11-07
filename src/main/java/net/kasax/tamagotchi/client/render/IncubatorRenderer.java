@@ -5,6 +5,13 @@ import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.kasax.tamagotchi.Tamagotchi;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.kasax.tamagotchi.block.PetIncubatorBlockEntity;
 import net.kasax.tamagotchi.item.TamaEggItem;
 import net.kasax.tamagotchi.pet.PetSpecies;
@@ -15,35 +22,16 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.util.FastColor;
 
 /** The egg in the incubator: a speckled egg in the pet's colours that wobbles harder the closer it is to hatching. */
 @Environment(EnvType.CLIENT)
-public class IncubatorRenderer implements BlockEntityRenderer<PetIncubatorBlockEntity, IncubatorRenderer.State> {
+public class IncubatorRenderer implements BlockEntityRenderer<PetIncubatorBlockEntity> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Tamagotchi.id("incubator_egg"), "main");
-    private static final Identifier TEXTURE = Tamagotchi.id("textures/entity/incubator_egg.png");
+    private static final ResourceLocation TEXTURE = Tamagotchi.id("textures/entity/incubator_egg.png");
     /** Top of the nest inside the dome, in pixels. */
     private static final float NEST_Y = 3F;
     private final ModelPart egg;
-
-    public static class State extends BlockEntityRenderState {
-        boolean hasEgg;
-        int color;
-        float progress;
-        float time;
-    }
 
     public IncubatorRenderer(BlockEntityRendererProvider.Context ctx) {
         this.egg = ctx.bakeLayer(LAYER);
@@ -61,39 +49,26 @@ public class IncubatorRenderer implements BlockEntityRenderer<PetIncubatorBlockE
     }
 
     @Override
-    public State createRenderState() {
-        return new State();
-    }
-
-    @Override
-    public void extractRenderState(PetIncubatorBlockEntity be, State state, float partialTick, Vec3 camera,
-                                   ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
-        BlockEntityRenderer.super.extractRenderState(be, state, partialTick, camera, crumbling);
-        state.hasEgg = !be.getEgg().isEmpty();
-        PetSpecies s = state.hasEgg ? TamaEggItem.species(be.getEgg()) : null;
-        state.color = s != null ? ARGB.opaque(ARGB.srgbLerp(0.35F, s.color(), 0xFFFFFFFF)) : 0xFFF4EEDC;
-        state.progress = be.progress(partialTick);
-        state.time = be.getLevel() != null ? (be.getLevel().getGameTime() % 24000) + partialTick : 0;
-    }
-
-    @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
-        if (!state.hasEgg) {
+    public void render(PetIncubatorBlockEntity be, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
+        if (be.getEgg().isEmpty()) {
             return;
         }
+        PetSpecies s = TamaEggItem.species(be.getEgg());
+        int color = s != null ? FastColor.ARGB32.opaque(FastColor.ARGB32.lerp(0.35F, s.color(), 0xFFFFFFFF)) : 0xFFF4EEDC;
+        float progress = be.progress(partialTick);
+        float time = be.getLevel() != null ? (be.getLevel().getGameTime() % 24000) + partialTick : 0;
         poseStack.pushPose();
         poseStack.translate(0.5F, NEST_Y / 16F, 0.5F);
         // a little wobble now and then, faster and wider towards the end
-        float p = state.progress;
+        float p = progress;
         float cycle = Mth.lerp(p, 60, 18);
-        float phase = (state.time % cycle) / cycle;
+        float phase = (time % cycle) / cycle;
         float burst = phase < 0.35F ? Mth.sin(phase / 0.35F * Mth.PI) : 0;
-        float angle = burst * Mth.sin(state.time * 1.3F) * Mth.lerp(p, 5, 12);   // more would nick the dome
-        poseStack.rotateDegrees(Axis.ZP, angle);
-        poseStack.rotateDegrees(Axis.XP, angle * 0.4F);
+        float angle = burst * Mth.sin(time * 1.3F) * Mth.lerp(p, 5, 12);   // more would nick the dome
+        poseStack.mulPose(Axis.ZP.rotationDegrees(angle));
+        poseStack.mulPose(Axis.XP.rotationDegrees(angle * 0.4F));
         poseStack.scale(-1, -1, 1);   // model space is y down, like an entity model
-        collector.submitModelPart(this.egg, poseStack, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY,
-                null, state.color);
+        this.egg.render(poseStack, buffers.getBuffer(RenderType.entityCutout(TEXTURE)), light, OverlayTexture.NO_OVERLAY, color);
         poseStack.popPose();
     }
 }

@@ -7,7 +7,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.kasax.tamagotchi.Tamagotchi;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 /** JEI plugin (loaded only when JEI is installed): information pages. All recipes are vanilla crafting recipes. */
@@ -16,7 +16,7 @@ public class JeiCompat implements IModPlugin {
     private static IJeiRuntime runtime;
 
     @Override
-    public Identifier getPluginUid() {
+    public ResourceLocation getPluginUid() {
         return Tamagotchi.id("jei");
     }
 

@@ -10,8 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -53,12 +52,12 @@ public final class OreMarkers {
     }
 
     public static void mark(ServerLevel level, BlockPos pos, BlockState state, int ticks, int color) {
-        Display.BlockDisplay d = EntityTypes.BLOCK_DISPLAY.create(level, EntitySpawnReason.TRIGGERED);
+        Display.BlockDisplay d = EntityType.BLOCK_DISPLAY.create(level);
         if (d == null) {
             return;
         }
         d.setBlockState(state);
-        d.snapTo(pos.getX(), pos.getY(), pos.getZ(), 0, 0);
+        d.moveTo(pos.getX(), pos.getY(), pos.getZ(), 0, 0);
         d.setTransformation(new Transformation(new Vector3f(-0.01F), new Quaternionf(), new Vector3f(1.02F), new Quaternionf()));
         d.setGlowingTag(true);
         d.setGlowColorOverride(color);
@@ -67,7 +66,7 @@ public final class OreMarkers {
     }
 
     private static long expiry(Entity e) {
-        for (String t : e.entityTags()) {
+        for (String t : e.getTags()) {
             if (t.startsWith(TAG)) {
                 try {
                     return Long.parseLong(t.substring(TAG.length()));

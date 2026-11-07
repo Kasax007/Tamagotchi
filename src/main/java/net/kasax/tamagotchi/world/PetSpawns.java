@@ -12,11 +12,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.material.Fluids;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Pets live in structures: when a structure is generated, one roll decides whether its pet is
@@ -40,7 +40,7 @@ public final class PetSpawns {
     }
 
     /** Rule id (= the structure tag under {@code tamagotchi:pet_home/}) to the pet and its chance, in check order. */
-    public static final Map<Identifier, Rule> RULES = new LinkedHashMap<>();
+    public static final Map<ResourceLocation, Rule> RULES = new LinkedHashMap<>();
 
     static {
         rule("desert_dragon", PetSpecies.DESERT_DRAGON, 0.40F);
@@ -69,39 +69,39 @@ public final class PetSpawns {
             return;
         }
         BlockPos center = pieces.get(0).getBoundingBox().getCenter();
-        if ((center.getX() >> 4) != chunkPos.x() || (center.getZ() >> 4) != chunkPos.z()) {
+        if ((center.getX() >> 4) != chunkPos.x || (center.getZ() >> 4) != chunkPos.z) {
             return;
         }
-        Holder<Structure> holder = level.registryAccess().lookupOrThrow(Registries.STRUCTURE).wrapAsHolder(structure);
+        Holder<Structure> holder = level.registryAccess().registryOrThrow(Registries.STRUCTURE).wrapAsHolder(structure);
         ResourceKey<Structure> key = holder.unwrapKey().orElse(null);
         Rule rule = key == null ? null : ruleFor(holder);
         if (rule == null) {
             return;
         }
         RandomSource rng = RandomSource.create(net.minecraft.world.level.levelgen.RandomSupport.mixStafford13(
-                level.getSeed() ^ center.asLong() * 31L ^ key.identifier().hashCode()));
+                level.getSeed() ^ center.asLong() * 31L ^ key.location().hashCode()));
         if (rng.nextFloat() >= rule.chance()) {
             return;
         }
         BlockPos spot = findSpot(level, pieces, chunkBB, rng, rule.species().gait() == PetSpecies.Gait.SWIM);
         if (spot == null) {
-            Tamagotchi.LOGGER.debug("No spot for {} in {}", rule.species().id(), key.identifier());
+            Tamagotchi.LOGGER.debug("No spot for {} in {}", rule.species().id(), key.location());
             return;
         }
-        TamaPet pet = ModEntities.type(rule.species()).create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+        TamaPet pet = ModEntities.type(rule.species()).create(level.getLevel());
         if (pet == null) {
             return;
         }
-        pet.snapTo(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, rng.nextFloat() * 360F, 0);
+        pet.moveTo(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, rng.nextFloat() * 360F, 0);
         pet.setHome(spot);
-        pet.finalizeSpawn(level, level.getCurrentDifficultyAt(spot), EntitySpawnReason.STRUCTURE, null);
+        pet.finalizeSpawn(level, level.getCurrentDifficultyAt(spot), MobSpawnType.STRUCTURE, null);
         level.addFreshEntityWithPassengers(pet);
         Tamagotchi.LOGGER.debug("Spawned a wild {} at {}", rule.species().id(), spot);
     }
 
     /** The first rule whose structure tag holds this structure, or null. */
     public static @Nullable Rule ruleFor(Holder<Structure> structure) {
-        for (Map.Entry<Identifier, Rule> e : RULES.entrySet()) {
+        for (Map.Entry<ResourceLocation, Rule> e : RULES.entrySet()) {
             if (structure.is(TagKey.create(Registries.STRUCTURE, e.getKey()))) {
                 return e.getValue();
             }

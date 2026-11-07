@@ -1,5 +1,6 @@
 package net.kasax.tamagotchi.block;
 
+import com.mojang.serialization.MapCodec;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -28,25 +30,31 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A framed portrait for the wall. Click it with an empty hand and it paints your nearest pet (click again for the
  * next one); click it with a dye to change the backdrop.
  */
 public class PetPortraitBlock extends BaseEntityBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
-    private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Block.box(0, 0, 14, 16, 16, 16));
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    private static final Map<Direction, VoxelShape> SHAPES = ShapeUtil.rotateHorizontal(Block.box(0, 0, 14, 16, 16, 16));
 
     public PetPortraitBlock(Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(Dyeing.BACKDROP, DyeColor.PINK));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(PetPortraitBlock::new);
     }
 
     @Override
@@ -76,7 +84,7 @@ public class PetPortraitBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         return Dyeing.apply(stack, state, level, pos, player, Dyeing.BACKDROP);
     }
 
@@ -88,7 +96,7 @@ public class PetPortraitBlock extends BaseEntityBlock {
         List<TamaPet> mine = server.getEntitiesOfClass(TamaPet.class, new AABB(pos).inflate(24, 12, 24),
                 p -> p.isAlive() && p.isTame() && p.isOwnedBy(player));
         if (mine.isEmpty()) {
-            player.sendOverlayMessage(Component.translatable("message.tamagotchi.portrait_none"));
+            player.displayClientMessage(Component.translatable("message.tamagotchi.portrait_none"), true);
             return InteractionResult.SUCCESS;
         }
         mine.sort(Comparator.comparingDouble(p -> p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos))));
@@ -99,7 +107,7 @@ public class PetPortraitBlock extends BaseEntityBlock {
         be.paint(pick);
         server.playSound(null, pos, SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundSource.BLOCKS, 0.8F, 1.2F);
         server.sendParticles(ModParticles.HEART, pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5, 3, 0.25, 0.1, 0.25, 0);
-        player.sendOverlayMessage(Component.translatable("message.tamagotchi.portrait", pick.getName()));
+        player.displayClientMessage(Component.translatable("message.tamagotchi.portrait", pick.getName()), true);
         return InteractionResult.SUCCESS;
     }
 

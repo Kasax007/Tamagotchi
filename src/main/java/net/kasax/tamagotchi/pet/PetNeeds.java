@@ -1,8 +1,7 @@
 package net.kasax.tamagotchi.pet;
 
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.nbt.CompoundTag;
 
 /** The Tamagotchi part: four needs (0..100) that drain over time, a mood made from them, and bond. */
 public final class PetNeeds {
@@ -113,7 +112,7 @@ public final class PetNeeds {
         return (packed >>> (need.ordinal() * 8)) & 0xFF;
     }
 
-    public void save(ValueOutput out) {
+    public void save(CompoundTag out) {
         out.putFloat("Hunger", this.hunger);
         out.putFloat("Fun", this.fun);
         out.putFloat("Energy", this.energy);
@@ -121,11 +120,11 @@ public final class PetNeeds {
         out.putFloat("Bond", this.bond);
     }
 
-    public void load(ValueInput in) {
-        this.hunger = in.getFloatOr("Hunger", 80);
-        this.fun = in.getFloatOr("Fun", 80);
-        this.energy = in.getFloatOr("Energy", 90);
-        this.hygiene = in.getFloatOr("Hygiene", 90);
-        this.bond = in.getFloatOr("Bond", 0);
+    public void load(CompoundTag in) {
+        this.hunger = in.contains("Hunger") ? in.getFloat("Hunger") : 80;
+        this.fun = in.contains("Fun") ? in.getFloat("Fun") : 80;
+        this.energy = in.contains("Energy") ? in.getFloat("Energy") : 90;
+        this.hygiene = in.contains("Hygiene") ? in.getFloat("Hygiene") : 90;
+        this.bond = in.contains("Bond") ? in.getFloat("Bond") : 0;
     }
 }

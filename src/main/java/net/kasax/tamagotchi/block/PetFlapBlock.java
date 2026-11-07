@@ -9,7 +9,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -33,9 +33,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * Other mobs path around it like a wall; pets path through it (see {@link net.kasax.tamagotchi.pet.PetPathing}).
  */
 public class PetFlapBlock extends Block {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
-    private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Block.box(0, 0, 7, 16, 16, 9));
+    private static final Map<Direction, VoxelShape> SHAPES = ShapeUtil.rotateHorizontal(Block.box(0, 0, 7, 16, 16, 9));
 
     public PetFlapBlock(Properties properties) {
         super(properties);
@@ -71,7 +71,7 @@ public class PetFlapBlock extends Block {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effects, boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (!(level instanceof ServerLevel server) || !(entity instanceof TamaPet)) {
             return;
         }

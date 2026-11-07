@@ -13,7 +13,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,11 +20,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.TagValueOutput;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /** Holds one egg and the game time it hatches at; the client draws the egg wobbling harder as that time comes. */
 public class PetIncubatorBlockEntity extends BlockEntity {
@@ -55,7 +51,7 @@ public class PetIncubatorBlockEntity extends BlockEntity {
         this.hatchAt = this.level.getGameTime() + HATCH_TICKS;
         this.level.playSound(null, this.worldPosition, SoundEvents.SNIFFER_EGG_PLOP, SoundSource.BLOCKS, 0.8F, 1.3F);
         if (player != null && TamaEggItem.species(one) != null) {
-            player.sendOverlayMessage(Component.translatable("message.tamagotchi.incubating", one.getHoverName()));
+            player.displayClientMessage(Component.translatable("message.tamagotchi.incubating", one.getHoverName()), true);
         }
         changed(true);
     }
@@ -113,17 +109,17 @@ public class PetIncubatorBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
-        this.egg = input.read("egg", ItemStack.CODEC).orElse(ItemStack.EMPTY);
-        this.hatchAt = input.getLongOr("hatch_at", 0L);
+    protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
+        super.loadAdditional(input, registries);
+        this.egg = input.contains("egg") ? ItemStack.parse(registries, input.getCompound("egg")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
+        this.hatchAt = input.getLong("hatch_at");
     }
 
     @Override
-    protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        super.saveAdditional(output, registries);
         if (!this.egg.isEmpty()) {
-            output.store("egg", ItemStack.CODEC, this.egg);
+            output.put("egg", this.egg.save(registries));
         }
         output.putLong("hatch_at", this.hatchAt);
     }
@@ -135,13 +131,11 @@ public class PetIncubatorBlockEntity extends BlockEntity {
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        TagValueOutput out = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, registries);
-        saveAdditional(out);
-        return out.buildResult();
+        return saveCustomOnly(registries);
     }
 
-    @Override
-    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+    /** Called by the block when it is broken or replaced: the egg drops. */
+    public void dropEgg(BlockPos pos) {
         if (this.level != null && !this.egg.isEmpty()) {
             Containers.dropItemStack(this.level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, this.egg);
             this.egg = ItemStack.EMPTY;

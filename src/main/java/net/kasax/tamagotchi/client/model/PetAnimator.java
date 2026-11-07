@@ -9,7 +9,7 @@ import net.kasax.tamagotchi.pet.PetSpecies.Gait;
 import net.kasax.tamagotchi.pet.TamaPet;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Procedural animation for every pet, layered: look → idle → gait → poses → one-shot actions.

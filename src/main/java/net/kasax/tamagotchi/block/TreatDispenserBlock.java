@@ -1,5 +1,6 @@
 package net.kasax.tamagotchi.block;
 
+import com.mojang.serialization.MapCodec;
 import net.kasax.tamagotchi.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,27 +23,32 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A treat machine. Fill it with treats or pet food, then give it a redstone pulse (button, timer, daylight sensor):
  * it shoots one treat in an arc to the hungriest pet nearby, and the pet catches it.
  */
 public class TreatDispenserBlock extends BaseEntityBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
     private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 15, 13);
 
     public TreatDispenserBlock(Properties properties) {
         super(properties);
         registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(TRIGGERED, false));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(TreatDispenserBlock::new);
     }
 
     @Override
@@ -84,7 +90,7 @@ public class TreatDispenserBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
         boolean powered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
         boolean triggered = state.getValue(TRIGGERED);
         if (powered && !triggered) {
@@ -108,14 +114,15 @@ public class TreatDispenserBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof TreatDispenserBlockEntity be
                 ? net.minecraft.world.inventory.AbstractContainerMenu.getRedstoneSignalFromContainer(be) : 0;
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
-        Containers.updateNeighboursAfterDestroy(state, level, pos);
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        Containers.dropContentsOnDestroy(state, newState, level, pos);
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

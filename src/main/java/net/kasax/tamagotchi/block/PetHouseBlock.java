@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -18,8 +19,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** A little dog house. Pets shelter inside from rain and thunder (the inside is hollow). */
 public class PetHouseBlock extends Block {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
-    private static final Map<Direction, VoxelShape> SHAPES = Shapes.rotateHorizontal(Shapes.or(
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    private static final Map<Direction, VoxelShape> SHAPES = ShapeUtil.rotateHorizontal(Shapes.or(
             Block.box(0, 0, 0, 16, 1, 16),       // floor
             Block.box(0, 1, 14, 16, 12, 16),     // back wall
             Block.box(0, 1, 0, 2, 12, 16),       // side walls

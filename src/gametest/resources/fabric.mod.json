@@ -5,7 +5,7 @@
   "name": "Tamagotchi tests",
   "environment": "*",
   "entrypoints": {
-    "fabric-client-gametest": [
+    "client": [
       "net.kasax.tamagotchi.test.PetGallery",
       "net.kasax.tamagotchi.test.BlockGallery"
     ]

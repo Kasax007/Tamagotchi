@@ -1,6 +1,7 @@
 package net.kasax.tamagotchi.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -12,10 +13,9 @@ import net.kasax.tamagotchi.pet.PetSpecies;
 import net.kasax.tamagotchi.pet.TamaPet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.joml.Vector3f;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The pets' own models, posed sitting and smiling, for plushies, portraits and their items. One model and one pose
@@ -65,21 +65,21 @@ public final class PetStatues {
     }
 
     /** Draws the pet (entity-model space: y down, 24 px = the ground) on the origin, facing -Z. */
-    public void submit(PetSpecies s, PetRenderState pose, PoseStack poseStack, SubmitNodeCollector collector, int light, int outline) {
-        submit(s, pose, poseStack, collector, light, outline, null);
+    public void render(PetSpecies s, PetRenderState pose, PoseStack poseStack, MultiBufferSource buffers, int light) {
+        render(s, pose, poseStack, buffers, light, null);
     }
 
     /** The same, with a plush heart tag sewn on. */
-    public void submit(PetSpecies s, PetRenderState pose, PoseStack poseStack, SubmitNodeCollector collector, int light, int outline,
-                       @Nullable ModelPart tag) {
+    public void render(PetSpecies s, PetRenderState pose, PoseStack poseStack, MultiBufferSource buffers, int light, @Nullable ModelPart tag) {
         poseStack.pushPose();
         poseStack.scale(-1, -1, 1);
         poseStack.translate(0, -1.501F, 0);
         PetModel model = this.models.get(s);
-        collector.submitModel(model, pose, poseStack, model.renderType(pose.texture), light, OverlayTexture.NO_OVERLAY, outline);
+        Vector3f anchor = tag == null ? null : this.tagAnchors.computeIfAbsent(s, k -> PlushTag.anchor(model, this.poses.get(k)));
+        model.pose(pose);
+        model.renderToBuffer(poseStack, buffers.getBuffer(model.renderType(pose.texture)), light, OverlayTexture.NO_OVERLAY, -1);
         if (tag != null) {
-            PlushTag.submit(tag, this.tagAnchors.computeIfAbsent(s, k -> PlushTag.anchor(model, this.poses.get(k))), poseStack, collector,
-                    light, outline);
+            PlushTag.render(tag, anchor, poseStack, buffers, light);
         }
         poseStack.popPose();
     }

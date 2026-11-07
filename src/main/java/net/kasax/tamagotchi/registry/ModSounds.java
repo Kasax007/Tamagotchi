@@ -6,7 +6,7 @@ import net.kasax.tamagotchi.Tamagotchi;
 import net.kasax.tamagotchi.pet.PetSpecies;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 /** Every sound event of the mod; the files and pitch tweaks live in assets/tamagotchi/sounds.json. */
@@ -59,7 +59,7 @@ public final class ModSounds {
     }
 
     private static SoundEvent reg(String name) {
-        Identifier id = Tamagotchi.id(name);
+        ResourceLocation id = Tamagotchi.id(name);
         SoundEvent ev = SoundEvent.createVariableRangeEvent(id);
         BY_NAME.put(name, ev);
         return ev;
