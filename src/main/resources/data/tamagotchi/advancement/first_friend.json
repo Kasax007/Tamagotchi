@@ -4,121 +4,141 @@
     "desert_dragon": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:desert_dragon"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:desert_dragon"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "jungle_dragon": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:jungle_dragon"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:jungle_dragon"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "tide_dragon": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:tide_dragon"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:tide_dragon"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "frost_penguin": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:frost_penguin"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:frost_penguin"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "ember_pup": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:ember_pup"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:ember_pup"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "sculk_wisp": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:sculk_wisp"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:sculk_wisp"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "void_kitten": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:void_kitten"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:void_kitten"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "pebble_golem": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:pebble_golem"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:pebble_golem"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "hex_toad": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:hex_toad"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:hex_toad"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     },
     "mimic": {
       "trigger": "minecraft:tame_animal",
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "type": "tamagotchi:mimic"
+        "entity": [
+          {
+            "entity": "this",
+            "predicate": {
+              "type": "tamagotchi:mimic"
+            },
+            "condition": "minecraft:entity_properties"
           }
-        }
+        ]
       }
     }
   },

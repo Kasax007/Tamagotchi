@@ -9,7 +9,8 @@ What changes for 1.21.1:
 * recipes: ingredients are objects ({"item": ...} / {"tag": ...}), not plain strings
 * recipe advancements: the recipe_unlocked condition is "recipe", not "recipes"
 * loot tables: "conditions" / "functions" lists with "condition" / "function" keys (26.x: "condition" / "modifier")
-* advancement entity predicates: {"type": ...} (26.x: {"minecraft:entity_type": ...})
+* advancement entity predicates: {"type": ...} (26.x: {"minecraft:entity_type": ...}); an entity checked with a loot
+  condition is a list of conditions
 * item models: 1.21.1 has no assets/<ns>/items/ definitions. Each one becomes models/item/<id>.json:
   - a plain model reference becomes a child model ({"parent": ...});
   - a select on the block_state colour (dyed bed, basket, egg lamp, portrait) becomes the plain block model, the
@@ -92,10 +93,17 @@ def _predicates(x):
     return x
 
 
+LOOT_CONDITIONS = {'minecraft:entity_properties', 'minecraft:all_of', 'minecraft:any_of', 'minecraft:inverted'}
+
+
 def advancement(body):
     out = _predicates(body)
     for c in out.get('criteria', {}).values():
         cond = c.get('conditions', {})
+        # an entity given as one loot condition (26.x) is a list of conditions on 1.21.1 ("condition", not "type")
+        for k, v in list(cond.items()):
+            if isinstance(v, dict) and v.get('type') in LOOT_CONDITIONS:
+                cond[k] = [_loot_cond(v)]
         if c.get('trigger') == 'minecraft:recipe_unlocked' and 'recipes' in cond:
             cond['recipe'] = cond.pop('recipes')
     return out
