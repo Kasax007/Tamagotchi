@@ -559,11 +559,20 @@ public class PetGallery implements FabricClientGameTest {
             p.setHealth(4F);
         });
         boolean[] showing = {false};
+        // watched on the server's own ticks (this harness does not run client and server in lockstep): the moment the
+        // pet holds the apple up, the owner is healed, before the pet can hand it over
+        server.onServerTick(s -> {
+            if (!showing[0] && !s.overworld().getEntitiesOfClass(TamaPet.class, player(s).getBoundingBox().inflate(40)).isEmpty()
+                    && onlyPet(s).getCarried().is(Items.GOLDEN_APPLE)) {
+                showing[0] = true;
+                player(s).setHealth(player(s).getMaxHealth());
+            }
+        });
         for (int i = 0; i < 80 && !showing[0]; i++) {
             ctx.waitTicks(1);
-            server.runOnServer(s -> showing[0] = onlyPet(s).getCarried().is(Items.GOLDEN_APPLE));
         }
-        server.runOnServer(s -> player(s).setHealth(player(s).getMaxHealth()));   // healed before the pet hands it over
+        server.onServerTick(null);
+        server.runOnServer(s -> player(s).setHealth(player(s).getMaxHealth()));
         ctx.waitTicks(80);
         int[] apples = {0};
         server.runOnServer(s -> {

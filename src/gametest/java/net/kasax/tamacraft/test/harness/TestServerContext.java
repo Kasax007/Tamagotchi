@@ -12,7 +12,12 @@ public final class TestServerContext {
     }
 
     public void runCommand(String command) {
-        runOnServer(s -> s.getCommands().performPrefixedCommand(s.createCommandSourceStack(), command));
+        runOnServer(s -> s.getCommands().performPrefixedCommand(s.createCommandSourceStack().withSuppressedOutput(), command));
+    }
+
+    /** Code that runs at the end of every server tick until it is set to null (one at a time). */
+    public void onServerTick(Consumer<MinecraftServer> action) {
+        TestRunner.serverTick = action;
     }
 
     public void runOnServer(Consumer<MinecraftServer> action) {

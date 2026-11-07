@@ -89,6 +89,7 @@ public final class ClientGameTestContext {
 
     /** A screenshot of the last frame, into run/screenshots/&lt;name&gt;.png. */
     public void takeScreenshot(TestScreenshotOptions options) {
+        runOnClient(mc -> mc.getToasts().clear());   // like Fabric's test client: no toasts in the pictures
         waitTick();
         String name = options.name() + ".png";
         runOnClient(mc -> Screenshot.grab(mc.gameDirectory, name, mc.getMainRenderTarget(), msg -> { }));

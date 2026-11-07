@@ -53,7 +53,7 @@ public final class TestWorldBuilder {
             LevelSettings settings = new LevelSettings(name, GameType.CREATIVE, false, Difficulty.NORMAL, true, rules,
                     WorldDataConfiguration.DEFAULT);
             OptionalLong parsed = WorldOptions.parseSeed(seedText);
-            WorldOptions options = new WorldOptions(parsed.orElse(flat ? 1L : WorldOptions.randomSeed()), true, false);
+            WorldOptions options = new WorldOptions(parsed.orElse(flat ? 1L : WorldOptions.randomSeed()), !flat, false);
             ResourceKey<WorldPreset> preset = flat ? WorldPresets.FLAT : WorldPresets.NORMAL;
             mc.createWorldOpenFlows().createFreshLevel(name, settings, options,
                     access -> access.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(preset).value().createWorldDimensions(),
