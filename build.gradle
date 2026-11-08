@@ -153,7 +153,7 @@ publishMods {
 	}
 	if (toGithub) {
 		github {
-			repository = "Kasax007/Tamagotchi"
+			repository = "Kasax007/tamacraft"
 			accessToken = providers.environmentVariable("GITHUB_TOKEN")
 			commitish = providers.environmentVariable("GITHUB_SHA").orElse("port/1.21.1")
 			tagName = "v${project.version}"
