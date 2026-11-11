@@ -1,6 +1,5 @@
 package net.kasax.tamacraft.registry;
 
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.kasax.tamacraft.Tamacraft;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -8,22 +7,27 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 /** Custom particles: sleep Zs, sparkles, emote bubbles and the like. */
 public final class ModParticles {
-    public static final SimpleParticleType ZZZ = FabricParticleTypes.simple();
-    public static final SimpleParticleType HEART = FabricParticleTypes.simple();
-    public static final SimpleParticleType SPARKLE = FabricParticleTypes.simple();
-    public static final SimpleParticleType SWEAT = FabricParticleTypes.simple();
-    public static final SimpleParticleType STINK = FabricParticleTypes.simple();
-    public static final SimpleParticleType LASER_DOT = FabricParticleTypes.simple(true);
-    public static final SimpleParticleType LEAF = FabricParticleTypes.simple();
-    public static final SimpleParticleType SONAR = FabricParticleTypes.simple(true);
-    public static final SimpleParticleType EMOTE_HUNGRY = FabricParticleTypes.simple();
-    public static final SimpleParticleType EMOTE_SLEEPY = FabricParticleTypes.simple();
-    public static final SimpleParticleType EMOTE_DIRTY = FabricParticleTypes.simple();
-    public static final SimpleParticleType EMOTE_BORED = FabricParticleTypes.simple();
-    public static final SimpleParticleType EMOTE_SAD = FabricParticleTypes.simple();
-    public static final SimpleParticleType EMOTE_LOVE = FabricParticleTypes.simple();
+    public static final SimpleParticleType ZZZ = simple(false);
+    public static final SimpleParticleType HEART = simple(false);
+    public static final SimpleParticleType SPARKLE = simple(false);
+    public static final SimpleParticleType SWEAT = simple(false);
+    public static final SimpleParticleType STINK = simple(false);
+    public static final SimpleParticleType LASER_DOT = simple(true);
+    public static final SimpleParticleType LEAF = simple(false);
+    public static final SimpleParticleType SONAR = simple(true);
+    public static final SimpleParticleType EMOTE_HUNGRY = simple(false);
+    public static final SimpleParticleType EMOTE_SLEEPY = simple(false);
+    public static final SimpleParticleType EMOTE_DIRTY = simple(false);
+    public static final SimpleParticleType EMOTE_BORED = simple(false);
+    public static final SimpleParticleType EMOTE_SAD = simple(false);
+    public static final SimpleParticleType EMOTE_LOVE = simple(false);
 
     private ModParticles() {
+    }
+
+    private static SimpleParticleType simple(boolean alwaysShow) {
+        return new SimpleParticleType(alwaysShow) {
+        };
     }
 
     private static void reg(String name, SimpleParticleType type) {

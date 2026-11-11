@@ -1,8 +1,6 @@
 package net.kasax.tamacraft.client.model;
 
 import java.util.function.Function;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.render.PetRenderState;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.minecraft.client.model.EntityModel;
@@ -14,7 +12,6 @@ import org.jspecify.annotations.Nullable;
  * layers; all motion is done by {@link PetAnimator}, which works on bone names, so any pet that
  * has e.g. a "tail" bone gets tail animations for free.
  */
-@Environment(EnvType.CLIENT)
 public class PetModel extends EntityModel<PetRenderState> {
     final PetSpecies species;
     final @Nullable ModelPart body, head, jaw, earL, earR, tail, tail2, tail3, wingL, wingR;

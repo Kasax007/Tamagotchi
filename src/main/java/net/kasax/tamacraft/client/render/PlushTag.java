@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.client.model.PetModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -19,7 +17,6 @@ import net.minecraft.resources.Identifier;
 import org.joml.Vector3f;
 
 /** The little heart tag sewn to the side of every plush, so it reads as a cuddly toy and not as a tiny pet. */
-@Environment(EnvType.CLIENT)
 public final class PlushTag {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Tamacraft.id("plush_tag"), "main");
     private static final Identifier TEXTURE = Tamacraft.id("textures/entity/plush_tag.png");

@@ -4,8 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.TamacraftClient;
 import net.kasax.tamacraft.client.model.PetModel;
 import net.kasax.tamacraft.pet.PetSpecies;
@@ -21,7 +19,6 @@ import org.jspecify.annotations.Nullable;
  * The pets' own models, posed sitting and smiling, for plushies, portraits and their items. One model and one pose
  * per kind; {@link #submit} draws one with its feet on the current origin, facing -Z.
  */
-@Environment(EnvType.CLIENT)
 public final class PetStatues {
     private final Map<PetSpecies, PetModel> models = new EnumMap<>(PetSpecies.class);
     private final Map<PetSpecies, PetRenderState> poses = new EnumMap<>(PetSpecies.class);

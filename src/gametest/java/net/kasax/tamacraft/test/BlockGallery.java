@@ -2,11 +2,11 @@ package net.kasax.tamacraft.test;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
-import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
+import net.kasax.tamacraft.test.harness.FabricClientGameTest;
+import net.kasax.tamacraft.test.harness.ClientGameTestContext;
+import net.kasax.tamacraft.test.harness.TestServerContext;
+import net.kasax.tamacraft.test.harness.TestSingleplayerContext;
+import net.kasax.tamacraft.test.harness.TestScreenshotOptions;
 import net.kasax.tamacraft.block.Dyeing;
 import net.kasax.tamacraft.block.EggLampBlock;
 import net.kasax.tamacraft.block.PetFlapBlock;
@@ -337,7 +337,7 @@ public class BlockGallery implements FabricClientGameTest {
         ctx.runOnClient(mc -> {
             CreativeModeInventoryScreen inv = new CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), false);
             mc.gui.setScreen(inv);
-            inv.setSelectedTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
+            ((net.kasax.tamacraft.test.mixin.CreativeScreenAccessor) inv).tamatest$selectTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
         });
         ctx.waitTicks(10);
         shot("49_creative_tab");

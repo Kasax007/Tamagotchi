@@ -1,8 +1,6 @@
 package net.kasax.tamacraft.client.particle;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.kasax.tamacraft.registry.ModParticles;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -14,24 +12,22 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 /** Client particle behaviours for the mod's particle types. */
-@Environment(EnvType.CLIENT)
 public final class PetParticles {
     private PetParticles() {
     }
 
-    public static void register() {
-        ParticleProviderRegistry r = ParticleProviderRegistry.getInstance();
-        r.register(ModParticles.ZZZ, sprites -> provider(sprites, Kind.ZZZ));
-        r.register(ModParticles.HEART, sprites -> provider(sprites, Kind.HEART));
-        r.register(ModParticles.SPARKLE, sprites -> provider(sprites, Kind.SPARKLE));
-        r.register(ModParticles.SWEAT, sprites -> provider(sprites, Kind.SWEAT));
-        r.register(ModParticles.STINK, sprites -> provider(sprites, Kind.STINK));
-        r.register(ModParticles.LASER_DOT, sprites -> provider(sprites, Kind.LASER));
-        r.register(ModParticles.LEAF, sprites -> provider(sprites, Kind.LEAF));
-        r.register(ModParticles.SONAR, sprites -> provider(sprites, Kind.SONAR));
+    public static void register(RegisterParticleProvidersEvent r) {
+        r.registerSpriteSet(ModParticles.ZZZ, sprites -> provider(sprites, Kind.ZZZ));
+        r.registerSpriteSet(ModParticles.HEART, sprites -> provider(sprites, Kind.HEART));
+        r.registerSpriteSet(ModParticles.SPARKLE, sprites -> provider(sprites, Kind.SPARKLE));
+        r.registerSpriteSet(ModParticles.SWEAT, sprites -> provider(sprites, Kind.SWEAT));
+        r.registerSpriteSet(ModParticles.STINK, sprites -> provider(sprites, Kind.STINK));
+        r.registerSpriteSet(ModParticles.LASER_DOT, sprites -> provider(sprites, Kind.LASER));
+        r.registerSpriteSet(ModParticles.LEAF, sprites -> provider(sprites, Kind.LEAF));
+        r.registerSpriteSet(ModParticles.SONAR, sprites -> provider(sprites, Kind.SONAR));
         for (SimpleParticleType t : new SimpleParticleType[]{ModParticles.EMOTE_HUNGRY, ModParticles.EMOTE_SLEEPY,
                 ModParticles.EMOTE_DIRTY, ModParticles.EMOTE_BORED, ModParticles.EMOTE_SAD, ModParticles.EMOTE_LOVE}) {
-            r.register(t, sprites -> provider(sprites, Kind.EMOTE));
+            r.registerSpriteSet(t, sprites -> provider(sprites, Kind.EMOTE));
         }
     }
 

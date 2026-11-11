@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.model.PetModel;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.minecraft.client.model.geom.ModelPart;
@@ -13,7 +11,6 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 /** Draws a fetched toy in the pet's mouth (or arms), following the head bone. */
-@Environment(EnvType.CLIENT)
 public class PetHeldItemLayer extends RenderLayer<PetRenderState, PetModel> {
     public PetHeldItemLayer(RenderLayerParent<PetRenderState, PetModel> parent) {
         super(parent);

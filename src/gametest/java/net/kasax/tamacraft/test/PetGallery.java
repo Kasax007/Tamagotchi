@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
-import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
-import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
+import net.kasax.tamacraft.test.harness.FabricClientGameTest;
+import net.kasax.tamacraft.test.harness.ClientGameTestContext;
+import net.kasax.tamacraft.test.harness.TestServerContext;
+import net.kasax.tamacraft.test.harness.TestSingleplayerContext;
+import net.kasax.tamacraft.test.harness.TestScreenshotOptions;
 import net.kasax.tamacraft.block.FoodBowlBlock;
 import net.kasax.tamacraft.block.PetBathBlock;
 import net.kasax.tamacraft.block.RunningWheelBlock;
@@ -270,7 +270,7 @@ public class PetGallery implements FabricClientGameTest {
         ctx.runOnClient(mc -> {
             CreativeModeInventoryScreen inv = new CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), false);
             mc.gui.setScreen(inv);
-            inv.setSelectedTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
+            ((net.kasax.tamacraft.test.mixin.CreativeScreenAccessor) inv).tamatest$selectTab(BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(ModTab.KEY));
         });
         ctx.waitTicks(10);
         shot("31_creative_tab");
@@ -308,8 +308,8 @@ public class PetGallery implements FabricClientGameTest {
 
     /** With JEI or REI loaded (-PwithJei / -PwithRei): list the mod's items and open a recipe, nothing else. */
     private boolean recipeViewerCheck() {
-        String viewer = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("jei") ? "jei"
-                : net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("roughlyenoughitems") ? "rei" : null;
+        String viewer = net.neoforged.fml.ModList.get().isLoaded("jei") ? "jei"
+                : net.neoforged.fml.ModList.get().isLoaded("roughlyenoughitems") ? "rei" : null;
         if (viewer == null) {
             return false;
         }

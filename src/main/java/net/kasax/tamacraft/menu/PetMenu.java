@@ -1,6 +1,5 @@
 package net.kasax.tamacraft.menu;
 
-import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.kasax.tamacraft.pet.TamaPet;
 import net.kasax.tamacraft.registry.ModMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -125,10 +124,10 @@ public class PetMenu extends AbstractContainerMenu {
     }
 
     /** Opens the menu for a pet; the client learns which entity and how many slots. */
-    public record Provider(TamaPet pet) implements ExtendedMenuProvider<Data> {
-        @Override
-        public Data getScreenOpeningData(ServerPlayer player) {
-            return new Data(this.pet.getId(), this.pet.storageSlots());
+    public record Provider(TamaPet pet) implements net.minecraft.world.MenuProvider {
+        /** What the client is sent with the menu (see {@link ModMenus#PET_MENU}). */
+        public void writeData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+            Data.CODEC.encode(buf, new Data(this.pet.getId(), this.pet.storageSlots()));
         }
 
         @Override

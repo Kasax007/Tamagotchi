@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.kasax.tamacraft.pet.TamaPet;
 import net.kasax.tamacraft.registry.ModBlocks;
@@ -29,7 +27,6 @@ import net.minecraft.world.item.Items;
  * The Tamacon: a pink handheld with an LCD that explains everything about the pets. A contents page links to
  * chapters; chapter text comes from the language file ({@code tamacon.tamacraft.<id>}) and is paged to fit.
  */
-@Environment(EnvType.CLIENT)
 public class TamaconScreen extends Screen {
     private static final int W = 240, H = 186;
     private static final int SHELL = 0xFFF4AFC8, SHELL_DARK = 0xFFC86E92, SHELL_LIGHT = 0xFFFFD6E5;

@@ -3,7 +3,6 @@ package net.kasax.tamacraft.registry;
 import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.kasax.tamacraft.pet.TamaPet;
 import net.minecraft.core.Registry;
@@ -49,7 +48,13 @@ public final class ModEntities {
     public static void initialize() {
         for (PetSpecies s : PetSpecies.values()) {
             Registry.register(BuiltInRegistries.ENTITY_TYPE, ResourceKey.create(Registries.ENTITY_TYPE, s.key()), TYPES.get(s));
-            FabricDefaultAttributeRegistry.register(TYPES.get(s), TamaPet.createAttributes(s));
+        }
+    }
+
+    /** The attributes of every pet (NeoForge asks for them once the registries are filled). */
+    public static void registerAttributes(net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent event) {
+        for (PetSpecies s : PetSpecies.values()) {
+            event.put(TYPES.get(s), TamaPet.createAttributes(s).build());
         }
     }
 }

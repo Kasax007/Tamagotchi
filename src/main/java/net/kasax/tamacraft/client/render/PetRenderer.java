@@ -3,8 +3,6 @@ package net.kasax.tamacraft.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.HashMap;
 import java.util.Map;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.client.model.PetModel;
 import net.kasax.tamacraft.pet.PetAction;
@@ -19,7 +17,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import org.jspecify.annotations.Nullable;
 
 /** Renders every pet: generated model, expression textures, glow layer and a carried toy. */
-@Environment(EnvType.CLIENT)
 public class PetRenderer extends MobRenderer<TamaPet, PetRenderState, PetModel> {
     public static final float MODEL_SCALE = 0.8F;
     private static final Map<Identifier, Boolean> EXISTS = new HashMap<>();

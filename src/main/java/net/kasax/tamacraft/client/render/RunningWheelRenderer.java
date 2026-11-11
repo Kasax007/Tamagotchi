@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.block.RunningWheelBlock;
 import net.kasax.tamacraft.block.RunningWheelBlockEntity;
@@ -29,7 +27,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 /** Draws the spinning wheel of the running wheel; speeds up while a pet runs and coasts to a stop. */
-@Environment(EnvType.CLIENT)
 public class RunningWheelRenderer implements BlockEntityRenderer<RunningWheelBlockEntity, RunningWheelRenderer.State> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Tamacraft.id("running_wheel"), "main");
     private static final Identifier TEXTURE = Tamacraft.id("textures/entity/running_wheel.png");

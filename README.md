@@ -1,5 +1,9 @@
 # Tamacraft
 
+> **Branch `port/26.3-neoforge`:** Tamacraft 1.3.0 for **Minecraft 26.3 on NeoForge** (version `1.3.0+26.3-neoforge`,
+> NeoForge 26.3.x, no Fabric API), the same pets, furniture and features as the Fabric release `1.3.0` with the same
+> ids and save data. Differences in building and testing are listed under [Building](#building).
+
 A Fabric mod for **Minecraft 26.3**: ten rare pets hide in the world's structures. Find one, tame it with a
 **Tamacraft Heart**, and look after it – feed it, play with it, keep it clean and let it sleep – and it becomes
 your best friend: it follows you, carries a backpack, helps you fight, feeds you golden apples when you are hurt
@@ -129,7 +133,18 @@ push the tag `v<version>` (a tag that does not match `mod_version` is refused) o
 
 ## Building
 
-Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,
+On this branch (NeoForge): Java 25, `./gradlew build` (ModDevGradle, NeoForge 26.3.0.102). The loader layer is
+NeoForge's: registration on the first `RegisterEvent` (the registry classes are the same as on Fabric), NeoForge's
+client registration events (layers, renderers, block tint sources, the plush special model renderer, particles,
+screens) and the access transformer `META-INF/accesstransformer.cfg`. JEI and REI are optional (`-PwithJei` /
+`-PwithRei` load them into the client test). `src/gametest` is a second, never shipped mod: the client tests are the
+Fabric build's, run by a small harness with the names of Fabric's client game-test API
+(`net.kasax.tamacraft.test.harness`, `xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks]` with
+`SDL_VIDEO_FORCE_EGL=1`), plus server game tests (`./gradlew runGameTestServer`) and a registry dump
+(`./gradlew runRegistryDump -PdumpTo=file`, the same lines as the Fabric build's for a diff). The video harness
+(`src/film`) stays on the Fabric branch `26.3`.
+
+On the Fabric branch `26.3`: Java 25, `./gradlew build`. Art and sound sources live in `tools/` (`tools/petart`, `tools/sprites`,
 `tools/sfx`, `tools/gui`, `tools/data`) and regenerate every texture, model and sound. The client game test
 `./gradlew runClientGameTest` renders a review gallery into `build/run/clientGameTest/screenshots` and logs
 functional checks as `[TamaTest] PASS/FAIL`. Headless: start `Xvfb :98`, then run it with

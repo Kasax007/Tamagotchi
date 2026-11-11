@@ -1,7 +1,5 @@
 package net.kasax.tamacraft.client.render;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.pet.PetAction;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -10,7 +8,6 @@ import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 
 /** Per-frame snapshot of a pet for the model, the animator and the layers. */
-@Environment(EnvType.CLIENT)
 public class PetRenderState extends LivingEntityRenderState {
     public PetSpecies species = PetSpecies.DESERT_DRAGON;
     public int flags;

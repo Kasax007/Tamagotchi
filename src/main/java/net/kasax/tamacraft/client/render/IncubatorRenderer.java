@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.block.PetIncubatorBlockEntity;
 import net.kasax.tamacraft.item.TamaEggItem;
@@ -30,7 +28,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 /** The egg in the incubator: a speckled egg in the pet's colours that wobbles harder the closer it is to hatching. */
-@Environment(EnvType.CLIENT)
 public class IncubatorRenderer implements BlockEntityRenderer<PetIncubatorBlockEntity, IncubatorRenderer.State> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Tamacraft.id("incubator_egg"), "main");
     private static final Identifier TEXTURE = Tamacraft.id("textures/entity/incubator_egg.png");

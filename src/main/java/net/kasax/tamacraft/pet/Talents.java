@@ -2,7 +2,6 @@ package net.kasax.tamacraft.pet;
 
 import java.util.List;
 import java.util.Optional;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.kasax.tamacraft.pet.PetNeeds.Mood;
 import net.kasax.tamacraft.pet.PetNeeds.Need;
 import net.kasax.tamacraft.registry.ModParticles;
@@ -17,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
+import net.neoforged.neoforge.common.Tags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -224,8 +224,8 @@ public final class Talents {
 
     /** Best first. {@code c:ores} catches every other ore, including the ones other mods add (tin, silver, ruby...). */
     private static final List<TagKey<Block>> ORES = List.of(BlockItemTags.DIAMOND_ORES.block(), BlockItemTags.EMERALD_ORES.block(),
-            ConventionalBlockTags.NETHERITE_SCRAP_ORES, BlockTags.GOLD_ORES, BlockItemTags.LAPIS_ORES.block(),
-            BlockItemTags.REDSTONE_ORES.block(), BlockTags.IRON_ORES, ConventionalBlockTags.ORES, BlockTags.COPPER_ORES,
+            Tags.BlockItems.ORES_NETHERITE_SCRAP.block(), BlockTags.GOLD_ORES, BlockItemTags.LAPIS_ORES.block(),
+            BlockItemTags.REDSTONE_ORES.block(), BlockTags.IRON_ORES, Tags.BlockItems.ORES.block(), BlockTags.COPPER_ORES,
             BlockItemTags.COAL_ORES.block());
 
     /** How good an ore the Pebble Golem thinks this is: 0 is the best, -1 is no ore at all. */

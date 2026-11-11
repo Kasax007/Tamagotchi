@@ -6,8 +6,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.function.Consumer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.TamacraftClient;
 import net.kasax.tamacraft.client.model.PetModel;
 import net.kasax.tamacraft.pet.PetSpecies;
@@ -20,7 +18,6 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 /** The plush items: the same little pet as the placed plush (item model type tamacraft:plush). */
-@Environment(EnvType.CLIENT)
 public class PlushSpecialRenderer implements NoDataSpecialModelRenderer {
     private final PetSpecies species;
     private final PetModel model;
@@ -65,7 +62,6 @@ public class PlushSpecialRenderer implements NoDataSpecialModelRenderer {
         this.model.root().getExtentsForGui(poseStack, output);
     }
 
-    @Environment(EnvType.CLIENT)
     public record Unbaked(PetSpecies species) implements NoDataSpecialModelRenderer.Unbaked {
         private static final Codec<PetSpecies> SPECIES = Codec.STRING.comapFlatMap(id -> {
             PetSpecies s = PetSpecies.byId(id);

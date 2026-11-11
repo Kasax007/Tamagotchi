@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.kasax.tamacraft.test.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "CreativeScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,8 +1,6 @@
 package net.kasax.tamacraft.client.screen;
 
 import java.util.List;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.menu.PetMenu;
 import net.kasax.tamacraft.pet.PetNeeds.Mood;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.player.Inventory;
  * The pet screen, styled like a little virtual-pet device: a pink shell, a green LCD with the
  * pet, its mood, needs, bond and talent, and the backpack slots next to it.
  */
-@Environment(EnvType.CLIENT)
 public class PetScreen extends AbstractContainerScreen<PetMenu> {
     private static final Identifier ICONS = Tamacraft.id("textures/gui/pet_icons.png");
     private static final Identifier SLOT = Identifier.withDefaultNamespace("container/slot");

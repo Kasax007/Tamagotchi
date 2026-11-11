@@ -1,11 +1,13 @@
 package net.kasax.tamacraft.world;
 
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+
 import com.mojang.math.Transformation;
 import java.util.HashSet;
 import java.util.Set;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Display;
@@ -30,15 +32,15 @@ public final class OreMarkers {
     }
 
     public static void initialize() {
-        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof Display.BlockDisplay d && expiry(d) >= 0) {
+        NeoForge.EVENT_BUS.addListener((EntityJoinLevelEvent event) -> {
+            if (!event.getLevel().isClientSide() && event.getEntity() instanceof Display.BlockDisplay d && expiry(d) >= 0) {
                 LIVE.add(d);
             }
         });
         // the next world in this game must not keep the last one's markers (and with them its level) alive
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> LIVE.clear());
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            if (LIVE.isEmpty() || server.getTickCount() % 20 != 0) {
+        NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event) -> LIVE.clear());
+        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
+            if (LIVE.isEmpty() || event.getServer().getTickCount() % 20 != 0) {
                 return;
             }
             LIVE.removeIf(d -> {
