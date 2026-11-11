@@ -2,6 +2,18 @@
 
 Each release uploads the section of its version as the changelog on CurseForge, Modrinth and GitHub.
 
+## 1.3.0+1.21.1-neoforge
+
+Tamacraft 1.3.0 for Minecraft 1.21.1 on **NeoForge** (21.1.x, no Fabric API needed): the same pets, furniture and
+features as the Fabric version 1.3.0+1.21.1, with the same ids and save data, so worlds, data packs and modpack files
+work the same on both loaders.
+
+- Ten rare pets to find, tame and look after, with needs, moods, bond, talents, toys, the Tama Pager and the Tamacon
+- All 25 pieces of furniture, the plushies and the dyeable colours; pets live in the same structures (the
+  `tamacraft:pet_home/...` structure tags)
+- Ids from before the rename (`tamagotchi:...`) are read as the new `tamacraft:...` ones
+- JEI and REI (both optional) show the info pages of the pets and items
+
 ## 1.3.0+1.21.1
 
 The Minecraft 1.21.1 version of Tamacraft 1.3.0: the same pets, furniture and features as Tamacraft 1.3.0 for 26.3,

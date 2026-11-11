@@ -1,7 +1,8 @@
 # Tamacraft
 
-> **Branch `port/1.21.1`:** Tamacraft 1.3.0 for **Minecraft 1.21.1** (Fabric, version `1.3.0+1.21.1`), the same
-> pets, furniture and features as the 26.3 release. Differences in building and testing are listed under
+> **Branch `port/1.21.1-neoforge`:** Tamacraft 1.3.0 for **Minecraft 1.21.1 on NeoForge** (version
+> `1.3.0+1.21.1-neoforge`, NeoForge 21.1.x, no Fabric API), the same pets, furniture and features as the Fabric
+> version `1.3.0+1.21.1` with the same ids and save data. Differences in building and testing are listed under
 > [Building](#building).
 
 A Fabric mod for **Minecraft 26.3**: ten rare pets hide in the world's structures. Find one, tame it with a
@@ -133,7 +134,16 @@ push the tag `v<version>` (a tag that does not match `mod_version` is refused) o
 
 ## Building
 
-On this branch (Minecraft 1.21.1): Java 21, `./gradlew build`; Loom remaps with the official Mojang mappings.
+On this branch (Minecraft 1.21.1, NeoForge): Java 21, `./gradlew build` (ModDevGradle, NeoForge 21.1.265, official
+Mojang names). The loader layer is NeoForge's: registration on the first `RegisterEvent` (the registry classes are the
+same as on Fabric), NeoForge's client registration events, `IClientItemExtensions` for the plush items and the access
+transformer `META-INF/accesstransformer.cfg`; the glowing model parts carry NeoForge's per-element light data
+(`neoforge_data`) next to `light_emission`. JEI and REI are optional (`-PwithJei` / `-PwithRei` load them into the
+client test). `src/gametest` is a second, never shipped mod with the client test harness, the server game tests
+(`./gradlew runGameTestServer`) and a registry dump (`./gradlew runRegistryDump -PdumpTo=file`, the same lines as the
+Fabric build's for a diff).
+
+On the Fabric branch `port/1.21.1`: Java 21, `./gradlew build`; Loom remaps with the official Mojang mappings.
 `tools/data/gen_data.py` ends with the 1.21.1 target `tools/data/mc1211.py`, which turns the generated 26.x data and
 item definitions into the 1.21.1 formats. Fabric API has no client game tests for 1.21.1, so `src/gametest` brings a
 small harness of its own (`net.kasax.tamacraft.test.harness`, real mouse and key input through the game's GLFW
