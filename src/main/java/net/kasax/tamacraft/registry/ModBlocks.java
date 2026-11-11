@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.block.BouncyMushroomBlock;
 import net.kasax.tamacraft.block.DyeablePetBedBlock;
@@ -93,17 +92,17 @@ public final class ModBlocks {
     }
 
     public static final BlockEntityType<RunningWheelBlockEntity> RUNNING_WHEEL_BE =
-            FabricBlockEntityTypeBuilder.create(RunningWheelBlockEntity::new, RUNNING_WHEEL).build();
+            BlockEntityType.Builder.of(RunningWheelBlockEntity::new, RUNNING_WHEEL).build(null);
     public static final BlockEntityType<PetPortraitBlockEntity> PET_PORTRAIT_BE =
-            FabricBlockEntityTypeBuilder.create(PetPortraitBlockEntity::new, PET_PORTRAIT).build();
+            BlockEntityType.Builder.of(PetPortraitBlockEntity::new, PET_PORTRAIT).build(null);
     public static final BlockEntityType<ToyBoxBlockEntity> TOY_BOX_BE =
-            FabricBlockEntityTypeBuilder.create(ToyBoxBlockEntity::new, TOY_BOX).build();
+            BlockEntityType.Builder.of(ToyBoxBlockEntity::new, TOY_BOX).build(null);
     public static final BlockEntityType<TreatDispenserBlockEntity> TREAT_DISPENSER_BE =
-            FabricBlockEntityTypeBuilder.create(TreatDispenserBlockEntity::new, TREAT_DISPENSER).build();
+            BlockEntityType.Builder.of(TreatDispenserBlockEntity::new, TREAT_DISPENSER).build(null);
     public static final BlockEntityType<PetIncubatorBlockEntity> PET_INCUBATOR_BE =
-            FabricBlockEntityTypeBuilder.create(PetIncubatorBlockEntity::new, PET_INCUBATOR).build();
+            BlockEntityType.Builder.of(PetIncubatorBlockEntity::new, PET_INCUBATOR).build(null);
     public static final BlockEntityType<PlushBlockEntity> PLUSH_BE =
-            FabricBlockEntityTypeBuilder.create(PlushBlockEntity::new, PLUSHES.values().toArray(Block[]::new)).build();
+            BlockEntityType.Builder.of(PlushBlockEntity::new, PLUSHES.values().toArray(Block[]::new)).build(null);
 
     private ModBlocks() {
     }

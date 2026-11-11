@@ -1,6 +1,5 @@
 package net.kasax.tamacraft.registry;
 
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.minecraft.core.Registry;
@@ -20,7 +19,7 @@ public final class ModTab {
     }
 
     public static void initialize() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, KEY, FabricItemGroup.builder()
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, KEY, CreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.tamacraft"))
                 .icon(() -> new ItemStack(ModItems.TAMACRAFT_HEART))
                 .displayItems((params, output) -> {

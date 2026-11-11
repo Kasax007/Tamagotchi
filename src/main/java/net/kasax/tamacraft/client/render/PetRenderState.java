@@ -1,7 +1,5 @@
 package net.kasax.tamacraft.client.render;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.pet.PetAction;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
  * Per-frame snapshot of a pet for the model, the animator and the layers. Minecraft 1.21.1 has no entity render
  * states, so the renderer fills this in itself (the fields are named like the later vanilla ones).
  */
-@Environment(EnvType.CLIENT)
 public class PetRenderState {
     public float ageInTicks;
     public float walkAnimationPos;

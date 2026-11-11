@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.render.PetRenderState;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.kasax.tamacraft.pet.TamaPet;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
  * <p>The pose comes from a {@link PetRenderState}: {@link PetRenderer} fills {@link #state} before vanilla calls
  * {@link #setupAnim}; plushies and portraits pose the model with {@link #pose} directly.
  */
-@Environment(EnvType.CLIENT)
 public class PetModel extends EntityModel<TamaPet> {
     final PetSpecies species;
     private final ModelPart root;

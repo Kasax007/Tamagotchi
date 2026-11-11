@@ -1,0 +1,19 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "tamacraft_gametest"
+version = "1.0.0"
+displayName = "Tamacraft tests"
+description = '''The client self-test, the server game tests and the registry dump of Tamacraft (development only).'''
+
+[[mixins]]
+config = "tamacraft-gametest.mixins.json"
+
+[[dependencies.tamacraft_gametest]]
+modId = "tamacraft"
+type = "required"
+versionRange = "[0,)"
+ordering = "AFTER"
+side = "BOTH"

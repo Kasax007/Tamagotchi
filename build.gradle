@@ -1,6 +1,7 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'java-library'
 	id 'maven-publish'
+	id 'net.neoforged.moddev' version "${moddev_version}"
 	id 'me.modmuss50.mod-publish-plugin' version '2.2.1'
 }
 
@@ -12,99 +13,132 @@ base {
 }
 
 repositories {
-	// recipe viewers, only for the compatibility test runs (-PwithJei / -PwithRei)
+	// recipe viewers (compile only; loaded only for the compatibility test runs -PwithJei / -PwithRei)
 	exclusiveContent {
 		forRepository { maven { url = "https://api.modrinth.com/maven" } }
 		filter { includeGroup "maven.modrinth" }
 	}
 }
 
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// 1.21.1 is obfuscated: official Mojang names, so the code reads like the 26.x branch
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// optional recipe-viewer plugins (src/main/java/.../compat); only compiled against, never bundled
-	modCompileOnly "maven.modrinth:jei:${project.jei_version}"
-	modCompileOnly "maven.modrinth:rei:${project.rei_version}"
-	modCompileOnly "maven.modrinth:architectury-api:${project.architectury_version}"
-
-	// ./gradlew runClientGameTest -PwithJei (or -PwithRei) loads the recipe viewer next to the mod
-	if (project.hasProperty("withJei")) {
-		modLocalRuntime "maven.modrinth:jei:${project.jei_version}"
-	}
-	if (project.hasProperty("withRei")) {
-		modLocalRuntime "maven.modrinth:rei:${project.rei_version}"
-		modLocalRuntime "maven.modrinth:architectury-api:${project.architectury_version}"
-		modLocalRuntime "maven.modrinth:cloth-config:${project.cloth_version}"
-	}
+java {
+	toolchain.languageVersion = JavaLanguageVersion.of(21)
+	withSourcesJar()
 }
 
-// Client self-test (src/gametest): Minecraft 1.21.1 has no Fabric client game-test API yet, so the tests bring their own
-// small harness (net.kasax.tamacraft.test.harness). Run: xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks|blocks|pets]
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+	it.options.encoding = "UTF-8"
+	it.options.compilerArgs += ["-Xmaxerrs", "2000"]
+}
+
+// Tests (src/gametest, a second mod that is never shipped):
+// - the client self-test: Minecraft 1.21.1 has no client game-test API, so the tests bring their own small harness
+//   (net.kasax.tamacraft.test.harness). Run: xvfb-run -a ./gradlew runClientGameTest [-Ptests=checks|blocks|pets]
+// - the server game tests (net.kasax.tamacraft.test.ServerTests): ./gradlew runGameTestServer
 sourceSets {
 	gametest {
 		compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
 		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
 	}
 }
-loom {
-	accessWidenerPath = file("src/main/resources/tamacraft.accesswidener")
+
+neoForge {
+	version = project.neo_version
+
 	mods {
-		"tamacraft" {
+		tamacraft {
 			sourceSet sourceSets.main
 		}
-		"tamacraft-gametest" {
+		tamacraft_gametest {
 			sourceSet sourceSets.gametest
 		}
 	}
+
 	runs {
+		client {
+			client()
+		}
+		server {
+			server()
+		}
 		clientGameTest {
 			client()
-			name "Client Game Test"
-			source sourceSets.gametest
-			runDir "build/run/clientGameTest"
-			property "tama.selftest", "true"
-			vmArg "-Xmx2G"
+			sourceSet = sourceSets.gametest
+			loadedMods = [mods.tamacraft, mods.tamacraft_gametest]
+			gameDirectory = file("build/run/clientGameTest")
+			systemProperty "tama.selftest", "true"
+			if (project.hasProperty("tests")) systemProperty "tama.tests", project.property("tests").toString()
+			jvmArgument "-Xmx2G"
+			programArguments.addAll("--username", "TamaTester")
+		}
+		gameTestServer {
+			type = "gameTestServer"
+			sourceSet = sourceSets.gametest
+			loadedMods = [mods.tamacraft, mods.tamacraft_gametest]
+			gameDirectory = file("build/run/gameTestServer")
+			systemProperty "neoforge.enabledGameTestNamespaces", "tamacraft"
+			jvmArgument "-Xmx2G"
+		}
+		// Writes the mod's registry ids, data and tags to a file and stops (for the comparison with the Fabric build):
+		// ./gradlew runRegistryDump -PdumpTo=/path/file.txt
+		registryDump {
+			server()
+			sourceSet = sourceSets.gametest
+			loadedMods = [mods.tamacraft, mods.tamacraft_gametest]
+			gameDirectory = file("build/run/registryDump")
+			systemProperty "tama.dump", (project.findProperty("dumpTo") ?: file("build/registry-dump.txt").absolutePath).toString()
+			programArguments.add("--nogui")
 		}
 	}
 }
-// ./gradlew runClientGameTest -Ptests=blocks (or pets) runs only that part of the client tests;
-// -Ptests=checks runs only the functional pet checks and real-click tests (no screenshots); combine: -Ptests=blocks,checks
-// the game runs on Java 21 like a 1.21.1 player's (Gradle itself may run on a newer JDK)
-tasks.withType(JavaExec).configureEach {
-	javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
-}
-tasks.matching { it.name == 'runClientGameTest' }.configureEach {
-	if (project.hasProperty('tests')) jvmArgs "-Dtama.tests=${project.property('tests')}"
-}
 
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+dependencies {
+	compileOnly "maven.modrinth:jei:${project.jei_version}"
+	compileOnly "maven.modrinth:rei:${project.rei_version}"
+	compileOnly "maven.modrinth:architectury-api:${project.architectury_version}"
+	// ./gradlew runClientGameTest -PwithJei (or -PwithRei) loads the recipe viewer next to the mod
+	if (project.hasProperty("withJei")) {
+		gametestRuntimeOnly "maven.modrinth:jei:${project.jei_version}"
+	}
+	if (project.hasProperty("withRei")) {
+		gametestRuntimeOnly "maven.modrinth:rei:${project.rei_version}"
+		gametestRuntimeOnly "maven.modrinth:architectury-api:${project.architectury_version}"
+		gametestRuntimeOnly "maven.modrinth:cloth-config:${project.cloth_version}"
 	}
 }
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
-	it.options.compilerArgs += ["-Xmaxerrs", "2000"]
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+	var replaceProperties = [mod_version: project.mod_version, minecraft_version: project.minecraft_version, neo_version: project.neo_version]
+	inputs.properties replaceProperties
+	expand replaceProperties
+	from "src/main/templates"
+	into "build/generated/sources/modMetadata"
 }
-
-java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
-}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
 
 jar {
-	inputs.property "archivesName", project.base.archivesName
-
 	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
+		rename { "${it}_${project.base.archivesName.get()}" }
+	}
+}
+
+// A clean game for every client self-test: no onboarding screens, no pause when the window loses focus.
+tasks.matching { it.name == "runClientGameTest" }.configureEach {
+	doFirst {
+		def dir = file("build/run/clientGameTest")
+		dir.mkdirs()
+		file("build/run/clientGameTest/options.txt").text = "onboardAccessibility:false\npauseOnLostFocus:false\ntutorialStep:none\n" +
+				"joinedFirstServer:true\nskipMultiplayerWarning:true\nnarrator:0\nsoundCategory_master:0.0\n"
+		delete "build/run/clientGameTest/saves", "build/run/clientGameTest/screenshots"
+	}
+}
+tasks.matching { it.name == "runGameTestServer" || it.name == "runRegistryDump" }.configureEach {
+	doFirst {
+		def dir = file("build/run/${it.name == 'runGameTestServer' ? 'gameTestServer' : 'registryDump'}")
+		dir.mkdirs()
+		new File(dir, "eula.txt").text = "eula=true\n"
+		delete new File(dir, "world"), new File(dir, "gametestworld")
 	}
 }
 
@@ -130,7 +164,7 @@ publishMods {
 	changelog = changelogFor(project.version.toString())
 	type = STABLE
 	displayName = "Tamacraft ${project.version}"
-	modLoaders.add("fabric")
+	modLoaders.add("neoforge")
 	dryRun = isDryRun
 
 	if (toCurseforge) {
@@ -140,7 +174,6 @@ publishMods {
 			minecraftVersions.add(project.minecraft_version)
 			client = true
 			server = true
-			requires("fabric-api")
 		}
 	}
 	if (toModrinth) {
@@ -148,14 +181,13 @@ publishMods {
 			projectId = modrinthId.isEmpty() ? "AAAAAAAA" : modrinthId
 			accessToken = providers.environmentVariable("MODRINTH_TOKEN")
 			minecraftVersions.add(project.minecraft_version)
-			requires("fabric-api")
 		}
 	}
 	if (toGithub) {
 		github {
 			repository = "Kasax007/Tamagotchi"
 			accessToken = providers.environmentVariable("GITHUB_TOKEN")
-			commitish = providers.environmentVariable("GITHUB_SHA").orElse("port/1.21.1")
+			commitish = providers.environmentVariable("GITHUB_SHA").orElse("port/1.21.1-neoforge")
 			tagName = "v${project.version}"
 		}
 	}

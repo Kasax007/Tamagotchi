@@ -371,6 +371,7 @@
       ],
       "shade": false,
       "light_emission": 15,
+      "neoforge_data": {"block_light": 15, "sky_light": 15},
       "faces": {
         "up": {
           "uv": [

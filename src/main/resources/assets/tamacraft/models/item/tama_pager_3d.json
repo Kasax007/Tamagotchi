@@ -3149,6 +3149,7 @@
       ],
       "shade": false,
       "light_emission": 8,
+      "neoforge_data": {"block_light": 15, "sky_light": 15},
       "faces": {
         "south": {
           "uv": [

@@ -1,8 +1,6 @@
 package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.model.PetModel;
 import net.kasax.tamacraft.pet.TamaPet;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,7 +10,6 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 /** Full-bright layer for lava cracks, sculk spots, glowing eyes and heart eyes. */
-@Environment(EnvType.CLIENT)
 public class PetGlowLayer extends RenderLayer<TamaPet, PetModel> {
     public PetGlowLayer(RenderLayerParent<TamaPet, PetModel> parent) {
         super(parent);

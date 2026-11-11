@@ -306,8 +306,8 @@ public class PetGallery implements FabricClientGameTest {
 
     /** With JEI or REI loaded (-PwithJei / -PwithRei): list the mod's items and open a recipe, nothing else. */
     private boolean recipeViewerCheck() {
-        String viewer = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("jei") ? "jei"
-                : net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("roughlyenoughitems") ? "rei" : null;
+        String viewer = net.neoforged.fml.ModList.get().isLoaded("jei") ? "jei"
+                : net.neoforged.fml.ModList.get().isLoaded("roughlyenoughitems") ? "rei" : null;
         if (viewer == null) {
             return false;
         }

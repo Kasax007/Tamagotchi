@@ -1,7 +1,5 @@
 package net.kasax.tamacraft.client.model;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.client.render.PetRenderState;
 import net.kasax.tamacraft.pet.PetAction;
 import net.kasax.tamacraft.pet.PetSpecies;
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
  * Model space: Y points down, the pet faces -Z, positive xRot tips a head's nose down, swings a
  * leg backwards and lifts a tail.
  */
-@Environment(EnvType.CLIENT)
 public final class PetAnimator {
     private static final float PI = Mth.PI;
 

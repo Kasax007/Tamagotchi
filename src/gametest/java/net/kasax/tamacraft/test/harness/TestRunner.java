@@ -1,8 +1,11 @@
 package net.kasax.tamacraft.test.harness;
 
 import java.util.List;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.kasax.tamacraft.test.BlockGallery;
 import net.kasax.tamacraft.test.PetGallery;
 import net.minecraft.client.Minecraft;
@@ -14,25 +17,26 @@ import org.slf4j.LoggerFactory;
  * Runs the client tests once the title screen is up (only with -Dtama.selftest, which the clientGameTest run sets),
  * then closes the game. Results are the "[TamaTest] PASS / FAIL" lines in the log.
  */
-public final class TestRunner implements ClientModInitializer {
+@Mod(value = "tamacraft_gametest", dist = Dist.CLIENT)
+public final class TestRunner {
     private static final Logger LOG = LoggerFactory.getLogger("TamaTest");
     /** See {@link TestServerContext#onServerTick}. */
     static volatile java.util.function.Consumer<net.minecraft.server.MinecraftServer> serverTick;
     private ClientGameTestContext ctx;
     private boolean started;
 
-    @Override
-    public void onInitializeClient() {
+    public TestRunner() {
         if (System.getProperty("tama.selftest") == null) {
             return;
         }
-        net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> {
+        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
             var hook = serverTick;
             if (hook != null) {
-                hook.accept(server);
+                hook.accept(event.getServer());
             }
         });
-        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> {
+            Minecraft mc = Minecraft.getInstance();
             if (this.ctx != null) {
                 this.ctx.onTick();
             }

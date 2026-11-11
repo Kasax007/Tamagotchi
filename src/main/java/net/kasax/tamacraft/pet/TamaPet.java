@@ -2,7 +2,6 @@ package net.kasax.tamacraft.pet;
 
 import java.util.List;
 import java.util.UUID;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.item.TamaEggItem;
 import net.kasax.tamacraft.menu.PetMenu;
@@ -529,14 +528,14 @@ public class TamaPet extends TamableAnimal {
         // sneak + right-click: open the pet screen / backpack on (chest) / backpack off (shears)
         if (player.isSecondaryUseActive()) {
             // any wooden chest and any shears (c: tags), so the chests and shears of other mods work too
-            if ((stack.is(Items.CHEST) || stack.is(ConventionalItemTags.WOODEN_CHESTS)) && !hasBackpack()) {
+            if ((stack.is(Items.CHEST) || stack.is(net.neoforged.neoforge.common.Tags.Items.CHESTS_WOODEN)) && !hasBackpack()) {
                 if (!client) {
                     equipBackpack();
                     stack.consume(1, player);
                 }
                 return InteractionResult.SUCCESS;
             }
-            if ((stack.is(Items.SHEARS) || stack.is(ConventionalItemTags.SHEAR_TOOLS)) && hasBackpack()) {
+            if ((stack.is(Items.SHEARS) || stack.is(net.neoforged.neoforge.common.Tags.Items.TOOLS_SHEAR)) && hasBackpack()) {
                 if (!client) {
                     removeBackpack(true);
                     playSound(net.minecraft.sounds.SoundEvents.SHEEP_SHEAR, 0.7F, 1.3F);
@@ -613,7 +612,8 @@ public class TamaPet extends TamableAnimal {
     }
 
     public void openPetScreen(ServerPlayer player) {
-        player.openMenu(new PetMenu.Provider(this));
+        PetMenu.Provider provider = new PetMenu.Provider(this);
+        player.openMenu(provider, provider::writeData);
         player.level().playSound(null, player.blockPosition(), ModSounds.PAGER_OPEN, SoundSource.PLAYERS, 0.6F, 1.0F);
     }
 

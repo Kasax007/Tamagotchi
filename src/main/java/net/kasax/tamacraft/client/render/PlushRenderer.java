@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.block.PlushBlock;
 import net.kasax.tamacraft.block.PlushBlockEntity;
 import net.kasax.tamacraft.pet.PetSpecies;
@@ -15,7 +13,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 
 /** Draws a plush: the pet's own model, small and sitting, squishing when someone squeezes it. */
-@Environment(EnvType.CLIENT)
 public class PlushRenderer implements BlockEntityRenderer<PlushBlockEntity> {
     /** How tall a plush is, in blocks, and how much chubbier than the pet (wider, a bit squat: soft and huggable). */
     public static final float HEIGHT = 0.7F;

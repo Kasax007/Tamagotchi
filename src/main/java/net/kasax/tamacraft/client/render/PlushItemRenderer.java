@@ -1,9 +1,7 @@
 package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.kasax.tamacraft.block.PlushBlock;
 import net.kasax.tamacraft.pet.PetSpecies;
 import net.minecraft.client.Minecraft;
@@ -17,13 +15,17 @@ import net.minecraft.world.item.ItemStack;
  * The plush items: the same little pet as the placed plush (item model parent builtin/entity, display transforms from
  * tamacraft:item/template_plush). The models are baked on first use, after the entity model layers are loaded.
  */
-@Environment(EnvType.CLIENT)
-public class PlushItemRenderer implements BuiltinItemRendererRegistry.DynamicItemRenderer {
+public class PlushItemRenderer extends BlockEntityWithoutLevelRenderer {
     private PetStatues statues;
     private ModelPart tag;
 
+    /** Made on first use (in game), when the block entity renderers and the entity models exist. */
+    public PlushItemRenderer() {
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+    }
+
     @Override
-    public void render(ItemStack stack, ItemDisplayContext mode, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext mode, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
         if (!(stack.getItem() instanceof BlockItem item) || !(item.getBlock() instanceof PlushBlock plush)) {
             return;
         }

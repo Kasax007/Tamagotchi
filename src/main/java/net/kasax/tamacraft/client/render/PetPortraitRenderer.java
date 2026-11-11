@@ -2,8 +2,6 @@ package net.kasax.tamacraft.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.kasax.tamacraft.block.PetPortraitBlock;
 import net.kasax.tamacraft.block.PetPortraitBlockEntity;
 import net.kasax.tamacraft.pet.PetSpecies;
@@ -20,7 +18,6 @@ import net.minecraft.util.FormattedCharSequence;
  * The painted pet: its model as a shallow relief on the canvas (so it never pokes through the wall), gently
  * breathing, with its name on the brass plate below.
  */
-@Environment(EnvType.CLIENT)
 public class PetPortraitRenderer implements BlockEntityRenderer<PetPortraitBlockEntity> {
     /** Canvas and plate positions in pixels (see the block model); the picture faces -Z in the local frame. */
     private static final float CANVAS_Z = 14.5F / 16F - 0.5F;

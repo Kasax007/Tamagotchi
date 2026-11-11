@@ -1,9 +1,8 @@
 package net.kasax.tamacraft.client.render;
 
 import java.util.Map;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.kasax.tamacraft.Tamacraft;
 import net.kasax.tamacraft.registry.ModItems;
 import net.minecraft.client.Minecraft;
@@ -18,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
  * and in item frames (26.x: a display_context select in the item model; 1.21.1: an extra model swapped in by
  * {@link net.kasax.tamacraft.mixin.client.ItemRendererMixin}, like vanilla does for the trident and spyglass).
  */
-@Environment(EnvType.CLIENT)
 public final class HeldItemModels {
     private static Map<Item, ResourceLocation> models;
 
@@ -27,7 +25,14 @@ public final class HeldItemModels {
 
     public static void register() {
         models = Map.of(ModItems.TAMA_PAGER, Tamacraft.id("item/tama_pager_3d"), ModItems.LASER_POINTER, Tamacraft.id("item/laser_pointer_3d"));
-        ModelLoadingPlugin.register(ctx -> ctx.addModels(models.values()));
+    }
+
+    /** The 3D models are extra models: NeoForge loads and bakes them next to the item models. */
+    public static void registerModels(ModelEvent.RegisterAdditional event) {
+        register();
+        for (ResourceLocation id : models.values()) {
+            event.register(ModelResourceLocation.standalone(id));
+        }
     }
 
     /** The model to draw {@code stack} with in {@code context}: the 3D one everywhere but in the inventory. */
@@ -36,6 +41,6 @@ public final class HeldItemModels {
             return model;
         }
         ResourceLocation id = models.get(stack.getItem());
-        return id == null ? model : Minecraft.getInstance().getModelManager().getModel(id);
+        return id == null ? model : Minecraft.getInstance().getModelManager().getModel(ModelResourceLocation.standalone(id));
     }
 }
