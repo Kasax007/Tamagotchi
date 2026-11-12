@@ -608,7 +608,7 @@ public class PetGallery implements FabricClientGameTest {
         check("a pet that faints in the void lands in its owner's inventory as an egg", voidEgg[0]);
 
         // the egg on the ground survives explosions (and fire, lava, cactus)
-        boolean[] eggSurvives = {false};
+        int[] eggSurvives = {0};
         server.runOnServer(s -> {
             ServerLevel level = s.overworld();
             TamaPet pet = spawn(level, player(s), PetSpecies.EMBER_PUP, 3.5, 3.5, 0, true);
@@ -617,8 +617,8 @@ public class PetGallery implements FabricClientGameTest {
         });
         ctx.waitTicks(3);
         server.runOnServer(s -> eggSurvives[0] = s.overworld().getEntitiesOfClass(ItemEntity.class, new AABB(3.5, Y, 3.5, 3.5, Y, 3.5).inflate(4),
-                e -> e.getItem().is(ModItems.TAMA_EGG)).size() == 1);
-        check("a Tama Egg on the ground survives an explosion", eggSurvives[0]);
+                e -> e.getItem().is(ModItems.TAMA_EGG)).size());
+        check("a Tama Egg on the ground survives an explosion (" + eggSurvives[0] + " eggs)", eggSurvives[0] == 1);
         clear();
 
         // a dragon saved in mid-air comes back with gravity (it used to hover forever)

@@ -4,10 +4,12 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.displays.DefaultInformationDisplay;
 import net.minecraft.world.item.ItemStack;
 
 /** REI plugin (loaded only when REI is installed): information pages. All recipes are vanilla crafting recipes. */
+@REIPluginClient
 public class ReiCompat implements REIClientPlugin {
     @Override
     public void registerDisplays(DisplayRegistry registry) {
