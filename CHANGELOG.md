@@ -2,6 +2,13 @@
 
 Each release uploads the section of its version as the changelog on CurseForge, Modrinth and GitHub.
 
+## 1.3.1
+
+Bug fixes.
+
+- The links in the mod list (Mod Menu) lead to the right places again: the source and issue links follow the
+  repository's new name, and there is a website button for the mod's page now
+
 ## 1.3.0
 
 The mod has a new name: **Tamacraft** (formerly Tamagotchi). Same pets, same furniture, same features.
